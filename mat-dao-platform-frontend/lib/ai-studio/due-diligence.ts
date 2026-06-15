@@ -56,7 +56,7 @@ function finalizeReport(
     analysisSource: source,
     layers: {
       layer1: source === "engine"
-        ? "PatentSBERTa NLP extraction + IPC/CPC classification"
+        ? "OpenAI embedding extraction + IPC/CPC classification"
         : "Client-side text extraction (backend offline)",
       layer2: source === "engine"
         ? "Patent corpus enrichment + FTO overlap analysis"

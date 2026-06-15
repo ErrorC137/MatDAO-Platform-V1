@@ -12,7 +12,10 @@ import {
   TrendingDown,
   ExternalLink,
   Beaker,
+  User,
 } from "lucide-react"
+import { useAuth } from "@/context/auth-context"
+import { loadUserData } from "@/lib/trl-services/storage"
 
 /* ------------------------------------------------------------------ */
 /*  Static data (would come from API in production)                    */
@@ -42,6 +45,7 @@ interface Project {
   institution: string
   change24h: number
   image: string
+  researcherId?: string
 }
 
 const projects: Project[] = [
@@ -175,10 +179,19 @@ type SortDir = "asc" | "desc"
 /* ------------------------------------------------------------------ */
 
 export default function ProjectMarketPage() {
+  const { user } = useAuth()
   const [searchQuery, setSearchQuery] = useState("")
   const [activeCategory, setActiveCategory] = useState<Category>("All")
   const [sortField, setSortField] = useState<SortField>("fundingRaised")
   const [sortDir, setSortDir] = useState<SortDir>("desc")
+  const [platformData, setPlatformData] = useState<any>(null)
+
+  // Load user data for researchers
+  useState(() => {
+    if (user && user.role === "researcher") {
+      setPlatformData(loadUserData(user.id))
+    }
+  })
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -227,6 +240,13 @@ export default function ProjectMarketPage() {
     })
     return list
   }, [searchQuery, activeCategory, sortField, sortDir])
+
+  // Get researcher's projects from assessments
+  const researcherProjects = useMemo(() => {
+    if (!user || user.role !== "researcher" || !platformData) return []
+    const assessmentTitles = platformData.assessments?.map((a: any) => a.title) || []
+    return projects.filter((p) => assessmentTitles.includes(p.name))
+  }, [user, platformData])
 
   return (
     <div className="flex flex-col">
@@ -316,6 +336,64 @@ export default function ProjectMarketPage() {
           </div>
         </div>
       </section>
+
+      {/* ---- My Projects Section (Researchers only) ---- */}
+      {user?.role === "researcher" && researcherProjects.length > 0 && (
+        <section className="border-b border-border/40 bg-primary/5 px-4 py-6">
+          <div className="mx-auto max-w-6xl">
+            <div className="mb-4 flex items-center gap-2">
+              <User className="h-5 w-5 text-primary" />
+              <h2 className="text-lg font-semibold text-foreground">My Ongoing Projects</h2>
+              <span className="rounded-full bg-primary/20 px-2 py-0.5 text-xs text-primary">
+                {researcherProjects.length}
+              </span>
+            </div>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {researcherProjects.map((project) => (
+                <Link
+                  key={project.id}
+                  href={`/project/${project.slug}`}
+                  className="group rounded-xl border border-border/50 bg-card/60 p-4 transition-colors hover:bg-card/80"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg">
+                      <img
+                        src={project.image}
+                        alt={project.name}
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="text-sm font-medium text-foreground group-hover:text-primary">
+                        {project.name}
+                      </h3>
+                      <p className="text-xs text-muted-foreground">{project.ticker}</p>
+                      <div className="mt-2 flex items-center gap-2">
+                        <span className="rounded-full border border-accent/30 bg-accent/10 px-2 py-0.5 text-[10px] font-medium text-accent">
+                          TRL {project.trl}
+                        </span>
+                        <span className="text-[10px] text-muted-foreground">{project.phase}</span>
+                      </div>
+                      <div className="mt-2">
+                        <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+                          <span>${project.fundingRaised.toLocaleString()} / ${project.fundingGoal.toLocaleString()}</span>
+                          <span>{Math.round((project.fundingRaised / project.fundingGoal) * 100)}%</span>
+                        </div>
+                        <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-border/40">
+                          <div
+                            className="h-full rounded-full bg-primary"
+                            style={{ width: `${Math.min(Math.round((project.fundingRaised / project.fundingGoal) * 100), 100)}%` }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ---- Table ---- */}
       <section className="px-4 pb-20 pt-6">

@@ -1,15 +1,33 @@
 "use client"
 
 import { useAuth } from "@/context/auth-context"
-import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { Wallet, Mail, User, Building2, Shield, Copy, Check, ExternalLink } from "lucide-react"
-import { useState } from "react"
+import {
+  Wallet,
+  Mail,
+  User,
+  Building2,
+  Shield,
+  Copy,
+  Check,
+  ExternalLink,
+  FileSearch,
+  Target,
+  Users,
+} from "lucide-react"
+import { useEffect, useState } from "react"
+import { loadUserData } from "@/lib/trl-services/storage"
+import type { UserPlatformData } from "@/lib/trl-services/types"
+import { formatUsd } from "@/lib/ai-studio/api"
 
 export default function ProfilePage() {
   const { user, connectWallet, disconnectWallet, isLoading } = useAuth()
-  const router = useRouter()
   const [copied, setCopied] = useState(false)
+  const [platformData, setPlatformData] = useState<UserPlatformData | null>(null)
+
+  useEffect(() => {
+    if (user) setPlatformData(loadUserData(user.id))
+  }, [user])
 
   if (!user) {
     return (
@@ -167,6 +185,80 @@ export default function ProfilePage() {
             )}
           </div>
 
+          {/* Assessment Reports */}
+          {platformData && platformData.assessments.length > 0 && (
+            <div className="rounded-xl border border-border/60 bg-card p-6">
+              <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-foreground">
+                <FileSearch className="h-5 w-5 text-primary" />
+                Project Assessments
+              </h2>
+              <div className="space-y-3">
+                {platformData.assessments.map((a) => (
+                  <div key={a.id} className="rounded-lg border border-border/60 bg-secondary/20 p-4">
+                    <h3 className="text-sm font-medium text-foreground">{a.title}</h3>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      TRL {a.summary.trl} · Score {a.summary.ipScore}
+                      {a.summary.valuationUsd ? ` · ${formatUsd(a.summary.valuationUsd)}` : ""}
+                    </p>
+                    <p className="mt-2 text-xs text-muted-foreground">
+                      {new Date(a.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Submitted Milestones */}
+          {platformData && platformData.submittedMilestones.length > 0 && (
+            <div className="rounded-xl border border-border/60 bg-card p-6">
+              <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-foreground">
+                <Target className="h-5 w-5 text-primary" />
+                Submitted Milestones
+              </h2>
+              <div className="space-y-3">
+                {platformData.submittedMilestones.map((m) => (
+                  <div key={m.id} className="rounded-lg border border-border/60 bg-secondary/20 p-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-foreground">{m.milestoneLabel}</span>
+                      <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] capitalize text-primary">
+                        {m.status}
+                      </span>
+                    </div>
+                    <p className="mt-1 text-xs text-muted-foreground">{m.projectTitle}</p>
+                    <p className="mt-2 text-xs text-foreground/80">{m.description}</p>
+                  </div>
+                ))}
+              </div>
+              <Link
+                href="/submit/milestone"
+                className="mt-3 inline-block text-xs text-primary hover:underline"
+              >
+                View milestone page →
+              </Link>
+            </div>
+          )}
+
+          {/* Co-founder Match Reports */}
+          {platformData && platformData.matchReports.length > 0 && (
+            <div className="rounded-xl border border-border/60 bg-card p-6">
+              <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-foreground">
+                <Users className="h-5 w-5 text-primary" />
+                Co-Founder Matches
+              </h2>
+              <div className="space-y-2">
+                {platformData.matchReports.map((m) => (
+                  <div key={m.id} className="rounded-lg border border-border/60 bg-secondary/20 px-4 py-3">
+                    <p className="text-sm font-medium text-foreground">{m.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {new Date(m.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Quick Actions */}
           {user.role === "researcher" && (
             <div className="rounded-xl border border-border/60 bg-card p-6">
@@ -180,6 +272,20 @@ export default function ProfilePage() {
                 >
                   <ExternalLink className="h-4 w-4 text-primary" />
                   <span className="text-foreground">Submit New Project</span>
+                </Link>
+                <Link
+                  href="/ai-studio/project-assessment/submit"
+                  className="flex items-center gap-3 rounded-lg border border-border/60 bg-secondary/30 px-4 py-3 text-sm transition-colors hover:bg-secondary/60"
+                >
+                  <FileSearch className="h-4 w-4 text-primary" />
+                  <span className="text-foreground">Run Full Assessment</span>
+                </Link>
+                <Link
+                  href="/submit/milestone"
+                  className="flex items-center gap-3 rounded-lg border border-border/60 bg-secondary/30 px-4 py-3 text-sm transition-colors hover:bg-secondary/60"
+                >
+                  <Target className="h-4 w-4 text-primary" />
+                  <span className="text-foreground">Milestone Builder</span>
                 </Link>
                 <Link
                   href="/project"

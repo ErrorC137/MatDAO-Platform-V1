@@ -11,6 +11,9 @@ const navLinks = [
   { label: "Why Us?", href: "/why-us" },
   { label: "Project", href: "/project" },
   { label: "AI Studio", href: "/ai-studio" },
+  { label: "Our Ecosystem", href: "/our-ecosystem" },
+  { label: "Co-Founder Match", href: "/co-founder-match" },
+  { label: "AI Verification", href: "/ai-auditor", roles: ["researcher", "staff"] },
   { label: "MAT Token", href: "/mattoken" },
 ]
 
@@ -49,7 +52,13 @@ export function Navbar() {
 
         {/* Nav Links */}
         <nav className="hidden items-center rounded-full border border-border/60 bg-secondary/50 px-1 py-1 md:flex">
-          {navLinks.map((link) => {
+          {navLinks
+            .filter((link) => {
+              if (!link.roles) return true
+              if (!user) return false
+              return link.roles.includes(user.role)
+            })
+            .map((link) => {
             const isActive =
               pathname === link.href ||
               (link.href !== "/" && pathname.startsWith(link.href))

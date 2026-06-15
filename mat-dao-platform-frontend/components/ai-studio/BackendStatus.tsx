@@ -16,7 +16,9 @@ export function BackendStatus({ required = true }: { required?: boolean }) {
         setChecking(false)
       }
     })
-    return () => { mounted = false }
+    return () => {
+      mounted = false
+    }
   }, [])
 
   if (checking) {
@@ -39,13 +41,14 @@ export function BackendStatus({ required = true }: { required?: boolean }) {
             </p>
             <p className="mt-1 text-amber-200/70">
               {required
-                ? "PDF and DOCX uploads require the matdao-ip-engine backend. Start it with:"
+                ? "PDF and DOCX uploads require the matdao-ip-engine service. Set IP_ENGINE_URL in your hosting environment."
                 : "PDF/DOCX need the backend. Plain text paste still works in limited mode."}
             </p>
-            <code className="mt-2 block rounded bg-black/30 px-2 py-1.5 font-mono text-[10px] text-amber-100/80">
-              cd matdao-ip-engine/backend{"\n"}
-              python -m uvicorn app.main:app --port 8765
-            </code>
+            {health?.backend_url && (
+              <code className="mt-2 block rounded bg-black/30 px-2 py-1.5 font-mono text-[10px] text-amber-100/80">
+                {health.backend_url}
+              </code>
+            )}
           </div>
         </div>
       </div>
@@ -56,7 +59,7 @@ export function BackendStatus({ required = true }: { required?: boolean }) {
     return (
       <div className="mb-6 flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-xs text-amber-200/80">
         <Loader2 className="h-3.5 w-3.5 animate-spin text-amber-400" />
-        IP Engine is warming up (loading PatentSBERTa index)... Try again in a minute.
+        Patent index builds on first analysis (OpenAI embeddings). Submit a document to warm the index.
       </div>
     )
   }
@@ -64,7 +67,8 @@ export function BackendStatus({ required = true }: { required?: boolean }) {
   return (
     <div className="mb-6 flex items-center gap-2 rounded-lg border border-emerald-500/25 bg-emerald-500/8 px-4 py-3 text-xs text-emerald-300/90">
       <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
-      IP Engine connected · {health.patent_corpus_size ?? 0} patents indexed · PatentSBERTa ready
+      IP Engine connected · {health.patent_corpus_size ?? 0} patents indexed ·{" "}
+      {health.embedding_model ?? "text-embedding-3-small"} ready
     </div>
   )
 }

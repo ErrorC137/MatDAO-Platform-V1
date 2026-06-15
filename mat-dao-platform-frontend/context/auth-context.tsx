@@ -1,6 +1,8 @@
 "use client"
 
-import { createContext, useContext, useState, useCallback, type ReactNode } from "react"
+import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react"
+import { supabase } from "@/lib/supabase/client"
+import type { Database } from "@/lib/supabase/client"
 
 export interface User {
   id: string
@@ -22,30 +24,80 @@ interface AuthContextType {
     role: "researcher" | "staff" | "investor"
     university?: string
   }) => Promise<void>
-  signOut: () => void
+  signOut: () => Promise<void>
   connectWallet: () => Promise<void>
-  disconnectWallet: () => void
+  disconnectWallet: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
-  const signIn = useCallback(async (email: string, _password: string) => {
-    setIsLoading(true)
-    // Simulated sign in — replace with Supabase Auth in production
-    await new Promise((resolve) => setTimeout(resolve, 800))
-    setUser({
-      id: crypto.randomUUID(),
-      email,
-      name: email.split("@")[0],
-      role: "researcher",
-      walletAddress: null,
-      university: null,
+  useEffect(() => {
+    // Check for existing session
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session?.user) {
+        await loadUserProfile(session.user.id)
+      }
+      setIsLoading(false)
+    }
+
+    checkSession()
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session?.user) {
+        await loadUserProfile(session.user.id)
+      } else if (event === 'SIGNED_OUT') {
+        setUser(null)
+      }
+      setIsLoading(false)
     })
-    setIsLoading(false)
+
+    return () => subscription.unsubscribe()
+  }, [])
+
+  const loadUserProfile = async (userId: string) => {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single()
+
+    if (profile) {
+      setUser({
+        id: profile.id,
+        email: profile.email,
+        name: profile.name,
+        role: profile.role as User['role'],
+        walletAddress: profile.wallet_address,
+        university: profile.university,
+      })
+    }
+  }
+
+  const signIn = useCallback(async (email: string, password: string) => {
+    setIsLoading(true)
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+
+      if (error) throw error
+
+      if (data.user) {
+        await loadUserProfile(data.user.id)
+      }
+    } catch (error) {
+      console.error('Sign in error:', error)
+      throw error
+    } finally {
+      setIsLoading(false)
+    }
   }, [])
 
   const signUp = useCallback(
@@ -57,61 +109,131 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       university?: string
     }) => {
       setIsLoading(true)
-      // Simulated sign up — replace with Supabase Auth in production
-      await new Promise((resolve) => setTimeout(resolve, 800))
-      setUser({
-        id: crypto.randomUUID(),
-        email: data.email,
-        name: data.name,
-        role: data.role,
-        walletAddress: null,
-        university: data.university || null,
-      })
-      setIsLoading(false)
+      try {
+        const { data: authData, error: authError } = await supabase.auth.signUp({
+          email: data.email,
+          password: data.password,
+        })
+
+        if (authError) throw authError
+
+        if (authData.user) {
+          // Create profile
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .insert({
+              id: authData.user.id,
+              email: data.email,
+              name: data.name,
+              role: data.role,
+              university: data.university || null,
+              wallet_address: null,
+            })
+
+          if (profileError) throw profileError
+
+          setUser({
+            id: authData.user.id,
+            email: data.email,
+            name: data.name,
+            role: data.role,
+            walletAddress: null,
+            university: data.university || null,
+          })
+        }
+      } catch (error) {
+        console.error('Sign up error:', error)
+        throw error
+      } finally {
+        setIsLoading(false)
+      }
     },
     []
   )
 
-  const signOut = useCallback(() => {
+  const signOut = useCallback(async () => {
+    await supabase.auth.signOut()
     setUser(null)
   }, [])
 
   const connectWallet = useCallback(async () => {
     setIsLoading(true)
-    // Simulated wallet connection — generates a fake address
-    await new Promise((resolve) => setTimeout(resolve, 600))
-    const fakeAddress =
-      "0x" +
-      Array.from({ length: 40 }, () =>
-        Math.floor(Math.random() * 16).toString(16)
-      ).join("")
+    try {
+      // Simulated wallet connection — in production, integrate with actual wallet provider
+      await new Promise((resolve) => setTimeout(resolve, 600))
+      const fakeAddress =
+        "0x" +
+        Array.from({ length: 40 }, () =>
+          Math.floor(Math.random() * 16).toString(16)
+        ).join("")
 
-    setUser((prev) => {
-      if (prev) {
-        return { ...prev, walletAddress: fakeAddress }
-      }
-      // If no user is signed in, create a wallet-only user
-      return {
-        id: crypto.randomUUID(),
-        email: "",
-        name: `${fakeAddress.slice(0, 6)}...${fakeAddress.slice(-4)}`,
-        role: "investor",
-        walletAddress: fakeAddress,
-        university: null,
-      }
-    })
-    setIsLoading(false)
-  }, [])
+      if (user) {
+        // Update existing user's wallet address
+        const { error } = await supabase
+          .from('profiles')
+          .update({ wallet_address: fakeAddress })
+          .eq('id', user.id)
 
-  const disconnectWallet = useCallback(() => {
-    setUser((prev) => {
-      if (prev && prev.email) {
-        return { ...prev, walletAddress: null }
+        if (error) throw error
+
+        setUser({ ...user, walletAddress: fakeAddress })
+      } else {
+        // Create wallet-only user (investor)
+        const { data: authData, error: authError } = await supabase.auth.signUp({
+          email: `${fakeAddress}@wallet.temp`,
+          password: crypto.randomUUID(),
+        })
+
+        if (authError) throw authError
+
+        if (authData.user) {
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .insert({
+              id: authData.user.id,
+              email: `${fakeAddress}@wallet.temp`,
+              name: `${fakeAddress.slice(0, 6)}...${fakeAddress.slice(-4)}`,
+              role: 'investor',
+              university: null,
+              wallet_address: fakeAddress,
+            })
+
+          if (profileError) throw profileError
+
+          setUser({
+            id: authData.user.id,
+            email: `${fakeAddress}@wallet.temp`,
+            name: `${fakeAddress.slice(0, 6)}...${fakeAddress.slice(-4)}`,
+            role: 'investor',
+            walletAddress: fakeAddress,
+            university: null,
+          })
+        }
       }
-      // If wallet-only user, sign out entirely
-      return null
-    })
-  }, [])
+    } catch (error) {
+      console.error('Wallet connection error:', error)
+      throw error
+    } finally {
+      setIsLoading(false)
+    }
+  }, [user])
+
+  const disconnectWallet = useCallback(async () => {
+    if (user && user.email.includes('@wallet.temp')) {
+      // Wallet-only user, sign out entirely
+      await signOut()
+    } else if (user) {
+      // Regular user, just remove wallet address
+      const { error } = await supabase
+        .from('profiles')
+        .update({ wallet_address: null })
+        .eq('id', user.id)
+
+      if (error) throw error
+
+      setUser({ ...user, walletAddress: null })
+    }
+  }, [user, signOut])
 
   return (
     <AuthContext.Provider

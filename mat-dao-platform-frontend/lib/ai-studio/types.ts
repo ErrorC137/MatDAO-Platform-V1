@@ -68,6 +68,21 @@ export interface AnalysisReport {
     automated_anchor_pct: number
     audit_trail?: AuditEntry[]
   }
+  trl_evaluation?: {
+    trl: number
+    trl_summary: string
+    accomplishments: string[]
+    potential_partnership: string
+    innovation_score: number
+    milestones: {
+      prototype: { status: "completed" | "current" | "future"; description: string; timeline: string }
+      mvp: { status: "completed" | "current" | "future"; description: string; timeline: string }
+      pilot_test: { status: "completed" | "current" | "future"; description: string; timeline: string }
+      commercialization: { status: "completed" | "current" | "future"; description: string; timeline: string }
+    }
+    sector_name: string
+    analysis_source: string
+  }
   document_stats: {
     abstract_chars: number
     methodology_chars: number

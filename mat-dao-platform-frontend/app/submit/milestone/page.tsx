@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import Link from "next/link"
 import {
   Plus,
   Check,
@@ -19,7 +20,14 @@ import {
   FileCheck,
   Leaf,
   Gavel,
+  Shield,
+  Target,
+  ExternalLink,
 } from "lucide-react"
+import { useAuth } from "@/context/auth-context"
+import { fetchVerifications } from "@/lib/trl-services/api"
+import { loadUserData } from "@/lib/trl-services/storage"
+import type { SubmittedMilestone, VerificationTask } from "@/lib/trl-services/types"
 
 /* ------------------------------------------------------------------ */
 /*  Data                                                               */
@@ -78,6 +86,20 @@ const trlTemplates: Record<string, { budget: string; duration: string }> = {
 /* ------------------------------------------------------------------ */
 
 export default function MilestoneBuilderPage() {
+  const { user } = useAuth()
+  const [recommendedMilestones, setRecommendedMilestones] = useState<SubmittedMilestone[]>([])
+  const [auditorResults, setAuditorResults] = useState<VerificationTask[]>([])
+
+  useEffect(() => {
+    if (user) {
+      const data = loadUserData(user.id)
+      setRecommendedMilestones(data.submittedMilestones)
+    }
+    fetchVerifications()
+      .then(setAuditorResults)
+      .catch(() => setAuditorResults([]))
+  }, [user])
+
   const [milestones, setMilestones] = useState<MilestoneData[]>([
     {
       id: 1,
@@ -150,6 +172,87 @@ export default function MilestoneBuilderPage() {
           </p>
         </div>
       </section>
+
+      {/* ---- AI-Recommended Milestones & Auditor Results ---- */}
+      {(recommendedMilestones.length > 0 || auditorResults.length > 0) && (
+        <section className="border-b border-border/40 bg-secondary/20 px-4 py-10">
+          <div className="mx-auto max-w-3xl space-y-8">
+            {recommendedMilestones.length > 0 && (
+              <div>
+                <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-foreground">
+                  <Target className="h-5 w-5 text-primary" />
+                  Recommended Next Steps
+                </h2>
+                <p className="mb-4 text-xs text-muted-foreground">
+                  From your Project Assessment report — submit proofs via the AI Auditor.
+                </p>
+                <div className="space-y-3">
+                  {recommendedMilestones.map((m) => (
+                    <div
+                      key={m.id}
+                      className="rounded-xl border border-border/60 bg-card p-4"
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-sm font-medium text-foreground">{m.milestoneLabel}</span>
+                        <span className="rounded-full bg-primary/10 px-2 py-0.5 font-mono text-[10px] capitalize text-primary">
+                          {m.status}
+                        </span>
+                      </div>
+                      <p className="mt-1 text-xs text-muted-foreground">{m.projectTitle}</p>
+                      <p className="mt-2 text-sm text-foreground/80">{m.description}</p>
+                      <p className="mt-1 font-mono text-[10px] text-muted-foreground">{m.timeline}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {auditorResults.length > 0 && (
+              <div>
+                <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-foreground">
+                  <Shield className="h-5 w-5 text-accent" />
+                  AI Auditor Results
+                </h2>
+                <div className="space-y-3">
+                  {auditorResults.slice(0, 5).map((task) => (
+                    <div
+                      key={task.id}
+                      className="rounded-xl border border-border/60 bg-card p-4"
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <p className="text-sm font-medium text-foreground">{task.title}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {task.projectTitle} · {task.milestoneName}
+                          </p>
+                        </div>
+                        <span
+                          className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${
+                            task.aiPassed
+                              ? "bg-accent/15 text-accent"
+                              : "bg-destructive/15 text-destructive"
+                          }`}
+                        >
+                          AI {task.aiPassed ? "Pass" : "Flagged"}
+                        </span>
+                      </div>
+                      <p className="mt-2 line-clamp-2 text-xs text-muted-foreground">
+                        {task.aiConsistencyReport.replace(/[#*]/g, "").slice(0, 200)}...
+                      </p>
+                    </div>
+                  ))}
+                </div>
+                <Link
+                  href="/ai-auditor"
+                  className="mt-3 inline-flex items-center gap-1 text-xs text-primary hover:underline"
+                >
+                  Submit new proof <ExternalLink className="h-3 w-3" />
+                </Link>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* ---- TRL Progress Stepper ---- */}
       <section className="px-4 py-10">

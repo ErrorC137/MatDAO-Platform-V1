@@ -5,8 +5,7 @@ import { usePathname } from "next/navigation"
 
 const tools = [
   { label: "Overview", href: "/ai-studio" },
-  { label: "IP Valuation", href: "/ai-studio/valuation" },
-  { label: "Due Diligence", href: "/ai-studio/due-diligence" },
+  { label: "Unified Analysis", href: "/ai-studio/project-assessment" },
 ]
 
 export function AiStudioSubnav() {

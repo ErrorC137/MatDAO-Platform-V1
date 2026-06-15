@@ -159,7 +159,7 @@ export default function DueDiligenceResultsPage() {
         <div className="rounded-xl border border-white/10 bg-black/30 px-5 py-4 font-mono text-xs text-white/40">
           Report generated: {new Date(report.timestamp).toLocaleString()} ·{" "}
           {report.analysisSource === "engine"
-            ? "Scored via matdao-ip-engine (PatentSBERTa + FTO pipeline)"
+            ? "Scored via matdao-ip-engine (OpenAI embeddings + FTO pipeline)"
             : "Client-side prototype scorer (backend was offline)"}
         </div>
 

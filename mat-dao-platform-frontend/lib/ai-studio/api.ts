@@ -5,6 +5,8 @@ export interface BackendHealth {
   status?: string
   index_ready?: boolean
   patent_corpus_size?: number
+  embedding_model?: string
+  backend_url?: string
   detail?: string
 }
 

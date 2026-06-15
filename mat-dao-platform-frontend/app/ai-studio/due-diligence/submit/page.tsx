@@ -91,7 +91,7 @@ export default function DueDiligenceSubmitPage() {
         <p className="mb-8 text-sm text-white/60">
           Peer-reviewed papers, preprints, arXiv exports, or technical reports — scored across 9 investment
           dimensions with an integrity gate that forces total score to zero on research integrity failures.
-          PDF/DOCX files are parsed by the IP Engine backend (PatentSBERTa pipeline).
+          PDF/DOCX files are parsed by the IP Engine backend (OpenAI embedding pipeline).
         </p>
 
         <BackendStatus required={false} />

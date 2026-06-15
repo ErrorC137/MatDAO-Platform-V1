@@ -1,11 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
-
-const IP_ENGINE_URL =
-  process.env.IP_ENGINE_URL ??
-  process.env.NEXT_PUBLIC_API_URL ??
-  "http://localhost:8765"
+import { getIpEngineUrl } from "@/lib/config/services"
 
 export async function POST(request: NextRequest) {
+  const IP_ENGINE_URL = getIpEngineUrl()
   try {
     const formData = await request.formData()
     const file = formData.get("file")
@@ -32,9 +29,7 @@ export async function POST(request: NextRequest) {
   } catch {
     return NextResponse.json(
       {
-        detail:
-          "Cannot reach the MatDAO IP Engine backend. Start it from matdao-ip-engine: " +
-          "cd backend && python -m uvicorn app.main:app --port 8765",
+        detail: `Cannot reach IP Engine at ${IP_ENGINE_URL}. Set IP_ENGINE_URL in your Vercel/v0 environment.`,
       },
       { status: 503 },
     )

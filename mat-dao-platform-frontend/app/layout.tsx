@@ -3,6 +3,8 @@ import { Inter, Plus_Jakarta_Sans } from "next/font/google"
 import "./globals.css"
 import { Navbar } from "@/components/navbar"
 import { AuthProvider } from "@/context/auth-context"
+import { WagmiProvider } from "@/components/providers/WagmiProvider"
+import { Toaster } from "react-hot-toast"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-jakarta" })
@@ -25,10 +27,13 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${jakarta.variable}`}>
       <body className="font-sans antialiased">
-        <AuthProvider>
-          <Navbar />
-          <main>{children}</main>
-        </AuthProvider>
+        <WagmiProvider>
+          <AuthProvider>
+            <Navbar />
+            <main>{children}</main>
+          </AuthProvider>
+        </WagmiProvider>
+        <Toaster position="top-right" />
       </body>
     </html>
   )
