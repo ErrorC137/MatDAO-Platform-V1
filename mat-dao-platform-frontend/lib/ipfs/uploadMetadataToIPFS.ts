@@ -1,3 +1,5 @@
+"use server"
+
 export interface AIMetadata {
   commercialViability: number
   scientificIntegrity: number
@@ -42,8 +44,6 @@ export async function uploadMetadataToIPFS(
 /**
  * Server action wrapper for IPFS upload (to avoid fs module issues in client components)
  */
-"use server"
-
 export async function uploadMetadataToIPFSAction(
   aiScores: AIMetadata,
   projectDetails: ProjectDetails
