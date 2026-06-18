@@ -122,9 +122,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         })
 
         if (authError) {
-          // Handle rate limit errors
-          if (authError.message.includes('rate limit') || authError.message.includes('too many requests')) {
-            throw new Error('Too many sign up attempts. Please wait a few minutes before trying again, or use a different email address.')
+          // Handle rate limit errors more specifically
+          if (authError.message.includes('rate limit') || 
+              authError.message.includes('too many requests') ||
+              authError.message.includes('Too many requests')) {
+            throw new Error('Sign up rate limit reached. Please wait 5-10 minutes before trying again, or use a different email address.')
+          }
+          if (authError.message.includes('User already registered')) {
+            throw new Error('This email is already registered. Please sign in instead.')
           }
           throw authError
         }
@@ -187,9 +192,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           .eq('id', user.id)
 
         if (error) {
-          // Handle rate limit errors
-          if (error.message.includes('rate limit') || error.message.includes('too many requests')) {
-            throw new Error('Too many wallet connection attempts. Please wait a moment and try again.')
+          // Handle rate limit errors more specifically
+          if (error.message.includes('rate limit') || 
+              error.message.includes('too many requests') ||
+              error.message.includes('Too many requests')) {
+            throw new Error('Wallet connection rate limit reached. Please wait 5-10 minutes before trying again.')
           }
           throw error
         }

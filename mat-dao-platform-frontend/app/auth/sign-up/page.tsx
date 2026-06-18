@@ -34,7 +34,13 @@ export default function SignUpPage() {
       router.push("/")
     } catch (err: any) {
       console.error("Sign up error:", err)
-      setError(err?.message || "Sign up failed. Please try again.")
+      const errorMessage = err?.message || "Sign up failed. Please try again."
+      setError(errorMessage)
+      
+      // If it's a rate limit error, show additional guidance
+      if (errorMessage.includes("rate limit") || errorMessage.includes("wait")) {
+        setError(errorMessage + " This is a security measure to prevent abuse.")
+      }
     }
   }
 
@@ -44,7 +50,13 @@ export default function SignUpPage() {
       router.push("/")
     } catch (err: any) {
       console.error("Wallet connection error:", err)
-      setError(err?.message || "Wallet connection failed.")
+      const errorMessage = err?.message || "Wallet connection failed."
+      setError(errorMessage)
+      
+      // If it's a rate limit error, show additional guidance
+      if (errorMessage.includes("rate limit") || errorMessage.includes("wait")) {
+        setError(errorMessage + " This is a security measure to prevent abuse.")
+      }
     }
   }
 

@@ -205,6 +205,71 @@ export default function ProjectAssessmentResultsPage() {
                 This score reflects the technical novelty, scientific rigor, and potential impact of your research based on analysis of the submitted content.
               </p>
             </div>
+            
+            {/* Paper Review Section */}
+            {(report.trlProject as any).paper_review && (
+              <div className="rounded-lg border border-[#6efcff]/30 bg-[#6efcff]/5 p-4">
+                <p className="text-xs font-semibold text-[#c5fdff] mb-2">📄 Paper Review & Validation</p>
+                <div className="space-y-2">
+                  <div className="flex items-start gap-2">
+                    <span className="text-xs text-white/50 min-w-[100px]">Methodology:</span>
+                    <span className="text-xs text-white/70">{(report.trlProject as any).paper_review.methodology_assessment}</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-xs text-white/50 min-w-[100px]">Data Quality:</span>
+                    <span className="text-xs text-white/70">{(report.trlProject as any).paper_review.data_quality}</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-xs text-white/50 min-w-[100px]">Reproducibility:</span>
+                    <span className="text-xs text-white/70">{(report.trlProject as any).paper_review.reproducibility}</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-xs text-white/50 min-w-[100px]">Confidence:</span>
+                    <span className="text-xs text-white/70">{(report.trlProject as any).paper_review.confidence_in_analysis}</span>
+                  </div>
+                  {(report.trlProject as any).paper_review.potential_hallucinations && (report.trlProject as any).paper_review.potential_hallucinations.length > 0 && (
+                    <div className="mt-2 rounded-lg border border-yellow-500/30 bg-yellow-500/10 p-3">
+                      <p className="text-xs font-semibold text-yellow-400 mb-1">⚠️ Potential Hallucinations Detected:</p>
+                      <ul className="space-y-1">
+                        {(report.trlProject as any).paper_review.potential_hallucinations.map((h: string, i: number) => (
+                          <li key={i} className="text-xs text-yellow-200/80">
+                            · {h}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+            
+            {/* Key Indicators */}
+            {(report.trlProject as any).key_indicators && (report.trlProject as any).key_indicators.length > 0 && (
+              <div className="rounded-lg border border-white/10 bg-black/20 p-4">
+                <p className="text-xs font-semibold text-white/70 mb-2">Key Indicators Found:</p>
+                <ul className="space-y-1">
+                  {(report.trlProject as any).key_indicators.map((indicator: string, i: number) => (
+                    <li key={i} className="text-xs text-white/55">
+                      · {indicator}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            
+            {/* Missing for Next TRL */}
+            {(report.trlProject as any).missing_for_next_trl && (report.trlProject as any).missing_for_next_trl.length > 0 && (
+              <div className="rounded-lg border border-white/10 bg-black/20 p-4">
+                <p className="text-xs font-semibold text-white/70 mb-2">What's Needed for Next TRL:</p>
+                <ul className="space-y-1">
+                  {(report.trlProject as any).missing_for_next_trl.map((item: string, i: number) => (
+                    <li key={i} className="text-xs text-white/55">
+                      · {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </section>
 
@@ -224,6 +289,35 @@ export default function ProjectAssessmentResultsPage() {
                   </div>
                   <p className="mt-2 text-sm text-white/70">{m.description}</p>
                   <p className="mt-1 font-mono text-[10px] text-white/50">Target: {m.timeline}</p>
+                  
+                  {/* Detailed breakdown */}
+                  {(m as any).specific_actions && (m as any).specific_actions.length > 0 && (
+                    <div className="mt-3 rounded-lg border border-white/10 bg-black/20 p-3">
+                      <p className="text-xs font-semibold text-white/70 mb-2">Specific Actions Required:</p>
+                      <ul className="space-y-1">
+                        {(m as any).specific_actions.map((action: string, i: number) => (
+                          <li key={i} className="text-xs text-white/55 flex items-start gap-2">
+                            <span className="text-[#6efcff]">•</span>
+                            <span>{action}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  
+                  {(m as any).resources_needed && (m as any).resources_needed.length > 0 && (
+                    <div className="mt-3 rounded-lg border border-white/10 bg-black/20 p-3">
+                      <p className="text-xs font-semibold text-white/70 mb-2">Resources Needed:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {(m as any).resources_needed.map((resource: string, i: number) => (
+                          <span key={i} className="text-[10px] bg-white/10 px-2 py-1 rounded text-white/60">
+                            {resource}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
                   {m.status === "current" && (
                     <p className="mt-2 text-xs text-[#6efcff]">
                       💡 This is your current focus. Complete this milestone to advance to the next TRL level.
