@@ -183,35 +183,84 @@ export default function ProjectAssessmentResultsPage() {
         </div>
 
         <section className="workflow-panel mb-6 rounded-2xl p-6">
-          <h2 className="mb-3 flex items-center gap-2 font-headline text-lg font-bold text-white/95">
-            <Target className="h-5 w-5 text-[#6efcff]" />
-            TRL Summary
-          </h2>
-          <p className="text-sm text-white/70">{report.trlProject.trlSummary}</p>
-          <ul className="mt-4 space-y-1">
-            {report.trlProject.accomplishments.map((a) => (
-              <li key={a} className="text-xs text-white/55">
-                · {a}
-              </li>
-            ))}
-          </ul>
+          <h2 className="mb-3 font-headline text-lg font-bold text-white/95">TRL Evaluation Details</h2>
+          <div className="space-y-3">
+            <div className="rounded-lg border border-white/10 bg-black/20 p-4">
+              <p className="text-xs font-semibold text-white/70 mb-2">Why TRL {report.trlProject.trl}?</p>
+              <p className="text-sm text-white/60">{report.trlProject.trlSummary}</p>
+            </div>
+            <div className="rounded-lg border border-white/10 bg-black/20 p-4">
+              <p className="text-xs font-semibold text-white/70 mb-2">Key Accomplishments</p>
+              <ul className="space-y-1">
+                {report.trlProject.accomplishments.map((a) => (
+                  <li key={a} className="text-xs text-white/55">
+                    · {a}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="rounded-lg border border-white/10 bg-black/20 p-4">
+              <p className="text-xs font-semibold text-white/70 mb-2">Innovation Score: {report.trlProject.score}/100</p>
+              <p className="text-xs text-white/60">
+                This score reflects the technical novelty, scientific rigor, and potential impact of your research based on analysis of the submitted content.
+              </p>
+            </div>
+          </div>
         </section>
 
         <section className="workflow-panel mb-6 rounded-2xl p-6">
           <h2 className="mb-4 font-headline text-lg font-bold text-white/95">Milestone Roadmap</h2>
-          <div className="grid gap-3 md:grid-cols-2">
-            {Object.entries(report.trlProject.milestones).map(([key, m]) => (
-              <div key={key} className="rounded-xl border border-white/10 bg-black/20 p-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold uppercase text-white/70">
-                    {MILESTONE_LABELS[key] || key}
-                  </span>
-                  <span className="font-mono text-[10px] text-[#6efcff]">{m.status}</span>
+          <div className="space-y-4">
+            {/* Incomplete/Current Milestones with Recommendations */}
+            {Object.entries(report.trlProject.milestones)
+              .filter(([, m]) => m.status === "current" || m.status === "future")
+              .map(([key, m]) => (
+                <div key={key} className="rounded-xl border border-[#6efcff]/30 bg-[#6efcff]/5 p-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold uppercase text-[#c5fdff]">
+                      {MILESTONE_LABELS[key] || key}
+                    </span>
+                    <span className="font-mono text-[10px] bg-[#6efcff]/20 px-2 py-1 rounded text-[#c5fdff]">{m.status}</span>
+                  </div>
+                  <p className="mt-2 text-sm text-white/70">{m.description}</p>
+                  <p className="mt-1 font-mono text-[10px] text-white/50">Target: {m.timeline}</p>
+                  {m.status === "current" && (
+                    <p className="mt-2 text-xs text-[#6efcff]">
+                      💡 This is your current focus. Complete this milestone to advance to the next TRL level.
+                    </p>
+                  )}
+                  {m.status === "future" && (
+                    <p className="mt-2 text-xs text-white/50">
+                      ⏳ This milestone will be unlocked after completing current milestones.
+                    </p>
+                  )}
                 </div>
-                <p className="mt-2 text-xs text-white/60">{m.description}</p>
-                <p className="mt-1 font-mono text-[10px] text-white/40">{m.timeline}</p>
-              </div>
-            ))}
+              ))}
+            
+            {/* Completed Milestones (collapsed) */}
+            {Object.entries(report.trlProject.milestones).some(([, m]) => m.status === "completed") && (
+              <details className="group">
+                <summary className="cursor-pointer text-xs text-white/40 hover:text-white/60">
+                  Show completed milestones ({Object.entries(report.trlProject.milestones).filter(([, m]) => m.status === "completed").length})
+                </summary>
+                <div className="mt-3 grid gap-3 md:grid-cols-2">
+                  {Object.entries(report.trlProject.milestones)
+                    .filter(([, m]) => m.status === "completed")
+                    .map(([key, m]) => (
+                      <div key={key} className="rounded-xl border border-white/10 bg-black/20 p-4 opacity-60">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-semibold uppercase text-white/50">
+                            {MILESTONE_LABELS[key] || key}
+                          </span>
+                          <span className="font-mono text-[10px] text-emerald-400">{m.status}</span>
+                        </div>
+                        <p className="mt-2 text-xs text-white/40">{m.description}</p>
+                        <p className="mt-1 font-mono text-[10px] text-white/30">{m.timeline}</p>
+                      </div>
+                    ))}
+                </div>
+              </details>
+            )}
           </div>
         </section>
 
@@ -240,11 +289,65 @@ export default function ProjectAssessmentResultsPage() {
         {report.ipReport && (
           <section className="workflow-panel mb-6 rounded-2xl p-6">
             <h2 className="mb-3 font-headline text-lg font-bold text-white/95">IP & FTO Analysis</h2>
-            <p className="text-sm text-white/60">
-              Sector: {report.ipReport.classification.sector_name} · FTO risk:{" "}
-              {(report.ipReport.fto.r_fto * 100).toFixed(0)}% · Target valuation:{" "}
-              {formatUsd(report.ipReport.valuation.v_target_usd)}
-            </p>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between rounded-lg border border-white/10 bg-black/20 px-4 py-3">
+                <span className="text-sm text-white/70">Sector</span>
+                <span className="text-sm font-semibold text-white/90">{report.ipReport.classification.sector_name}</span>
+              </div>
+              <div className="flex items-center justify-between rounded-lg border border-white/10 bg-black/20 px-4 py-3">
+                <span className="text-sm text-white/70">FTO Risk Score</span>
+                <span className="text-sm font-semibold text-white/90">{(report.ipReport.fto.r_fto * 100).toFixed(2)}%</span>
+              </div>
+              <div className="flex items-center justify-between rounded-lg border border-white/10 bg-black/20 px-4 py-3">
+                <span className="text-sm text-white/70">Target Valuation</span>
+                <span className="text-sm font-semibold text-white/90">{formatUsd(report.ipReport.valuation.v_target_usd)}</span>
+              </div>
+              <div className="mt-4 rounded-lg border border-white/10 bg-black/20 p-4">
+                <p className="text-xs font-semibold text-white/70 mb-2">Valuation Calculation Breakdown</p>
+                <div className="space-y-2 text-xs text-white/60">
+                  <div className="flex justify-between">
+                    <span>Baseline Value (V_baseline)</span>
+                    <span>{formatUsd(report.ipReport.valuation.v_baseline_usd)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Originality Score (S_originality)</span>
+                    <span>{report.ipReport.valuation.s_originality.toFixed(2)}x</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>FTO Adjustment (1 - R_fto)</span>
+                    <span>{(1 - report.ipReport.valuation.r_fto).toFixed(2)}x</span>
+                  </div>
+                  <div className="border-t border-white/10 pt-2 mt-2 flex justify-between font-semibold text-white/90">
+                    <span>Target Valuation (V_target)</span>
+                    <span>{formatUsd(report.ipReport.valuation.v_target_usd)}</span>
+                  </div>
+                  <p className="mt-2 text-[10px] text-white/40">
+                    Formula: V_target = V_baseline × S_originality × (1 - R_fto)
+                  </p>
+                </div>
+              </div>
+              <div className="rounded-lg border border-white/10 bg-black/20 p-4">
+                <p className="text-xs font-semibold text-white/70 mb-2">Classification Details</p>
+                <div className="space-y-2 text-xs text-white/60">
+                  <div className="flex justify-between">
+                    <span>IPC Primary</span>
+                    <span>{report.ipReport.classification.ipc_primary}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>CPC Primary</span>
+                    <span>{report.ipReport.classification.cpc_primary}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>NACE Code</span>
+                    <span>{report.ipReport.classification.nace_code}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Classification Confidence</span>
+                    <span>{(report.ipReport.classification.classification_confidence * 100).toFixed(0)}%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </section>
         )}
 

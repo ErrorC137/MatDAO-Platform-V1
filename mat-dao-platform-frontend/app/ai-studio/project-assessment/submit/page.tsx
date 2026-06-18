@@ -16,6 +16,8 @@ export default function ProjectAssessmentSubmitPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [dragOver, setDragOver] = useState(false)
+  const [userTrl, setUserTrl] = useState("")
+  const [useUserTrl, setUseUserTrl] = useState(false)
 
   const runAssessment = useCallback(async () => {
     if (!title.trim() || (!textContent.trim() && !file)) {
@@ -31,6 +33,7 @@ export default function ProjectAssessmentSubmitPage() {
         category,
         textContent: textContent || (file ? await file.text() : ""),
         file,
+        userTrl: useUserTrl ? parseInt(userTrl) : undefined,
       })
       sessionStorage.setItem("matdao-combined-report", JSON.stringify(report))
       router.push("/ai-studio/project-assessment/results")
@@ -39,7 +42,7 @@ export default function ProjectAssessmentSubmitPage() {
     } finally {
       setLoading(false)
     }
-  }, [title, author, category, textContent, file, router])
+  }, [title, author, category, textContent, file, router, useUserTrl, userTrl])
 
   return (
     <div className="relative px-5 py-12 sm:px-6">
@@ -112,6 +115,40 @@ export default function ProjectAssessmentSubmitPage() {
             value={textContent}
             onChange={(e) => setTextContent(e.target.value)}
           />
+
+          {/* Optional User TRL Input */}
+          <div className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              id="useUserTrl"
+              checked={useUserTrl}
+              onChange={(e) => setUseUserTrl(e.target.checked)}
+              className="h-4 w-4 rounded border-white/20 bg-black/30 text-[#6efcff] focus:ring-[#6efcff]"
+            />
+            <label htmlFor="useUserTrl" className="text-sm text-white/70">
+              I know my current TRL level
+            </label>
+          </div>
+          {useUserTrl && (
+            <div className="flex items-center gap-3">
+              <select
+                className="w-full rounded-lg border border-white/10 bg-black/30 px-4 py-2.5 text-sm text-white"
+                value={userTrl}
+                onChange={(e) => setUserTrl(e.target.value)}
+              >
+                <option value="">Select TRL Level</option>
+                <option value="1">TRL 1 - Basic principles observed</option>
+                <option value="2">TRL 2 - Technology concept formulated</option>
+                <option value="3">TRL 3 - Experimental proof of concept</option>
+                <option value="4">TRL 4 - Technology validated in lab</option>
+                <option value="5">TRL 5 - Technology validated in relevant environment</option>
+                <option value="6">TRL 6 - Technology demonstrated in relevant environment</option>
+                <option value="7">TRL 7 - Technology demonstrated in operational environment</option>
+                <option value="8">TRL 8 - System complete and qualified</option>
+                <option value="9">TRL 9 - System proven in operational environment</option>
+              </select>
+            </div>
+          )}
 
           {error && <p className="text-sm text-red-400">{error}</p>}
 

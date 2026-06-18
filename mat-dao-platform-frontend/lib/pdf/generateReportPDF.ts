@@ -7,29 +7,29 @@ export function generateReportPDF(report: CombinedAssessmentReport): void {
   let currentY = 0
   
   // Title
-  doc.setFontSize(20)
+  doc.setFontSize(18)
   doc.setTextColor(0, 0, 0)
   doc.text("MatDAO Research Intelligence Report", 14, 20)
   
-  doc.setFontSize(12)
+  doc.setFontSize(10)
   doc.setTextColor(100, 100, 100)
-  doc.text(`Generated: ${new Date().toLocaleDateString()}`, 14, 28)
+  doc.text(`Generated: ${new Date().toLocaleDateString()}`, 14, 27)
   
   // Project Details
-  doc.setFontSize(14)
+  doc.setFontSize(13)
   doc.setTextColor(0, 0, 0)
-  doc.text("Project Details", 14, 40)
+  doc.text("Project Details", 14, 38)
   
-  doc.setFontSize(10)
+  doc.setFontSize(9)
   doc.setTextColor(60, 60, 60)
-  doc.text(`Title: ${report.title}`, 14, 48)
-  doc.text(`Author: ${report.author}`, 14, 54)
-  doc.text(`Category: ${report.category}`, 14, 60)
+  doc.text(`Title: ${report.title}`, 14, 45)
+  doc.text(`Author: ${report.author}`, 14, 51)
+  doc.text(`Category: ${report.category}`, 14, 57)
   
   // Summary Metrics
-  doc.setFontSize(14)
+  doc.setFontSize(13)
   doc.setTextColor(0, 0, 0)
-  doc.text("Summary Metrics", 14, 72)
+  doc.text("Summary Metrics", 14, 68)
   
   const summaryData = [
     ["TRL Level", `TRL ${report.summary.trl}`],
@@ -40,36 +40,36 @@ export function generateReportPDF(report: CombinedAssessmentReport): void {
   ]
   
   autoTable(doc, {
-    startY: 78,
+    startY: 73,
     head: [["Metric", "Value"]],
     body: summaryData,
     theme: "grid",
-    headStyles: { fillColor: [110, 252, 255], textColor: [0, 0, 0] },
+    headStyles: { fillColor: [110, 252, 255], textColor: [0, 0, 0], fontSize: 9 },
     styles: { fontSize: 9 },
     didDrawPage: (data) => {
-      currentY = data.cursor?.y || 78
+      currentY = data.cursor?.y || 73
     },
   })
   
   // TRL Summary
-  doc.setFontSize(14)
+  doc.setFontSize(13)
   doc.setTextColor(0, 0, 0)
-  doc.text("TRL Evaluation", 14, currentY + 15)
-  
-  doc.setFontSize(10)
-  doc.setTextColor(60, 60, 60)
-  const trlText = doc.splitTextToSize(report.trlProject.trlSummary, 180)
-  doc.text(trlText, 14, currentY + 23)
-  
-  // Accomplishments
-  doc.setFontSize(11)
-  doc.setTextColor(0, 0, 0)
-  doc.text("Key Accomplishments:", 14, currentY + trlText.length * 5 + 35)
+  doc.text("TRL Evaluation", 14, currentY + 12)
   
   doc.setFontSize(9)
   doc.setTextColor(60, 60, 60)
+  const trlText = doc.splitTextToSize(report.trlProject.trlSummary, 180)
+  doc.text(trlText, 14, currentY + 19)
+  
+  // Accomplishments
+  doc.setFontSize(10)
+  doc.setTextColor(0, 0, 0)
+  doc.text("Key Accomplishments:", 14, currentY + trlText.length * 4 + 28)
+  
+  doc.setFontSize(8)
+  doc.setTextColor(60, 60, 60)
   report.trlProject.accomplishments.forEach((acc, i) => {
-    doc.text(`• ${acc}`, 14, currentY + trlText.length * 5 + 43 + (i * 6))
+    doc.text(`• ${acc}`, 14, currentY + trlText.length * 4 + 35 + (i * 5))
   })
   
   // Milestone Roadmap
@@ -81,13 +81,13 @@ export function generateReportPDF(report: CombinedAssessmentReport): void {
   ])
   
   autoTable(doc, {
-    startY: currentY + trlText.length * 5 + report.trlProject.accomplishments.length * 6 + 55,
+    startY: currentY + trlText.length * 4 + report.trlProject.accomplishments.length * 5 + 45,
     head: [["Milestone", "Description", "Timeline", "Status"]],
     body: milestoneData,
     theme: "grid",
-    headStyles: { fillColor: [110, 252, 255], textColor: [0, 0, 0] },
-    styles: { fontSize: 8, cellWidth: "wrap" },
-    columnStyles: { 0: { cellWidth: 25 }, 1: { cellWidth: 80 }, 2: { cellWidth: 35 }, 3: { cellWidth: 25 } },
+    headStyles: { fillColor: [110, 252, 255], textColor: [0, 0, 0], fontSize: 8 },
+    styles: { fontSize: 7, cellWidth: "wrap" },
+    columnStyles: { 0: { cellWidth: 22 }, 1: { cellWidth: 75 }, 2: { cellWidth: 32 }, 3: { cellWidth: 22 } },
     didDrawPage: (data) => {
       currentY = data.cursor?.y || 0
     },
@@ -96,7 +96,7 @@ export function generateReportPDF(report: CombinedAssessmentReport): void {
   // IP Valuation (if available)
   if (report.ipReport) {
     doc.addPage()
-    doc.setFontSize(14)
+    doc.setFontSize(13)
     doc.setTextColor(0, 0, 0)
     doc.text("IP Valuation & FTO Analysis", 14, 20)
     
@@ -108,11 +108,11 @@ export function generateReportPDF(report: CombinedAssessmentReport): void {
     ]
     
     autoTable(doc, {
-      startY: 28,
+      startY: 27,
       head: [["Metric", "Value"]],
       body: ipData,
       theme: "grid",
-      headStyles: { fillColor: [110, 252, 255], textColor: [0, 0, 0] },
+      headStyles: { fillColor: [110, 252, 255], textColor: [0, 0, 0], fontSize: 9 },
       styles: { fontSize: 9 },
     })
   }
@@ -120,7 +120,7 @@ export function generateReportPDF(report: CombinedAssessmentReport): void {
   // Due Diligence (if available)
   if (report.dueDiligenceReport) {
     doc.addPage()
-    doc.setFontSize(14)
+    doc.setFontSize(13)
     doc.setTextColor(0, 0, 0)
     doc.text("Scientific Due Diligence", 14, 20)
     
@@ -131,30 +131,30 @@ export function generateReportPDF(report: CombinedAssessmentReport): void {
     ]
     
     autoTable(doc, {
-      startY: 28,
+      startY: 27,
       head: [["Metric", "Value"]],
       body: ddData,
       theme: "grid",
-      headStyles: { fillColor: [110, 252, 255], textColor: [0, 0, 0] },
+      headStyles: { fillColor: [110, 252, 255], textColor: [0, 0, 0], fontSize: 9 },
       styles: { fontSize: 9 },
     })
   }
   
   // Recommended Next Steps
   doc.addPage()
-  doc.setFontSize(14)
+  doc.setFontSize(13)
   doc.setTextColor(0, 0, 0)
   doc.text("Recommended Next Steps", 14, 20)
   
-  doc.setFontSize(10)
+  doc.setFontSize(9)
   doc.setTextColor(60, 60, 60)
   report.summary.recommendedNextSteps.forEach((step, i) => {
     const stepText = doc.splitTextToSize(`${i + 1}. ${step}`, 180)
-    doc.text(stepText, 14, 28 + (i * 15))
+    doc.text(stepText, 14, 28 + (i * 12))
   })
   
   // Footer
-  doc.setFontSize(8)
+  doc.setFontSize(7)
   doc.setTextColor(150, 150, 150)
   doc.text("Generated by MatDAO AI Platform", 14, 280)
   doc.text("matdao-platform-v1.vercel.app", 14, 285)

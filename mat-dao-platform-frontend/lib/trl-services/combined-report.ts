@@ -13,6 +13,7 @@ export interface AssessmentInput {
   category?: string
   author?: string
   file?: File | null
+  userTrl?: number // Optional user-provided TRL (1-9)
 }
 
 /** Generate a consistent hash from input for caching */
@@ -31,7 +32,8 @@ function generateDeterministicFallback(input: AssessmentInput): CombinedAssessme
     hashSum = hashSum & hashSum
   }
   
-  const deterministicTRL = 3 + (Math.abs(hashSum) % 7) // TRL 3-9
+  // Use user-provided TRL if available, otherwise generate deterministic TRL
+  const deterministicTRL = input.userTrl ? input.userTrl : 3 + (Math.abs(hashSum) % 7) // TRL 3-9
   const deterministicScore = 70 + (Math.abs(hashSum) % 25) // Score 70-95
   const categories = ['Energy Storage', 'Carbon Capture', 'AI Materials', 'Biomaterials', 'Advanced Materials']
   const deterministicCategory = categories[Math.abs(hashSum) % categories.length]
