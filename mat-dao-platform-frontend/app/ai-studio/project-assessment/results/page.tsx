@@ -441,6 +441,87 @@ export default function ProjectAssessmentResultsPage() {
                   </div>
                 </div>
               </div>
+              
+              {/* DeepSeek-enhanced valuation insights */}
+              {(report.ipReport.valuation as any).deepseek_enhancement && (
+                <>
+                  <div className="rounded-lg border border-[#6efcff]/30 bg-[#6efcff]/5 p-4">
+                    <p className="text-xs font-semibold text-[#c5fdff] mb-2">🚀 Market Opportunity</p>
+                    <div className="space-y-2 text-xs text-white/70">
+                      <div className="flex justify-between">
+                        <span>Total Addressable Market</span>
+                        <span>{(report.ipReport.valuation as any).deepseek_enhancement.market_opportunity.total_addressable_market}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Serviceable Addressable Market</span>
+                        <span>{(report.ipReport.valuation as any).deepseek_enhancement.market_opportunity.serviceable_addressable_market}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Market Growth Rate</span>
+                        <span>{(report.ipReport.valuation as any).deepseek_enhancement.market_opportunity.market_growth_rate}</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="rounded-lg border border-white/10 bg-black/20 p-4">
+                    <p className="text-xs font-semibold text-white/70 mb-2">Commercialization Path</p>
+                    <div className="space-y-2 text-xs text-white/60">
+                      <div className="flex justify-between">
+                        <span>Time to Market</span>
+                        <span>{(report.ipReport.valuation as any).deepseek_enhancement.commercialization_path.time_to_market}</span>
+                      </div>
+                      <div className="mt-2">
+                        <p className="text-[10px] text-white/50 mb-1">Key Partnerships:</p>
+                        <div className="flex flex-wrap gap-1">
+                          {(report.ipReport.valuation as any).deepseek_enhancement.commercialization_path.key_partnerships.map((p: string, i: number) => (
+                            <span key={i} className="text-[10px] bg-white/10 px-2 py-0.5 rounded text-white/60">{p}</span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="rounded-lg border border-white/10 bg-black/20 p-4">
+                    <p className="text-xs font-semibold text-white/70 mb-2">Risk Factors</p>
+                    <div className="space-y-2">
+                      {(report.ipReport.valuation as any).deepseek_enhancement.risk_factors.technical_risks.length > 0 && (
+                        <div>
+                          <p className="text-[10px] text-white/50 mb-1">Technical Risks:</p>
+                          <ul className="space-y-1">
+                            {(report.ipReport.valuation as any).deepseek_enhancement.risk_factors.technical_risks.map((r: string, i: number) => (
+                              <li key={i} className="text-[10px] text-white/55">• {r}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      {(report.ipReport.valuation as any).deepseek_enhancement.risk_factors.market_risks.length > 0 && (
+                        <div>
+                          <p className="text-[10px] text-white/50 mb-1">Market Risks:</p>
+                          <ul className="space-y-1">
+                            {(report.ipReport.valuation as any).deepseek_enhancement.risk_factors.market_risks.map((r: string, i: number) => (
+                              <li key={i} className="text-[10px] text-white/55">• {r}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="rounded-lg border border-white/10 bg-black/20 p-4">
+                    <p className="text-xs font-semibold text-white/70 mb-2">Recommendations</p>
+                    <div className="space-y-2">
+                      <div>
+                        <p className="text-[10px] text-white/50 mb-1">Immediate Actions:</p>
+                        <ul className="space-y-1">
+                          {(report.ipReport.valuation as any).deepseek_enhancement.recommendations.immediate_actions.map((a: string, i: number) => (
+                            <li key={i} className="text-[10px] text-white/55">• {a}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </section>
         )}
@@ -448,10 +529,133 @@ export default function ProjectAssessmentResultsPage() {
         {report.dueDiligenceReport && (
           <section className="workflow-panel mb-6 rounded-2xl p-6">
             <h2 className="mb-3 font-headline text-lg font-bold text-white/95">Due Diligence</h2>
-            <p className="text-sm text-white/60">
-              Total score: {report.dueDiligenceReport.totalScore.toFixed(1)}% · Tier:{" "}
-              <span className="uppercase text-[#c5fdff]">{report.dueDiligenceReport.investmentTier}</span>
-            </p>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between rounded-lg border border-white/10 bg-black/20 px-4 py-3">
+                <span className="text-sm text-white/70">Total score</span>
+                <span className="text-sm font-semibold text-white/90">{report.dueDiligenceReport.totalScore.toFixed(1)}%</span>
+              </div>
+              <div className="flex items-center justify-between rounded-lg border border-white/10 bg-black/20 px-4 py-3">
+                <span className="text-sm text-white/70">Tier</span>
+                <span className="text-sm font-semibold text-[#c5fdff] uppercase">{report.dueDiligenceReport.investmentTier}</span>
+              </div>
+              
+              {/* DeepSeek-enhanced due diligence */}
+              {(report.dueDiligenceReport as any).scientific_rigor && (
+                <>
+                  <div className="rounded-lg border border-[#6efcff]/30 bg-[#6efcff]/5 p-4">
+                    <p className="text-xs font-semibold text-[#c5fdff] mb-2">🔬 Scientific Rigor</p>
+                    <div className="space-y-2 text-xs text-white/70">
+                      <div className="flex justify-between">
+                        <span>Methodology Quality</span>
+                        <span>{(report.dueDiligenceReport as any).scientific_rigor.methodology_quality}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Experimental Design</span>
+                        <span>{(report.dueDiligenceReport as any).scientific_rigor.experimental_design}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Data Analysis</span>
+                        <span>{(report.dueDiligenceReport as any).scientific_rigor.data_analysis}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Reproducibility</span>
+                        <span>{(report.dueDiligenceReport as any).scientific_rigor.reproducibility_score}</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="rounded-lg border border-white/10 bg-black/20 p-4">
+                    <p className="text-xs font-semibold text-white/70 mb-2">Innovation Assessment</p>
+                    <div className="space-y-2 text-xs text-white/60">
+                      <div className="flex justify-between">
+                        <span>Technical Novelty</span>
+                        <span>{(report.dueDiligenceReport as any).innovation_assessment.technical_novelty}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Patentability Potential</span>
+                        <span>{(report.dueDiligenceReport as any).innovation_assessment.patentability_potential}</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="rounded-lg border border-white/10 bg-black/20 p-4">
+                    <p className="text-xs font-semibold text-white/70 mb-2">Market Fit</p>
+                    <div className="space-y-2 text-xs text-white/60">
+                      <div className="flex justify-between">
+                        <span>Problem Solving</span>
+                        <span>{(report.dueDiligenceReport as any).market_fit.problem_solving}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Market Need</span>
+                        <span>{(report.dueDiligenceReport as any).market_fit.market_need}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Competitive Advantage</span>
+                        <span>{(report.dueDiligenceReport as any).market_fit.competitive_advantage}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Scalability</span>
+                        <span>{(report.dueDiligenceReport as any).market_fit.scalability_potential}</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="rounded-lg border border-white/10 bg-black/20 p-4">
+                    <p className="text-xs font-semibold text-white/70 mb-2">Risk Assessment</p>
+                    <div className="space-y-2">
+                      {(report.dueDiligenceReport as any).risk_assessment.technical_risks.length > 0 && (
+                        <div>
+                          <p className="text-[10px] text-white/50 mb-1">Technical Risks:</p>
+                          <ul className="space-y-1">
+                            {(report.dueDiligenceReport as any).risk_assessment.technical_risks.map((r: string, i: number) => (
+                              <li key={i} className="text-[10px] text-white/55">• {r}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      {(report.dueDiligenceReport as any).risk_assessment.execution_risks.length > 0 && (
+                        <div>
+                          <p className="text-[10px] text-white/50 mb-1">Execution Risks:</p>
+                          <ul className="space-y-1">
+                            {(report.dueDiligenceReport as any).risk_assessment.execution_risks.map((r: string, i: number) => (
+                              <li key={i} className="text-[10px] text-white/55">• {r}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="rounded-lg border border-white/10 bg-black/20 p-4">
+                    <p className="text-xs font-semibold text-white/70 mb-2">Investment Recommendation</p>
+                    <div className="space-y-2 text-xs text-white/60">
+                      <div className="flex justify-between">
+                        <span>Overall Score</span>
+                        <span className="font-semibold text-white/90">{(report.dueDiligenceReport as any).investment_recommendation.overall_score}/100</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Recommended Action</span>
+                        <span className="font-semibold text-[#c5fdff]">{(report.dueDiligenceReport as any).investment_recommendation.recommended_action}</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="rounded-lg border border-white/10 bg-black/20 p-4">
+                    <p className="text-xs font-semibold text-white/70 mb-2">Next Steps</p>
+                    <div className="space-y-2">
+                      <div>
+                        <p className="text-[10px] text-white/50 mb-1">Due Diligence Items:</p>
+                        <ul className="space-y-1">
+                          {(report.dueDiligenceReport as any).next_steps.due_diligence_items.map((item: string, i: number) => (
+                            <li key={i} className="text-[10px] text-white/55">• {item}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
           </section>
         )}
 
