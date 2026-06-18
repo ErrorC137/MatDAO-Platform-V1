@@ -7,7 +7,7 @@ import { Check, Save, Target, Gem, Loader2 } from "lucide-react"
 import { useAuth } from "@/context/auth-context"
 import { formatUsd } from "@/lib/ai-studio/api"
 import { addAssessment, addSubmittedMilestone, MILESTONE_LABELS } from "@/lib/trl-services/storage"
-import { uploadMetadataToIPFS } from "@/lib/ipfs/uploadMetadataToIPFS"
+import { uploadMetadataToIPFSAction } from "@/lib/ipfs/uploadMetadataToIPFS"
 import { useMintIPNFT } from "@/lib/web3/hooks/useMintIPNFT"
 import { CONTRACT_ADDRESSES } from "@/lib/web3/config"
 import type { CombinedAssessmentReport } from "@/lib/trl-services/types"
@@ -38,8 +38,8 @@ export default function ProjectAssessmentResultsPage() {
 
     setMinting(true)
     try {
-      // Upload metadata to IPFS
-      const metadataUri = await uploadMetadataToIPFS(
+      // Upload metadata to IPFS using server action
+      const metadataUri = await uploadMetadataToIPFSAction(
         {
           commercialViability: report.summary.ipScore,
           scientificIntegrity: report.summary.dueDiligenceScore || 85,
