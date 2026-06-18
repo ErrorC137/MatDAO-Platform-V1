@@ -32,8 +32,9 @@ export default function SignUpPage() {
     try {
       await signUp({ email, password, name, role, university: university || undefined })
       router.push("/")
-    } catch {
-      setError("Sign up failed. Please try again.")
+    } catch (err: any) {
+      console.error("Sign up error:", err)
+      setError(err?.message || "Sign up failed. Please try again.")
     }
   }
 
@@ -41,8 +42,9 @@ export default function SignUpPage() {
     try {
       await connectWallet()
       router.push("/")
-    } catch {
-      setError("Wallet connection failed.")
+    } catch (err: any) {
+      console.error("Wallet connection error:", err)
+      setError(err?.message || "Wallet connection failed.")
     }
   }
 
