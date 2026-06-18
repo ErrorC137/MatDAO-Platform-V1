@@ -42,7 +42,7 @@ contract MatDAO_IPNFT is ERC721URIStorage, Ownable {
         bytes32 licenseTermsHash
     );
 
-    constructor() ERC721("MatDAO IP-NFT", "MATDAO-IP") Ownable(msg.sender) {
+    constructor() ERC721("MatDAO IP-NFT", "MATDAO-IP") {
         _nextTokenId = 1;
     }
 

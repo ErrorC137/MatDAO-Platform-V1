@@ -14,6 +14,10 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract SwapRouter is Ownable {
     using SafeERC20 for IERC20;
 
+    constructor() {
+        // Constructor sets the deployer as the initial owner
+    }
+
     // Fixed exchange rate: 1 USDC = 0.0003 ETH (approximate)
     uint256 public constant ETH_PER_USDC = 3e14; // 0.0003 ETH in wei
     uint256 public constant USDC_PER_ETH = 3333; // 3333 USDC per ETH

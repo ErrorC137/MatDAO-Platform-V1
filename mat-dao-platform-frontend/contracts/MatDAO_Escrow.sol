@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 /**
  * @title MatDAO_Escrow
@@ -66,7 +66,7 @@ contract MatDAO_Escrow is Ownable, ReentrancyGuard {
         address _matdaoTreasury,
         string[] memory _milestoneDescriptions,
         uint256[] memory _milestoneAmounts
-    ) Ownable(msg.sender) {
+    ) {
         require(_fundingToken != address(0), "Invalid funding token");
         require(_iptToken != address(0), "Invalid IPT token");
         require(_researcher != address(0), "Invalid researcher address");
