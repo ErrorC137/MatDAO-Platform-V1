@@ -4,6 +4,25 @@ import { createContext, useContext, useState, useCallback, useEffect, type React
 import { supabase } from "@/lib/supabase/client"
 import type { Database } from "@/lib/supabase/client"
 
+// Local cooldown tracking
+const COOLDOWN_KEY = 'auth_cooldown'
+const COOLDOWN_DURATION = 5 * 60 * 1000 // 5 minutes
+
+function getCooldownRemaining(): number {
+  const cooldownEnd = localStorage.getItem(COOLDOWN_KEY)
+  if (!cooldownEnd) return 0
+  const remaining = parseInt(cooldownEnd) - Date.now()
+  return Math.max(0, remaining)
+}
+
+function setCooldown(): void {
+  localStorage.setItem(COOLDOWN_KEY, (Date.now() + COOLDOWN_DURATION).toString())
+}
+
+function clearCooldown(): void {
+  localStorage.removeItem(COOLDOWN_KEY)
+}
+
 export interface User {
   id: string
   email: string
@@ -116,6 +135,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }) => {
       setIsLoading(true)
       try {
+        // Check cooldown
+        const cooldownRemaining = getCooldownRemaining()
+        if (cooldownRemaining > 0) {
+          const minutes = Math.ceil(cooldownRemaining / 60000)
+          throw new Error(`Please wait ${minutes} minute${minutes > 1 ? 's' : ''} before trying again.`)
+        }
+
         const { data: authData, error: authError } = await supabase.auth.signUp({
           email: data.email,
           password: data.password,
@@ -126,6 +152,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           if (authError.message.includes('rate limit') || 
               authError.message.includes('too many requests') ||
               authError.message.includes('Too many requests')) {
+            setCooldown()
             throw new Error('Sign up rate limit reached. Please wait 5-10 minutes before trying again, or use a different email address.')
           }
           if (authError.message.includes('User already registered')) {
@@ -147,7 +174,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               wallet_address: null,
             })
 
-          if (profileError) throw profileError
+          if (profileError) {
+            // If profile creation fails, try to delete the auth user to avoid partial state
+            await supabase.auth.admin.deleteUser(authData.user.id)
+            throw profileError
+          }
 
           setUser({
             id: authData.user.id,
@@ -157,6 +188,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             walletAddress: null,
             university: data.university || null,
           })
+          
+          // Clear cooldown on success
+          clearCooldown()
         }
       } catch (error) {
         console.error('Sign up error:', error)
@@ -176,6 +210,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const connectWallet = useCallback(async () => {
     setIsLoading(true)
     try {
+      // Check cooldown
+      const cooldownRemaining = getCooldownRemaining()
+      if (cooldownRemaining > 0) {
+        const minutes = Math.ceil(cooldownRemaining / 60000)
+        throw new Error(`Please wait ${minutes} minute${minutes > 1 ? 's' : ''} before trying again.`)
+      }
+
       // Simulated wallet connection — in production, integrate with actual wallet provider
       await new Promise((resolve) => setTimeout(resolve, 600))
       const fakeAddress =
@@ -196,6 +237,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           if (error.message.includes('rate limit') || 
               error.message.includes('too many requests') ||
               error.message.includes('Too many requests')) {
+            setCooldown()
             throw new Error('Wallet connection rate limit reached. Please wait 5-10 minutes before trying again.')
           }
           throw error
@@ -241,6 +283,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           })
         }
       }
+      
+      // Clear cooldown on success
+      clearCooldown()
     } catch (error) {
       console.error('Wallet connection error:', error)
       throw error

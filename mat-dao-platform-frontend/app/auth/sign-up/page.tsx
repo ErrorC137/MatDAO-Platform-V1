@@ -36,11 +36,6 @@ export default function SignUpPage() {
       console.error("Sign up error:", err)
       const errorMessage = err?.message || "Sign up failed. Please try again."
       setError(errorMessage)
-      
-      // If it's a rate limit error, show additional guidance
-      if (errorMessage.includes("rate limit") || errorMessage.includes("wait")) {
-        setError(errorMessage + " This is a security measure to prevent abuse.")
-      }
     }
   }
 
@@ -52,11 +47,6 @@ export default function SignUpPage() {
       console.error("Wallet connection error:", err)
       const errorMessage = err?.message || "Wallet connection failed."
       setError(errorMessage)
-      
-      // If it's a rate limit error, show additional guidance
-      if (errorMessage.includes("rate limit") || errorMessage.includes("wait")) {
-        setError(errorMessage + " This is a security measure to prevent abuse.")
-      }
     }
   }
 
@@ -198,7 +188,20 @@ export default function SignUpPage() {
             )}
 
             {error && (
-              <p className="text-sm text-destructive">{error}</p>
+              <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-3">
+                <p className="text-sm text-destructive">{error}</p>
+                {error.includes("wait") && (
+                  <button
+                    onClick={() => {
+                      localStorage.removeItem('auth_cooldown')
+                      setError("")
+                    }}
+                    className="mt-2 text-xs text-destructive/80 underline hover:text-destructive"
+                  >
+                    Clear cooldown (development only)
+                  </button>
+                )}
+              </div>
             )}
 
             <button
