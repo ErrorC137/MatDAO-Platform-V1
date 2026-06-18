@@ -206,7 +206,7 @@ export default function OurEcosystemPage() {
             Our Ecosystem
           </p>
           <h1 className="font-headline mb-2 text-3xl font-extrabold text-white/95 md:text-4xl">
-            Research-to-Commercialization Pyramid
+            Research-to-Commercialization Projects
           </h1>
           <p className="max-w-2xl text-sm text-white/60">
             Explore cutting-edge material science projects organized by TRL stage. Projects progress from early research
