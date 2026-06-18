@@ -1,5 +1,3 @@
-"use server"
-
 export interface AIMetadata {
   commercialViability: number
   scientificIntegrity: number
@@ -39,16 +37,6 @@ export async function uploadMetadataToIPFS(
   // TODO: Implement actual Pinata upload in a server-only context
   console.warn("Using mock IPFS URI - Pinata SDK requires server-side only")
   return `ipfs://QmMock${Date.now()}${Math.random().toString(36).substring(7)}`
-}
-
-/**
- * Server action wrapper for IPFS upload (to avoid fs module issues in client components)
- */
-export async function uploadMetadataToIPFSAction(
-  aiScores: AIMetadata,
-  projectDetails: ProjectDetails
-): Promise<string> {
-  return await uploadMetadataToIPFS(aiScores, projectDetails)
 }
 
 /**
