@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Check, Save, Target, Gem, Loader2 } from "lucide-react"
+import { Check, Save, Target, Gem, Loader2, Download } from "lucide-react"
 import { useAuth } from "@/context/auth-context"
 import { formatUsd } from "@/lib/ai-studio/api"
 import { addAssessment, addSubmittedMilestone, MILESTONE_LABELS } from "@/lib/trl-services/storage"
@@ -11,6 +11,7 @@ import { uploadMetadataToIPFSAction } from "@/lib/ipfs/uploadMetadataToIPFSActio
 import { useMintIPNFT } from "@/lib/web3/hooks/useMintIPNFT"
 import { CONTRACT_ADDRESSES } from "@/lib/web3/config"
 import type { CombinedAssessmentReport } from "@/lib/trl-services/types"
+import { generateReportPDF } from "@/lib/pdf/generateReportPDF"
 
 export default function ProjectAssessmentResultsPage() {
   const router = useRouter()
@@ -71,6 +72,11 @@ export default function ProjectAssessmentResultsPage() {
     }
   }
 
+  function downloadPDF() {
+    if (!report) return
+    generateReportPDF(report)
+  }
+
   function saveToProfile() {
     if (!report || !user) return
     addAssessment(user.id, report)
@@ -109,6 +115,14 @@ export default function ProjectAssessmentResultsPage() {
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={downloadPDF}
+              className="inline-flex items-center gap-2 rounded-full border border-[#6efcff]/40 bg-[#6efcff]/10 px-5 py-2 text-sm font-semibold text-[#c5fdff] hover:bg-[#6efcff]/20"
+            >
+              <Download className="h-4 w-4" />
+              Download PDF
+            </button>
             {user ? (
               <button
                 type="button"

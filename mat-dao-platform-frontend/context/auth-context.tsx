@@ -87,7 +87,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         password,
       })
 
-      if (error) throw error
+      if (error) {
+        // Handle rate limit errors
+        if (error.message.includes('rate limit') || error.message.includes('too many requests')) {
+          throw new Error('Too many sign in attempts. Please wait a few minutes before trying again.')
+        }
+        throw error
+      }
 
       if (data.user) {
         await loadUserProfile(data.user.id)
@@ -115,7 +121,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           password: data.password,
         })
 
-        if (authError) throw authError
+        if (authError) {
+          // Handle rate limit errors
+          if (authError.message.includes('rate limit') || authError.message.includes('too many requests')) {
+            throw new Error('Too many sign up attempts. Please wait a few minutes before trying again, or use a different email address.')
+          }
+          throw authError
+        }
 
         if (authData.user) {
           // Create profile
@@ -174,7 +186,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           .update({ wallet_address: fakeAddress })
           .eq('id', user.id)
 
-        if (error) throw error
+        if (error) {
+          // Handle rate limit errors
+          if (error.message.includes('rate limit') || error.message.includes('too many requests')) {
+            throw new Error('Too many wallet connection attempts. Please wait a moment and try again.')
+          }
+          throw error
+        }
 
         setUser({ ...user, walletAddress: fakeAddress })
       } else {
@@ -184,7 +202,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           password: crypto.randomUUID(),
         })
 
-        if (authError) throw authError
+        if (authError) {
+          // Handle rate limit errors
+          if (authError.message.includes('rate limit') || authError.message.includes('too many requests')) {
+            throw new Error('Too many wallet connection attempts. Please wait a moment and try again.')
+          }
+          throw authError
+        }
 
         if (authData.user) {
           const { error: profileError } = await supabase

@@ -15,6 +15,7 @@ const navLinks = [
   { label: "Co-Founder Match", href: "/co-founder-match" },
   { label: "AI Verification", href: "/ai-auditor", roles: ["researcher", "staff"] },
   { label: "MAT Token", href: "/mattoken" },
+  { label: "Guide", href: "/guide" },
 ]
 
 export function Navbar() {

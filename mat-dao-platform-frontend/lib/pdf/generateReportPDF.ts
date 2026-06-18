@@ -1,0 +1,164 @@
+import jsPDF from "jspdf"
+import autoTable from "jspdf-autotable"
+import type { CombinedAssessmentReport } from "@/lib/trl-services/types"
+
+export function generateReportPDF(report: CombinedAssessmentReport): void {
+  const doc = new jsPDF()
+  let currentY = 0
+  
+  // Title
+  doc.setFontSize(20)
+  doc.setTextColor(0, 0, 0)
+  doc.text("MatDAO Research Intelligence Report", 14, 20)
+  
+  doc.setFontSize(12)
+  doc.setTextColor(100, 100, 100)
+  doc.text(`Generated: ${new Date().toLocaleDateString()}`, 14, 28)
+  
+  // Project Details
+  doc.setFontSize(14)
+  doc.setTextColor(0, 0, 0)
+  doc.text("Project Details", 14, 40)
+  
+  doc.setFontSize(10)
+  doc.setTextColor(60, 60, 60)
+  doc.text(`Title: ${report.title}`, 14, 48)
+  doc.text(`Author: ${report.author}`, 14, 54)
+  doc.text(`Category: ${report.category}`, 14, 60)
+  
+  // Summary Metrics
+  doc.setFontSize(14)
+  doc.setTextColor(0, 0, 0)
+  doc.text("Summary Metrics", 14, 72)
+  
+  const summaryData = [
+    ["TRL Level", `TRL ${report.summary.trl}`],
+    ["Innovation Score", String(report.summary.ipScore)],
+    ["IP Valuation", report.summary.valuationUsd ? `$${report.summary.valuationUsd.toLocaleString()}` : "N/A"],
+    ["Due Diligence", report.summary.dueDiligenceScore !== null ? `${report.summary.dueDiligenceScore.toFixed(1)}%` : "N/A"],
+    ["Investment Tier", report.summary.investmentTier || "N/A"],
+  ]
+  
+  autoTable(doc, {
+    startY: 78,
+    head: [["Metric", "Value"]],
+    body: summaryData,
+    theme: "grid",
+    headStyles: { fillColor: [110, 252, 255], textColor: [0, 0, 0] },
+    styles: { fontSize: 9 },
+    didDrawPage: (data) => {
+      currentY = data.cursor?.y || 78
+    },
+  })
+  
+  // TRL Summary
+  doc.setFontSize(14)
+  doc.setTextColor(0, 0, 0)
+  doc.text("TRL Evaluation", 14, currentY + 15)
+  
+  doc.setFontSize(10)
+  doc.setTextColor(60, 60, 60)
+  const trlText = doc.splitTextToSize(report.trlProject.trlSummary, 180)
+  doc.text(trlText, 14, currentY + 23)
+  
+  // Accomplishments
+  doc.setFontSize(11)
+  doc.setTextColor(0, 0, 0)
+  doc.text("Key Accomplishments:", 14, currentY + trlText.length * 5 + 35)
+  
+  doc.setFontSize(9)
+  doc.setTextColor(60, 60, 60)
+  report.trlProject.accomplishments.forEach((acc, i) => {
+    doc.text(`• ${acc}`, 14, currentY + trlText.length * 5 + 43 + (i * 6))
+  })
+  
+  // Milestone Roadmap
+  const milestoneData = Object.entries(report.trlProject.milestones).map(([key, m]) => [
+    key,
+    m.description,
+    m.timeline,
+    m.status,
+  ])
+  
+  autoTable(doc, {
+    startY: currentY + trlText.length * 5 + report.trlProject.accomplishments.length * 6 + 55,
+    head: [["Milestone", "Description", "Timeline", "Status"]],
+    body: milestoneData,
+    theme: "grid",
+    headStyles: { fillColor: [110, 252, 255], textColor: [0, 0, 0] },
+    styles: { fontSize: 8, cellWidth: "wrap" },
+    columnStyles: { 0: { cellWidth: 25 }, 1: { cellWidth: 80 }, 2: { cellWidth: 35 }, 3: { cellWidth: 25 } },
+    didDrawPage: (data) => {
+      currentY = data.cursor?.y || 0
+    },
+  })
+  
+  // IP Valuation (if available)
+  if (report.ipReport) {
+    doc.addPage()
+    doc.setFontSize(14)
+    doc.setTextColor(0, 0, 0)
+    doc.text("IP Valuation & FTO Analysis", 14, 20)
+    
+    const ipData = [
+      ["Sector", report.ipReport.classification.sector_name],
+      ["FTO Risk Score", `${(report.ipReport.fto.r_fto * 100).toFixed(2)}%`],
+      ["Target Valuation", `$${report.ipReport.valuation.v_target_usd.toLocaleString()}`],
+      ["Classification", report.ipReport.classification.ipc_primary],
+    ]
+    
+    autoTable(doc, {
+      startY: 28,
+      head: [["Metric", "Value"]],
+      body: ipData,
+      theme: "grid",
+      headStyles: { fillColor: [110, 252, 255], textColor: [0, 0, 0] },
+      styles: { fontSize: 9 },
+    })
+  }
+  
+  // Due Diligence (if available)
+  if (report.dueDiligenceReport) {
+    doc.addPage()
+    doc.setFontSize(14)
+    doc.setTextColor(0, 0, 0)
+    doc.text("Scientific Due Diligence", 14, 20)
+    
+    const ddData = [
+      ["Total Score", `${report.dueDiligenceReport.totalScore.toFixed(1)}%`],
+      ["Investment Tier", report.dueDiligenceReport.investmentTier.toUpperCase()],
+      ["Integrity Gate", report.dueDiligenceReport.integrityGateTriggered ? "Triggered" : "Not Triggered"],
+    ]
+    
+    autoTable(doc, {
+      startY: 28,
+      head: [["Metric", "Value"]],
+      body: ddData,
+      theme: "grid",
+      headStyles: { fillColor: [110, 252, 255], textColor: [0, 0, 0] },
+      styles: { fontSize: 9 },
+    })
+  }
+  
+  // Recommended Next Steps
+  doc.addPage()
+  doc.setFontSize(14)
+  doc.setTextColor(0, 0, 0)
+  doc.text("Recommended Next Steps", 14, 20)
+  
+  doc.setFontSize(10)
+  doc.setTextColor(60, 60, 60)
+  report.summary.recommendedNextSteps.forEach((step, i) => {
+    const stepText = doc.splitTextToSize(`${i + 1}. ${step}`, 180)
+    doc.text(stepText, 14, 28 + (i * 15))
+  })
+  
+  // Footer
+  doc.setFontSize(8)
+  doc.setTextColor(150, 150, 150)
+  doc.text("Generated by MatDAO AI Platform", 14, 280)
+  doc.text("matdao-platform-v1.vercel.app", 14, 285)
+  
+  // Save PDF
+  doc.save(`MatDAO-Report-${report.title.replace(/\s+/g, '-')}.pdf`)
+}
