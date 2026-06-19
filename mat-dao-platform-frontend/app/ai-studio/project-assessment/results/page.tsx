@@ -443,26 +443,35 @@ export default function ProjectAssessmentResultsPage() {
           </div>
         </section>
 
+        {/* Enhanced Recommended Next Steps */}
         <section className="workflow-panel mb-6 rounded-2xl p-6">
-          <h2 className="mb-3 font-headline text-lg font-bold text-white/95">Recommended Next Steps</h2>
-          <ul className="space-y-2">
-            {report.summary.recommendedNextSteps.map((step) => (
-              <li key={step} className="rounded-lg border border-white/10 bg-black/20 px-4 py-3 text-sm text-white/65">
-                {step}
-              </li>
+          <div className="flex items-center gap-2 mb-4">
+            <ChevronRight className="w-5 h-5 text-[#6efcff]" />
+            <h2 className="font-headline text-lg font-bold text-white/95">Recommended Next Steps</h2>
+          </div>
+          <div className="space-y-3">
+            {report.summary.recommendedNextSteps.map((step, index) => (
+              <div key={step} className="flex items-start gap-3 rounded-lg border border-white/10 bg-black/20 px-4 py-3 transition-all duration-200 hover:border-[#6efcff]/30">
+                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#6efcff]/20 flex items-center justify-center">
+                  <span className="text-xs font-bold text-[#c5fdff]">{index + 1}</span>
+                </div>
+                <p className="text-sm text-white/65 flex-1">{step}</p>
+              </div>
             ))}
-          </ul>
-          <p className="mt-4 text-xs text-white/45">
-            Submit milestone proofs via the{" "}
-            <Link href="/ai-auditor" className="text-[#c5fdff] underline">
-              AI Auditor
-            </Link>{" "}
-            — results will appear on your{" "}
-            <Link href="/submit/milestone" className="text-[#c5fdff] underline">
-              milestone page
-            </Link>
-            .
-          </p>
+          </div>
+          <div className="mt-4 rounded-lg border border-[#6efcff]/30 bg-[#6efcff]/5 p-3">
+            <p className="text-xs text-white/70">
+              Submit milestone proofs via the{" "}
+              <Link href="/ai-auditor" className="text-[#c5fdff] underline font-medium">
+                AI Auditor
+              </Link>{" "}
+              — results will appear on your{" "}
+              <Link href="/submit/milestone" className="text-[#c5fdff] underline font-medium">
+                milestone page
+              </Link>
+              .
+            </p>
+          </div>
         </section>
 
         {/* Enhanced IP & FTO Analysis */}
@@ -472,19 +481,20 @@ export default function ProjectAssessmentResultsPage() {
               <ShieldCheck className="w-5 h-5 text-[#6efcff]" />
               <h2 className="font-headline text-lg font-bold text-white/95">IP & FTO Analysis</h2>
             </div>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between rounded-lg border border-white/10 bg-black/20 px-4 py-3">
-                <span className="text-sm text-white/70">Sector</span>
-                <span className="text-sm font-semibold text-white/90">{report.ipReport.classification.sector_name}</span>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+              <div className="rounded-xl border border-white/10 bg-black/20 p-4">
+                <p className="text-xs text-white/50 mb-1">Sector</p>
+                <p className="text-sm font-semibold text-white/90">{report.ipReport.classification.sector_name}</p>
               </div>
-              <div className="flex items-center justify-between rounded-lg border border-white/10 bg-black/20 px-4 py-3">
-                <span className="text-sm text-white/70">FTO Risk Score</span>
-                <span className="text-sm font-semibold text-white/90">{(report.ipReport.fto.r_fto * 100).toFixed(2)}%</span>
+              <div className="rounded-xl border border-white/10 bg-black/20 p-4">
+                <p className="text-xs text-white/50 mb-1">FTO Risk Score</p>
+                <p className={`text-sm font-semibold ${getFTORiskColor(report.ipReport.fto.r_fto)}`}>{(report.ipReport.fto.r_fto * 100).toFixed(2)}%</p>
               </div>
-              <div className="flex items-center justify-between rounded-lg border border-white/10 bg-black/20 px-4 py-3">
-                <span className="text-sm text-white/70">Target Valuation</span>
-                <span className="text-sm font-semibold text-white/90">{formatUsd(report.ipReport.valuation.v_target_usd)}</span>
+              <div className="rounded-xl border border-white/10 bg-black/20 p-4">
+                <p className="text-xs text-white/50 mb-1">Target Valuation</p>
+                <p className="text-sm font-semibold text-emerald-400">{formatUsd(report.ipReport.valuation.v_target_usd)}</p>
               </div>
+            </div>
               <div className="mt-4 rounded-lg border border-white/10 bg-black/20 p-4">
                 <p className="text-xs font-semibold text-white/70 mb-2">Valuation Calculation Breakdown</p>
                 <div className="space-y-2 text-xs text-white/60">
@@ -615,18 +625,28 @@ export default function ProjectAssessmentResultsPage() {
           </section>
         )}
 
+        {/* Enhanced Due Diligence */}
         {report.dueDiligenceReport && (
           <section className="workflow-panel mb-6 rounded-2xl p-6">
-            <h2 className="mb-3 font-headline text-lg font-bold text-white/95">Due Diligence</h2>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between rounded-lg border border-white/10 bg-black/20 px-4 py-3">
-                <span className="text-sm text-white/70">Total score</span>
-                <span className="text-sm font-semibold text-white/90">{report.dueDiligenceReport.totalScore.toFixed(1)}%</span>
+            <div className="flex items-center gap-2 mb-4">
+              <Brain className="w-5 h-5 text-[#6efcff]" />
+              <h2 className="font-headline text-lg font-bold text-white/95">Due Diligence</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div className="rounded-xl border border-white/10 bg-black/20 p-4">
+                <p className="text-xs text-white/50 mb-1">Total Score</p>
+                <div className="flex items-center gap-2">
+                  <p className={`text-lg font-bold ${getDueDiligenceScoreColor(report.dueDiligenceReport.totalScore)}`}>{report.dueDiligenceReport.totalScore.toFixed(1)}%</p>
+                  <div className="flex-1 bg-white/10 rounded-full h-2">
+                    <div className={`h-2 rounded-full ${getDueDiligenceScoreBarColor(report.dueDiligenceReport.totalScore)}`} style={{ width: `${report.dueDiligenceReport.totalScore}%` }} />
+                  </div>
+                </div>
               </div>
-              <div className="flex items-center justify-between rounded-lg border border-white/10 bg-black/20 px-4 py-3">
-                <span className="text-sm text-white/70">Tier</span>
-                <span className="text-sm font-semibold text-[#c5fdff] uppercase">{report.dueDiligenceReport.investmentTier}</span>
+              <div className="rounded-xl border border-white/10 bg-black/20 p-4">
+                <p className="text-xs text-white/50 mb-1">Investment Tier</p>
+                <span className={`text-sm font-bold uppercase ${getInvestmentTierColor(report.dueDiligenceReport.investmentTier)}`}>{report.dueDiligenceReport.investmentTier}</span>
               </div>
+            </div>
               
               {/* DeepSeek-enhanced due diligence */}
               {(report.dueDiligenceReport as any).scientific_rigor && (
@@ -920,4 +940,32 @@ function getScoreBarColor(score: number): string {
   if (score >= 60) return "bg-teal-500"
   if (score >= 40) return "bg-amber-500"
   return "bg-red-500"
+}
+
+function getFTORiskColor(risk: number): string {
+  if (risk <= 0.2) return "text-emerald-400"
+  if (risk <= 0.4) return "text-teal-400"
+  if (risk <= 0.6) return "text-amber-400"
+  return "text-red-400"
+}
+
+function getDueDiligenceScoreColor(score: number): string {
+  if (score >= 80) return "text-emerald-400"
+  if (score >= 60) return "text-teal-400"
+  if (score >= 40) return "text-amber-400"
+  return "text-red-400"
+}
+
+function getDueDiligenceScoreBarColor(score: number): string {
+  if (score >= 80) return "bg-emerald-500"
+  if (score >= 60) return "bg-teal-500"
+  if (score >= 40) return "bg-amber-500"
+  return "bg-red-500"
+}
+
+function getInvestmentTierColor(tier: string): string {
+  if (tier === "A" || tier === "A+") return "text-emerald-400"
+  if (tier === "B" || tier === "B+") return "text-teal-400"
+  if (tier === "C" || tier === "C+") return "text-amber-400"
+  return "text-red-400"
 }
