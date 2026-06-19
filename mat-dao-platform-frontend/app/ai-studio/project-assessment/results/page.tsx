@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Check, Save, Target, Gem, Loader2, Download } from "lucide-react"
+import { Check, Save, Target, Gem, Loader2, Download, Flame, ShieldCheck, AlertTriangle, Award, ChevronRight, Zap, Brain, Battery, Wind, Orbit } from "lucide-react"
 import { useAuth } from "@/context/auth-context"
 import { formatUsd } from "@/lib/ai-studio/api"
 import { addAssessment, addSubmittedMilestone, MILESTONE_LABELS } from "@/lib/trl-services/storage"
@@ -165,44 +165,95 @@ export default function ProjectAssessmentResultsPage() {
           </div>
         </div>
 
+        {/* Enhanced Metrics Grid with Color Coding */}
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
-          <Metric label="TRL Level" value={`TRL ${report.summary.trl}`} />
-          <Metric label="Innovation Score" value={String(report.summary.ipScore)} />
-          <Metric
-            label="IP Valuation"
-            value={report.summary.valuationUsd ? formatUsd(report.summary.valuationUsd) : "N/A"}
+          <EnhancedMetric 
+            label="TRL Level" 
+            value={`TRL ${report.summary.trl}`} 
+            trl={report.summary.trl}
+            icon={<Award className="w-4 h-4" />}
           />
-          <Metric
-            label="Due Diligence"
+          <EnhancedMetric 
+            label="Innovation Score" 
+            value={String(report.summary.ipScore)} 
+            score={report.summary.ipScore}
+            icon={<Flame className="w-4 h-4" />}
+          />
+          <EnhancedMetric 
+            label="IP Valuation" 
+            value={report.summary.valuationUsd ? formatUsd(report.summary.valuationUsd) : "N/A"}
+            icon={<Gem className="w-4 h-4" />}
+          />
+          <EnhancedMetric 
+            label="Due Diligence" 
             value={
               report.summary.dueDiligenceScore !== null
                 ? `${report.summary.dueDiligenceScore.toFixed(0)}%`
                 : "N/A"
             }
+            score={report.summary.dueDiligenceScore || 0}
+            icon={<ShieldCheck className="w-4 h-4" />}
           />
         </div>
 
+        {/* Enhanced TRL Evaluation Section */}
         <section className="workflow-panel mb-6 rounded-2xl p-6">
-          <h2 className="mb-3 font-headline text-lg font-bold text-white/95">TRL Evaluation Details</h2>
-          <div className="space-y-3">
-            <div className="rounded-lg border border-white/10 bg-black/20 p-4">
-              <p className="text-xs font-semibold text-white/70 mb-2">Why TRL {report.trlProject.trl}?</p>
-              <p className="text-sm text-white/60">{report.trlProject.trlSummary}</p>
+          <div className="flex items-center gap-2 mb-4">
+            <Award className="w-5 h-5 text-[#6efcff]" />
+            <h2 className="font-headline text-lg font-bold text-white/95">TRL Evaluation Details</h2>
+            <span className={`ml-auto font-mono text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded ${getTRLBadgeClass(report.trlProject.trl)}`}>
+              TRL {report.trlProject.trl}
+            </span>
+          </div>
+          <div className="space-y-4">
+            {/* TRL Summary Card */}
+            <div className="rounded-xl border border-white/10 bg-gradient-to-br from-black/20 to-black/40 p-5">
+              <div className="flex items-start gap-3">
+                <div className={`p-2 rounded-lg ${getTRLIconBg(report.trlProject.trl)}`}>
+                  {getTRLIcon(report.trlProject.trl)}
+                </div>
+                <div className="flex-1">
+                  <p className="text-xs font-semibold text-white/70 mb-2">Why TRL {report.trlProject.trl}?</p>
+                  <p className="text-sm text-white/60 leading-relaxed">{report.trlProject.trlSummary}</p>
+                </div>
+              </div>
             </div>
-            <div className="rounded-lg border border-white/10 bg-black/20 p-4">
-              <p className="text-xs font-semibold text-white/70 mb-2">Key Accomplishments</p>
-              <ul className="space-y-1">
-                {report.trlProject.accomplishments.map((a) => (
-                  <li key={a} className="text-xs text-white/55">
-                    · {a}
+            
+            {/* Key Accomplishments */}
+            <div className="rounded-xl border border-white/10 bg-black/20 p-5">
+              <p className="text-xs font-semibold text-white/70 mb-3 flex items-center gap-2">
+                <Check className="w-3.5 h-3.5 text-emerald-400" />
+                Key Accomplishments
+              </p>
+              <ul className="space-y-2">
+                {report.trlProject.accomplishments.map((a, i) => (
+                  <li key={i} className="text-xs text-white/55 flex items-start gap-2">
+                    <span className="text-emerald-400 mt-0.5">•</span>
+                    <span>{a}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="rounded-lg border border-white/10 bg-black/20 p-4">
-              <p className="text-xs font-semibold text-white/70 mb-2">Innovation Score: {report.trlProject.score}/100</p>
-              <p className="text-xs text-white/60">
-                This score reflects the technical novelty, scientific rigor, and potential impact of your research based on analysis of the submitted content.
+            
+            {/* Innovation Score */}
+            <div className="rounded-xl border border-white/10 bg-black/20 p-5">
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-xs font-semibold text-white/70 flex items-center gap-2">
+                  <Flame className="w-3.5 h-3.5 text-orange-400" />
+                  Innovation Score
+                </p>
+                <span className={`font-mono text-sm font-bold ${getScoreColor(report.trlProject.score)}`}>
+                  {report.trlProject.score}/100
+                </span>
+              </div>
+              <div className="w-full bg-white/10 rounded-full h-2 mt-2">
+                <div 
+                  className={`h-2 rounded-full transition-all duration-500 ${getScoreBarColor(report.trlProject.score)}`} 
+                  style={{ width: `${report.trlProject.score}%` }}
+                />
+              </div>
+              <p className="text-xs text-white/50 mt-2">
+                Reflects technical novelty, scientific rigor, and potential impact based on analysis.
               </p>
             </div>
             
@@ -273,22 +324,56 @@ export default function ProjectAssessmentResultsPage() {
           </div>
         </section>
 
+        {/* Enhanced Milestone Roadmap */}
         <section className="workflow-panel mb-6 rounded-2xl p-6">
-          <h2 className="mb-4 font-headline text-lg font-bold text-white/95">Milestone Roadmap</h2>
+          <div className="flex items-center gap-2 mb-4">
+            <Target className="w-5 h-5 text-[#6efcff]" />
+            <h2 className="font-headline text-lg font-bold text-white/95">Milestone Roadmap</h2>
+          </div>
           <div className="space-y-4">
             {/* Incomplete/Current Milestones with Recommendations */}
             {Object.entries(report.trlProject.milestones)
               .filter(([, m]) => m.status === "current" || m.status === "future")
-              .map(([key, m]) => (
-                <div key={key} className="rounded-xl border border-[#6efcff]/30 bg-[#6efcff]/5 p-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold uppercase text-[#c5fdff]">
-                      {MILESTONE_LABELS[key] || key}
-                    </span>
-                    <span className="font-mono text-[10px] bg-[#6efcff]/20 px-2 py-1 rounded text-[#c5fdff]">{m.status}</span>
+              .map(([key, m], index) => (
+                <div key={key} className={`rounded-xl border p-5 transition-all duration-200 ${
+                  m.status === "current" 
+                    ? "border-[#6efcff]/40 bg-gradient-to-br from-[#6efcff]/10 to-transparent shadow-lg shadow-[#6efcff]/10" 
+                    : "border-white/10 bg-black/20"
+                }`}>
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex items-start gap-3 flex-1">
+                      <div className={`p-2 rounded-lg ${m.status === "current" ? "bg-[#6efcff]/20" : "bg-white/10"}`}>
+                        {m.status === "current" ? (
+                          <Flame className="w-4 h-4 text-[#6efcff]" />
+                        ) : (
+                          <Target className="w-4 h-4 text-white/50" />
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="text-xs font-semibold uppercase text-white/90">
+                            {MILESTONE_LABELS[key] || key}
+                          </span>
+                          <span className={`font-mono text-[10px] px-2 py-0.5 rounded ${
+                            m.status === "current" 
+                              ? "bg-[#6efcff]/20 text-[#c5fdff]" 
+                              : "bg-white/10 text-white/50"
+                          }`}>
+                            {m.status}
+                          </span>
+                        </div>
+                        <p className="text-sm text-white/70 leading-relaxed">{m.description}</p>
+                        <div className="flex items-center gap-2 mt-2">
+                          <span className="font-mono text-[10px] text-white/50">Target: {m.timeline}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-mono text-xs font-bold ${
+                      m.status === "current" ? "bg-[#6efcff] text-black" : "bg-white/10 text-white/50"
+                    }`}>
+                      {index + 1}
+                    </div>
                   </div>
-                  <p className="mt-2 text-sm text-white/70">{m.description}</p>
-                  <p className="mt-1 font-mono text-[10px] text-white/50">Target: {m.timeline}</p>
                   
                   {/* Detailed breakdown */}
                   {(m as any).specific_actions && (m as any).specific_actions.length > 0 && (
@@ -380,9 +465,13 @@ export default function ProjectAssessmentResultsPage() {
           </p>
         </section>
 
+        {/* Enhanced IP & FTO Analysis */}
         {report.ipReport && (
           <section className="workflow-panel mb-6 rounded-2xl p-6">
-            <h2 className="mb-3 font-headline text-lg font-bold text-white/95">IP & FTO Analysis</h2>
+            <div className="flex items-center gap-2 mb-4">
+              <ShieldCheck className="w-5 h-5 text-[#6efcff]" />
+              <h2 className="font-headline text-lg font-bold text-white/95">IP & FTO Analysis</h2>
+            </div>
             <div className="space-y-3">
               <div className="flex items-center justify-between rounded-lg border border-white/10 bg-black/20 px-4 py-3">
                 <span className="text-sm text-white/70">Sector</span>
@@ -752,4 +841,83 @@ function Metric({ label, value }: { label: string; value: string }) {
       <p className="mt-1 font-headline text-lg font-bold text-white/90">{value}</p>
     </div>
   )
+}
+
+function EnhancedMetric({ label, value, trl, score, icon }: { label: string; value: string; trl?: number; score?: number; icon: React.ReactNode }) {
+  const getMetricColor = () => {
+    if (trl !== undefined) {
+      if (trl >= 8) return "border-emerald-500/30 bg-emerald-950/20"
+      if (trl >= 6) return "border-teal-500/30 bg-teal-950/20"
+      if (trl >= 4) return "border-amber-500/30 bg-amber-950/20"
+      return "border-indigo-500/30 bg-indigo-950/20"
+    }
+    if (score !== undefined) {
+      if (score >= 80) return "border-emerald-500/30 bg-emerald-950/20"
+      if (score >= 60) return "border-teal-500/30 bg-teal-950/20"
+      if (score >= 40) return "border-amber-500/30 bg-amber-950/20"
+      return "border-red-500/30 bg-red-950/20"
+    }
+    return "border-white/10 bg-black/20"
+  }
+
+  const getMetricTextColor = () => {
+    if (trl !== undefined) {
+      if (trl >= 8) return "text-emerald-400"
+      if (trl >= 6) return "text-teal-400"
+      if (trl >= 4) return "text-amber-400"
+      return "text-indigo-400"
+    }
+    if (score !== undefined) {
+      if (score >= 80) return "text-emerald-400"
+      if (score >= 60) return "text-teal-400"
+      if (score >= 40) return "text-amber-400"
+      return "text-red-400"
+    }
+    return "text-white/90"
+  }
+
+  return (
+    <div className={`rounded-xl border px-4 py-4 transition-all duration-200 hover:scale-105 ${getMetricColor()}`}>
+      <div className="flex items-center gap-2 mb-2">
+        <div className="p-1.5 rounded-lg bg-white/10">{icon}</div>
+        <p className="text-xs text-white/50">{label}</p>
+      </div>
+      <p className={`text-lg font-bold ${getMetricTextColor()} mt-1`}>{value}</p>
+    </div>
+  )
+}
+
+function getTRLBadgeClass(trl: number): string {
+  if (trl >= 8) return "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
+  if (trl >= 6) return "bg-teal-500/10 text-teal-400 border border-teal-500/30"
+  if (trl >= 4) return "bg-amber-500/10 text-amber-400 border border-amber-500/30"
+  return "bg-indigo-500/10 text-indigo-400 border border-indigo-500/30"
+}
+
+function getTRLIcon(trl: number): React.ReactNode {
+  if (trl >= 8) return <Award className="w-4 h-4 text-emerald-400" />
+  if (trl >= 6) return <Zap className="w-4 h-4 text-teal-400" />
+  if (trl >= 4) return <Battery className="w-4 h-4 text-amber-400" />
+  return <Brain className="w-4 h-4 text-indigo-400" />
+}
+
+function getTRLIconBg(trl: number): string {
+  if (trl >= 8) return "bg-emerald-500/20"
+  if (trl >= 6) return "bg-teal-500/20"
+  if (trl >= 4) return "bg-amber-500/20"
+  return "bg-indigo-500/20"
+}
+
+function getScoreColor(score: number): string {
+  if (score >= 80) return "text-emerald-400"
+  if (score >= 60) return "text-teal-400"
+  if (score >= 40) return "text-amber-400"
+  return "text-red-400"
+}
+
+function getScoreBarColor(score: number): string {
+  if (score >= 80) return "bg-emerald-500"
+  if (score >= 60) return "bg-teal-500"
+  if (score >= 40) return "bg-amber-500"
+  return "bg-red-500"
 }
