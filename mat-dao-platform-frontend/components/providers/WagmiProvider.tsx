@@ -8,12 +8,19 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 
 const config = getDefaultConfig({
   appName: 'MatDAO Platform',
-  projectId: '14b9b11e59d6c908c7fa6cd4524dad47', // อย่าลืมเปลี่ยนเป็น Project ID จริงของคุณนะครับ
+  projectId: '14b9b11e59d6c908c7fa6cd4524dad47',
   chains: [mainnet, polygon, optimism, arbitrum, base],
-  ssr: true, 
+  ssr: false,
 });
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
 
 export function WagmiProvider({ children }: { children: React.ReactNode }) {
   return (
