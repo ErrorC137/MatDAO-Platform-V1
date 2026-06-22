@@ -3,6 +3,8 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react"
 import { supabase } from "@/lib/supabase/client"
 import type { Database } from "@/lib/supabase/client"
+import { useAccount, useConnect, useDisconnect } from 'wagmi'
+import { injected } from 'wagmi/connectors'
 
 // Local cooldown tracking
 const COOLDOWN_KEY = 'auth_cooldown'
@@ -53,6 +55,9 @@ const AuthContext = createContext<AuthContextType | null>(null)
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const { address, isConnected } = useAccount()
+  const { connect } = useConnect()
+  const { disconnect } = useDisconnect()
 
   useEffect(() => {
     // Check for existing session
@@ -78,6 +83,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     return () => subscription.unsubscribe()
   }, [])
+
+  // Sync wallet connection with user state
+  useEffect(() => {
+    if (isConnected && address && user) {
+      // Update user's wallet address in Supabase
+      supabase
+        .from('profiles')
+        .update({ wallet_address: address })
+        .eq('id', user.id)
+        .then(({ error }) => {
+          if (error) console.error('Error updating wallet address:', error)
+          else setUser({ ...user, walletAddress: address })
+        })
+    }
+  }, [isConnected, address, user])
 
   const loadUserProfile = async (userId: string) => {
     const { data: profile } = await supabase
@@ -217,70 +237,70 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw new Error(`Please wait ${minutes} minute${minutes > 1 ? 's' : ''} before trying again.`)
       }
 
-      // Simulated wallet connection — in production, integrate with actual wallet provider
-      await new Promise((resolve) => setTimeout(resolve, 600))
-      const fakeAddress =
-        "0x" +
-        Array.from({ length: 40 }, () =>
-          Math.floor(Math.random() * 16).toString(16)
-        ).join("")
+      // Use actual wallet connection via wagmi
+      await connect({ connector: injected() })
+      
+      // Wait for the address to be available
+      if (address) {
+        const walletAddress = address
 
-      if (user) {
-        // Update existing user's wallet address
-        const { error } = await supabase
-          .from('profiles')
-          .update({ wallet_address: fakeAddress })
-          .eq('id', user.id)
-
-        if (error) {
-          // Handle rate limit errors more specifically
-          if (error.message.includes('rate limit') || 
-              error.message.includes('too many requests') ||
-              error.message.includes('Too many requests')) {
-            setCooldown()
-            throw new Error('Wallet connection rate limit reached. Please wait 5-10 minutes before trying again.')
-          }
-          throw error
-        }
-
-        setUser({ ...user, walletAddress: fakeAddress })
-      } else {
-        // Create wallet-only user (investor)
-        const { data: authData, error: authError } = await supabase.auth.signUp({
-          email: `${fakeAddress}@wallet.temp`,
-          password: crypto.randomUUID(),
-        })
-
-        if (authError) {
-          // Handle rate limit errors
-          if (authError.message.includes('rate limit') || authError.message.includes('too many requests')) {
-            throw new Error('Too many wallet connection attempts. Please wait a moment and try again.')
-          }
-          throw authError
-        }
-
-        if (authData.user) {
-          const { error: profileError } = await supabase
+        if (user) {
+          // Update existing user's wallet address
+          const { error } = await supabase
             .from('profiles')
-            .insert({
-              id: authData.user.id,
-              email: `${fakeAddress}@wallet.temp`,
-              name: `${fakeAddress.slice(0, 6)}...${fakeAddress.slice(-4)}`,
-              role: 'investor',
-              university: null,
-              wallet_address: fakeAddress,
-            })
+            .update({ wallet_address: walletAddress })
+            .eq('id', user.id)
 
-          if (profileError) throw profileError
+          if (error) {
+            // Handle rate limit errors more specifically
+            if (error.message.includes('rate limit') || 
+                error.message.includes('too many requests') ||
+                error.message.includes('Too many requests')) {
+              setCooldown()
+              throw new Error('Wallet connection rate limit reached. Please wait 5-10 minutes before trying again.')
+            }
+            throw error
+          }
 
-          setUser({
-            id: authData.user.id,
-            email: `${fakeAddress}@wallet.temp`,
-            name: `${fakeAddress.slice(0, 6)}...${fakeAddress.slice(-4)}`,
-            role: 'investor',
-            walletAddress: fakeAddress,
-            university: null,
+          setUser({ ...user, walletAddress: walletAddress })
+        } else {
+          // Create wallet-only user (investor)
+          const { data: authData, error: authError } = await supabase.auth.signUp({
+            email: `${walletAddress}@wallet.temp`,
+            password: crypto.randomUUID(),
           })
+
+          if (authError) {
+            // Handle rate limit errors
+            if (authError.message.includes('rate limit') || authError.message.includes('too many requests')) {
+              throw new Error('Too many wallet connection attempts. Please wait a moment and try again.')
+            }
+            throw authError
+          }
+
+          if (authData.user) {
+            const { error: profileError } = await supabase
+              .from('profiles')
+              .insert({
+                id: authData.user.id,
+                email: `${walletAddress}@wallet.temp`,
+                name: `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`,
+                role: 'investor',
+                university: null,
+                wallet_address: walletAddress,
+              })
+
+            if (profileError) throw profileError
+
+            setUser({
+              id: authData.user.id,
+              email: `${walletAddress}@wallet.temp`,
+              name: `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`,
+              role: 'investor',
+              walletAddress: walletAddress,
+              university: null,
+            })
+          }
         }
       }
       
@@ -292,24 +312,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsLoading(false)
     }
-  }, [user])
+  }, [user, connect, address])
 
   const disconnectWallet = useCallback(async () => {
-    if (user && user.email.includes('@wallet.temp')) {
-      // Wallet-only user, sign out entirely
-      await signOut()
-    } else if (user) {
-      // Regular user, just remove wallet address
-      const { error } = await supabase
-        .from('profiles')
-        .update({ wallet_address: null })
-        .eq('id', user.id)
+    try {
+      // Disconnect from wagmi
+      await disconnect()
+      
+      if (user && user.email.includes('@wallet.temp')) {
+        // Wallet-only user, sign out entirely
+        await signOut()
+      } else if (user) {
+        // Regular user, just remove wallet address
+        const { error } = await supabase
+          .from('profiles')
+          .update({ wallet_address: null })
+          .eq('id', user.id)
 
-      if (error) throw error
+        if (error) throw error
 
-      setUser({ ...user, walletAddress: null })
+        setUser({ ...user, walletAddress: null })
+      }
+    } catch (error) {
+      console.error('Wallet disconnection error:', error)
+      throw error
     }
-  }, [user, signOut])
+  }, [user, disconnect, signOut])
 
   return (
     <AuthContext.Provider

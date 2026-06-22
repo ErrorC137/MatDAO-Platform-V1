@@ -3,7 +3,6 @@
 import { useAuth } from "@/context/auth-context"
 import Link from "next/link"
 import {
-  Wallet,
   Mail,
   User,
   Building2,
@@ -19,9 +18,10 @@ import { useEffect, useState } from "react"
 import { loadUserData } from "@/lib/trl-services/storage"
 import type { UserPlatformData } from "@/lib/trl-services/types"
 import { formatUsd } from "@/lib/ai-studio/api"
+import { ConnectButton } from '@rainbow-me/rainbowkit'
 
 export default function ProfilePage() {
-  const { user, connectWallet, disconnectWallet, isLoading } = useAuth()
+  const { user, isLoading } = useAuth()
   const [copied, setCopied] = useState(false)
   const [platformData, setPlatformData] = useState<UserPlatformData | null>(null)
 
@@ -127,7 +127,7 @@ export default function ProfilePage() {
           {/* Wallet Section */}
           <div className="rounded-xl border border-border/60 bg-card p-6">
             <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-foreground">
-              <Wallet className="h-5 w-5 text-primary" />
+              <Shield className="h-5 w-5 text-primary" />
               Wallet
             </h2>
 
@@ -156,16 +156,10 @@ export default function ProfilePage() {
                   <div className="h-2 w-2 rounded-full bg-accent" />
                   <span className="text-xs text-accent">Connected</span>
                 </div>
-                <button
-                  onClick={disconnectWallet}
-                  className="self-start rounded-lg border border-border px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-                >
-                  Disconnect Wallet
-                </button>
+                <ConnectButton />
               </div>
             ) : (
               <div className="flex flex-col items-center gap-4 rounded-lg border border-dashed border-border bg-secondary/30 px-6 py-8">
-                <Wallet className="h-8 w-8 text-muted-foreground" />
                 <div className="text-center">
                   <p className="text-sm font-medium text-foreground">
                     No wallet connected
@@ -174,13 +168,7 @@ export default function ProfilePage() {
                     Connect your wallet to participate in governance and funding
                   </p>
                 </div>
-                <button
-                  onClick={connectWallet}
-                  disabled={isLoading}
-                  className="rounded-full border border-primary/40 bg-primary/10 px-6 py-2.5 text-sm font-medium text-primary transition-colors hover:bg-primary/20 disabled:opacity-50"
-                >
-                  Connect Wallet
-                </button>
+                <ConnectButton />
               </div>
             )}
           </div>

@@ -4,10 +4,11 @@ import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/context/auth-context"
-import { Wallet, Mail, Lock, Loader2 } from "lucide-react"
+import { ConnectButton } from '@rainbow-me/rainbowkit'
+import { Mail, Lock, Loader2 } from "lucide-react"
 
 export default function SignInPage() {
-  const { signIn, connectWallet, isLoading } = useAuth()
+  const { signIn, isLoading } = useAuth()
   const router = useRouter()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -25,15 +26,6 @@ export default function SignInPage() {
       router.push("/")
     } catch {
       setError("Invalid credentials. Please try again.")
-    }
-  }
-
-  async function handleWalletConnect() {
-    try {
-      await connectWallet()
-      router.push("/")
-    } catch {
-      setError("Wallet connection failed.")
     }
   }
 
@@ -58,19 +50,9 @@ export default function SignInPage() {
         {/* Card */}
         <div className="rounded-2xl border border-border/60 bg-card p-8">
           {/* Wallet Button */}
-          <button
-            type="button"
-            onClick={handleWalletConnect}
-            disabled={isLoading}
-            className="mb-6 flex w-full items-center justify-center gap-3 rounded-xl border border-primary/40 bg-primary/10 px-4 py-3 text-sm font-medium text-primary transition-colors hover:bg-primary/20 disabled:opacity-50"
-          >
-            {isLoading ? (
-              <Loader2 className="h-5 w-5 animate-spin" />
-            ) : (
-              <Wallet className="h-5 w-5" />
-            )}
-            Connect Wallet
-          </button>
+          <div className="mb-6">
+            <ConnectButton />
+          </div>
 
           {/* Divider */}
           <div className="mb-6 flex items-center gap-4">

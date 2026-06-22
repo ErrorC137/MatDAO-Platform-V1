@@ -4,7 +4,8 @@ import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/context/auth-context"
-import { Wallet, Mail, Lock, User, Building2, Loader2 } from "lucide-react"
+import { ConnectButton } from '@rainbow-me/rainbowkit'
+import { Mail, Lock, User, Building2, Loader2 } from "lucide-react"
 
 const roles = [
   { value: "researcher" as const, label: "Researcher", description: "Submit and manage research projects" },
@@ -13,7 +14,7 @@ const roles = [
 ]
 
 export default function SignUpPage() {
-  const { signUp, connectWallet, isLoading } = useAuth()
+  const { signUp, isLoading } = useAuth()
   const router = useRouter()
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
@@ -39,17 +40,6 @@ export default function SignUpPage() {
     }
   }
 
-  async function handleWalletConnect() {
-    try {
-      await connectWallet()
-      router.push("/")
-    } catch (err: any) {
-      console.error("Wallet connection error:", err)
-      const errorMessage = err?.message || "Wallet connection failed."
-      setError(errorMessage)
-    }
-  }
-
   return (
     <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
@@ -71,19 +61,9 @@ export default function SignUpPage() {
         {/* Card */}
         <div className="rounded-2xl border border-border/60 bg-card p-8">
           {/* Wallet Button */}
-          <button
-            type="button"
-            onClick={handleWalletConnect}
-            disabled={isLoading}
-            className="mb-6 flex w-full items-center justify-center gap-3 rounded-xl border border-primary/40 bg-primary/10 px-4 py-3 text-sm font-medium text-primary transition-colors hover:bg-primary/20 disabled:opacity-50"
-          >
-            {isLoading ? (
-              <Loader2 className="h-5 w-5 animate-spin" />
-            ) : (
-              <Wallet className="h-5 w-5" />
-            )}
-            Connect Wallet
-          </button>
+          <div className="mb-6">
+            <ConnectButton />
+          </div>
 
           {/* Divider */}
           <div className="mb-6 flex items-center gap-4">
