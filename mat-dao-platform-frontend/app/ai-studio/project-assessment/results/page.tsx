@@ -495,7 +495,7 @@ export default function ProjectAssessmentResultsPage() {
                 <p className="text-sm font-semibold text-emerald-400">{formatUsd(report.ipReport.valuation.v_target_usd)}</p>
               </div>
             </div>
-              <div className="mt-4 rounded-lg border border-white/10 bg-black/20 p-4">
+            <div className="mt-4 rounded-lg border border-white/10 bg-black/20 p-4">
                 <p className="text-xs font-semibold text-white/70 mb-2">Valuation Calculation Breakdown</p>
                 <div className="space-y-2 text-xs text-white/60">
                   <div className="flex justify-between">
@@ -621,7 +621,6 @@ export default function ProjectAssessmentResultsPage() {
                   </div>
                 </>
               )}
-            </div>
           </section>
         )}
 
@@ -764,7 +763,6 @@ export default function ProjectAssessmentResultsPage() {
                   </div>
                 </>
               )}
-            </div>
           </section>
         )}
 

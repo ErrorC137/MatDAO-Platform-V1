@@ -5,7 +5,6 @@ import { Navbar } from "@/components/navbar"
 import { AuthProvider } from "@/context/auth-context"
 import { WagmiProvider } from "@/components/providers/WagmiProvider"
 import { Toaster } from "react-hot-toast"
-import { Providers } from "@/components/providers/WagmiProvider";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-jakarta" })
@@ -28,12 +27,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${jakarta.variable}`}>
       <body className="font-sans antialiased">
-        <Providers>
+        <WagmiProvider>
           <AuthProvider>
             <Navbar />
             <main>{children}</main>
           </AuthProvider>
-        </Providers>
+        </WagmiProvider>
         <Toaster position="top-right" />
       </body>
     </html>
