@@ -1,17 +1,26 @@
-"use client"
+'use client';
 
-import { WagmiProvider as WagmiProviderComponent } from "wagmi"
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { config } from "@/lib/web3/config"
+import '@rainbow-me/rainbowkit/styles.css';
+import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { WagmiProvider } from 'wagmi';
+import { mainnet, polygon, optimism, arbitrum, base } from 'wagmi/chains';
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 
-const queryClient = new QueryClient()
+const config = getDefaultConfig({
+  appName: 'MatDAO Platform',
+  projectId: '14b9b11e59d6c908c7fa6cd4524dad47', // อย่าลืมเปลี่ยนเป็น Project ID จริงของคุณนะครับ
+  chains: [mainnet, polygon, optimism, arbitrum, base],
+  ssr: true, 
+});
+
+const queryClient = new QueryClient();
 
 export function WagmiProvider({ children }: { children: React.ReactNode }) {
   return (
-    <WagmiProviderComponent config={config}>
+    <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        {children}
+        <RainbowKitProvider>{children}</RainbowKitProvider>
       </QueryClientProvider>
-    </WagmiProviderComponent>
-  )
+    </WagmiProvider>
+  );
 }
