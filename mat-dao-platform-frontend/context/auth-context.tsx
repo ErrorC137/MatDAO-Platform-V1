@@ -96,19 +96,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       if (isConnected && address) {
         if (user) {
-          // Update existing user's wallet address in Supabase
-          console.log('Updating wallet address for existing user:', user.id, 'new address:', address)
-          const { error } = await supabase
-            .from('profiles')
-            .update({ wallet_address: address })
-            .eq('id', user.id)
+          // Only update if wallet address has changed
+          if (user.walletAddress !== address) {
+            console.log('Updating wallet address for existing user:', user.id, 'new address:', address)
+            const { error } = await supabase
+              .from('profiles')
+              .update({ wallet_address: address })
+              .eq('id', user.id)
 
-          if (!error) {
-            console.log('Wallet address updated successfully in database')
-            setUser({ ...user, walletAddress: address })
-            console.log('User state updated with wallet address:', address)
-          } else {
-            console.error('Error updating wallet address:', error)
+            if (!error) {
+              console.log('Wallet address updated successfully in database')
+              setUser({ ...user, walletAddress: address })
+              console.log('User state updated with wallet address:', address)
+            } else {
+              console.error('Error updating wallet address:', error)
+            }
           }
         } else {
           // Check if a user with this wallet address already exists
