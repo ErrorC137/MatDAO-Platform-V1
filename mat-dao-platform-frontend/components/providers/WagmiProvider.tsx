@@ -5,12 +5,16 @@ import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { WagmiProvider as WagmiProviderCore } from 'wagmi';
 import { mainnet, polygon, optimism, arbitrum, base } from 'wagmi/chains';
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import { injected, walletConnect } from 'wagmi/connectors';
 
 const config = getDefaultConfig({
   appName: 'MatDAO Platform',
   projectId: '14b9b11e59d6c908c7fa6cd4524dad47',
   chains: [mainnet, polygon, optimism, arbitrum, base],
-  ssr: true,
+  ssr: false,
+  connectors: [
+    injected(),
+  ],
 });
 
 const queryClient = new QueryClient({
