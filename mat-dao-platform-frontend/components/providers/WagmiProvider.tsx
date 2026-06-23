@@ -10,7 +10,7 @@ const config = getDefaultConfig({
   appName: 'MatDAO Platform',
   projectId: '14b9b11e59d6c908c7fa6cd4524dad47',
   chains: [mainnet, polygon, optimism, arbitrum, base],
-  ssr: false,
+  ssr: true,
 });
 
 const queryClient = new QueryClient({
