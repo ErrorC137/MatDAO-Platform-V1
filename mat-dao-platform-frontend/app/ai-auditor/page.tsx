@@ -16,13 +16,13 @@ import {
 import { MarkdownReport } from "@/components/trl-services/MarkdownReport"
 import { TrlBackendStatus } from "@/components/trl-services/TrlBackendStatus"
 import { useAuth } from "@/context/auth-context"
-import { fetchProjects, fetchVerifications, submitVerification } from "@/lib/trl-services/api"
+import { supabase } from "@/lib/supabase/client"
 import { MILESTONE_LABELS } from "@/lib/trl-services/storage"
-import type { TrlProject, VerificationTask } from "@/lib/trl-services/types"
+import type { VerificationTask } from "@/lib/trl-services/types"
 
 export default function AiAuditorPage() {
   const { user } = useAuth()
-  const [projects, setProjects] = useState<TrlProject[]>([])
+  const [projects, setProjects] = useState<any[]>([])
   const [tasks, setTasks] = useState<VerificationTask[]>([])
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
@@ -40,10 +40,44 @@ export default function AiAuditorPage() {
   async function loadData() {
     setLoading(true)
     try {
-      const [projs, verifs] = await Promise.all([fetchProjects(), fetchVerifications()])
-      setProjects(projs)
-      setTasks(verifs)
-      if (projs.length > 0 && !projectId) setProjectId(projs[0].id)
+      // Fetch projects from Supabase
+      const { data: projectData, error: projectError } = await supabase
+        .from('projects')
+        .select('*')
+        .eq('researcher_id', user?.id)
+        .order('created_at', { ascending: false })
+
+      if (projectError) throw projectError
+      setProjects(projectData || [])
+
+      // Fetch verification tasks from Supabase
+      const { data: taskData, error: taskError } = await supabase
+        .from('verification_tasks')
+        .select('*')
+        .order('submitted_at', { ascending: false })
+
+      if (taskError) throw taskError
+
+      const transformedTasks: VerificationTask[] = (taskData || []).map(t => ({
+        id: t.id,
+        title: t.title,
+        milestoneName: t.milestone_name,
+        projectId: t.project_id,
+        projectTitle: t.project_title,
+        proofText: t.proof_text,
+        submittedBy: t.submitted_by,
+        submittedAt: t.submitted_at,
+        aiPassed: t.ai_passed,
+        aiPlagiarismScore: t.ai_plagiarism_score,
+        aiConsistencyReport: t.ai_consistency_report,
+        humanVoted: t.human_voted,
+        humanPassed: t.human_passed,
+        humanNotes: t.human_notes,
+        status: t.status,
+      }))
+      setTasks(transformedTasks)
+
+      if (projectData && projectData.length > 0 && !projectId) setProjectId(projectData[0].id)
     } catch {
       setError("Failed to load auditor data")
     } finally {
@@ -65,14 +99,45 @@ export default function AiAuditorPage() {
     setError(null)
     try {
       const targetProject = projects.find((p) => p.id === projectId)
-      const task = await submitVerification({
-        title,
-        milestoneName,
-        projectId,
-        projectTitle: targetProject?.title || "Custom Project",
-        proofText,
-        submittedBy: submittedBy || user?.name || "Researcher",
-      })
+
+      // Insert into Supabase verification_tasks table
+      const { data: taskData, error: insertError } = await supabase
+        .from('verification_tasks')
+        .insert({
+          title,
+          milestone_name: milestoneName,
+          project_id: projectId,
+          project_title: targetProject?.title || "Custom Project",
+          proof_text: proofText,
+          submitted_by: submittedBy || user?.name || "Researcher",
+          ai_passed: false,
+          ai_plagiarism_score: 0,
+          ai_consistency_report: "Pending AI analysis...",
+          status: "pending",
+        })
+        .select()
+        .single()
+
+      if (insertError) throw insertError
+
+      const task: VerificationTask = {
+        id: taskData.id,
+        title: taskData.title,
+        milestoneName: taskData.milestone_name,
+        projectId: taskData.project_id,
+        projectTitle: taskData.project_title,
+        proofText: taskData.proof_text,
+        submittedBy: taskData.submitted_by,
+        submittedAt: taskData.submitted_at,
+        aiPassed: taskData.ai_passed,
+        aiPlagiarismScore: taskData.ai_plagiarism_score,
+        aiConsistencyReport: taskData.ai_consistency_report,
+        humanVoted: taskData.human_voted,
+        humanPassed: taskData.human_passed,
+        humanNotes: taskData.human_notes,
+        status: taskData.status,
+      }
+
       setLastSubmitted(task)
       setTitle("")
       setProofText("")

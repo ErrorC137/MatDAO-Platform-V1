@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import {
   Plus,
   Check,
@@ -23,8 +24,10 @@ import {
   Shield,
   Target,
   ExternalLink,
+  Loader2,
 } from "lucide-react"
 import { useAuth } from "@/context/auth-context"
+import { supabase } from "@/lib/supabase/client"
 import { fetchVerifications } from "@/lib/trl-services/api"
 import { loadUserData } from "@/lib/trl-services/storage"
 import type { SubmittedMilestone, VerificationTask } from "@/lib/trl-services/types"
@@ -87,18 +90,60 @@ const trlTemplates: Record<string, { budget: string; duration: string }> = {
 
 export default function MilestoneBuilderPage() {
   const { user } = useAuth()
+  const router = useRouter()
   const [recommendedMilestones, setRecommendedMilestones] = useState<SubmittedMilestone[]>([])
   const [auditorResults, setAuditorResults] = useState<VerificationTask[]>([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [projectId, setProjectId] = useState<string | null>(null)
 
   useEffect(() => {
+    // Get projectId from URL
+    const urlParams = new URLSearchParams(window.location.search)
+    const pid = urlParams.get('projectId')
+    setProjectId(pid)
+
     if (user) {
-      const data = loadUserData(user.id)
-      setRecommendedMilestones(data.submittedMilestones)
+      // Load from Supabase instead of local storage
+      fetchSubmittedMilestones()
     }
     fetchVerifications()
       .then(setAuditorResults)
       .catch(() => setAuditorResults([]))
   }, [user])
+
+  const fetchSubmittedMilestones = async () => {
+    if (!user) return
+
+    try {
+      const { data, error } = await supabase
+        .from('submitted_milestones')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('submitted_at', { ascending: false })
+
+      if (error) throw error
+
+      if (data) {
+        const transformed: SubmittedMilestone[] = data.map(m => ({
+          id: m.id,
+          projectId: m.project_id,
+          projectTitle: m.project_title,
+          milestoneKey: m.milestone_key as any,
+          milestoneLabel: m.milestone_label,
+          description: m.description,
+          timeline: m.timeline,
+          status: m.status,
+          submittedAt: m.submitted_at,
+          submittedBy: m.submitted_by,
+          verificationId: m.verification_id,
+        }))
+        setRecommendedMilestones(transformed)
+      }
+    } catch (err) {
+      console.error('Error fetching milestones:', err)
+    }
+  }
 
   const [milestones, setMilestones] = useState<MilestoneData[]>([
     {
@@ -155,6 +200,77 @@ export default function MilestoneBuilderPage() {
     if (expandedId === id) setExpandedId(null)
   }
 
+  const handleSubmitMilestones = async () => {
+    if (!user || !projectId) {
+      setError("Please sign in and ensure you have a project ID")
+      return
+    }
+
+    setLoading(true)
+    setError(null)
+
+    try {
+      // Get project title
+      const { data: projectData } = await supabase
+        .from('projects')
+        .select('title')
+        .eq('id', projectId)
+        .single()
+
+      const projectTitle = projectData?.title || "Unknown Project"
+
+      // Submit each milestone
+      for (const milestone of milestones) {
+        if (!milestone.title) continue
+
+        const { error: milestoneError } = await supabase
+          .from('submitted_milestones')
+          .insert({
+            user_id: user.id,
+            project_id: projectId,
+            project_title: projectTitle,
+            milestone_key: milestone.id.toString(),
+            milestone_label: milestone.title,
+            description: milestone.description,
+            timeline: milestone.duration,
+            status: 'future',
+            submitted_by: user.name || user.email,
+          })
+
+        if (milestoneError) throw milestoneError
+      }
+
+      // Update project development_timeline
+      const timelineData = milestones.map(m => ({
+        key: m.id.toString(),
+        label: m.title,
+        description: m.description,
+        budget: parseInt(m.budget) || 0,
+        duration: m.duration,
+        proving: m.proving,
+        riskCategory: m.riskCategory,
+      }))
+
+      const { error: updateError } = await supabase
+        .from('projects')
+        .update({ development_timeline: timelineData })
+        .eq('id', projectId)
+
+      if (updateError) throw updateError
+
+      // Refresh milestones
+      await fetchSubmittedMilestones()
+
+      // Navigate to dashboard
+      router.push('/researcher-dashboard')
+    } catch (err) {
+      console.error('Error submitting milestones:', err)
+      setError(err instanceof Error ? err.message : 'Failed to submit milestones')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div className="flex flex-col">
       {/* ---- Hero ---- */}
@@ -174,6 +290,13 @@ export default function MilestoneBuilderPage() {
       </section>
 
       {/* ---- AI-Recommended Milestones & Auditor Results ---- */}
+      {error && (
+        <section className="border-b border-border/40 bg-destructive/10 px-4 py-6">
+          <div className="mx-auto max-w-3xl">
+            <p className="text-sm text-destructive">{error}</p>
+          </div>
+        </section>
+      )}
       {(recommendedMilestones.length > 0 || auditorResults.length > 0) && (
         <section className="border-b border-border/40 bg-secondary/20 px-4 py-10">
           <div className="mx-auto max-w-3xl space-y-8">
@@ -589,12 +712,21 @@ export default function MilestoneBuilderPage() {
           <div className="mt-6 flex flex-col items-center gap-3">
             <button
               type="button"
-              className="rounded-full bg-primary px-8 py-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+              onClick={handleSubmitMilestones}
+              disabled={loading}
+              className="rounded-full bg-primary px-8 py-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
             >
-              Submit All Milestones
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Submitting...
+                </>
+              ) : (
+                "Submit All Milestones"
+              )}
             </button>
             <p className="text-xs text-muted-foreground">
-              Your milestones will be reviewed by the MatDAO committee.
+              Your milestones will be saved and linked to your project.
             </p>
           </div>
         </div>
