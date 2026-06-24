@@ -1,17 +1,22 @@
 "use client"
 
-import { useState } from "react"
-import { 
-  FileText, 
-  TrendingUp, 
-  DollarSign, 
-  Clock, 
-  CheckCircle, 
+import { useState, useEffect } from "react"
+import { useAuth } from "@/context/auth-context"
+import { supabase } from "@/lib/supabase/client"
+import {
+  FileText,
+  TrendingUp,
+  DollarSign,
+  Clock,
+  CheckCircle,
   AlertCircle,
   Plus,
   Download,
   Eye,
-  Award
+  Award,
+  Users,
+  Calendar,
+  BarChart3,
 } from "lucide-react"
 import { getAllMockReports } from "@/lib/ai-studio/mockReports"
 
@@ -19,14 +24,19 @@ interface Project {
   id: string
   title: string
   trl: number
-  funding: number
+  funding_goal: number
+  funding_raised: number
   status: "active" | "completed" | "pending"
+  phase: string
+  created_at: string
+  updated_at: string
   milestones: {
     total: number
     completed: number
     pending: number
   }
-  lastUpdated: string
+  weeks_in_progress: number
+  investor_count: number
 }
 
 interface AIReport {
@@ -35,7 +45,7 @@ interface AIReport {
   projectName: string
   trlScore: number
   ipScore: number
-  dueDiligenceScore: number
+  dueDiligenceScore: number | null
   overallScore: number
   generatedAt: string
   status: "complete" | "processing" | "failed"
@@ -46,43 +56,112 @@ const mockProjects: Project[] = [
     id: "g-cap-500",
     title: "G-Cap 500: Ultra-Fast Charging Graphene Batteries",
     trl: 6,
-    funding: 180000,
+    funding_goal: 250000,
+    funding_raised: 180000,
     status: "active",
+    phase: "TRL 6",
+    created_at: "2026-06-01",
+    updated_at: "2026-06-10",
     milestones: { total: 4, completed: 2, pending: 2 },
-    lastUpdated: "2026-06-10"
+    weeks_in_progress: 8,
+    investor_count: 12,
   },
   {
     id: "cnt-power-cable",
     title: "CNT Power Cable for Grid Infrastructure",
     trl: 4,
-    funding: 95000,
+    funding_goal: 150000,
+    funding_raised: 95000,
     status: "active",
+    phase: "TRL 4",
+    created_at: "2026-05-15",
+    updated_at: "2026-06-08",
     milestones: { total: 4, completed: 1, pending: 3 },
-    lastUpdated: "2026-06-08"
+    weeks_in_progress: 6,
+    investor_count: 8,
   },
   {
     id: "water-hyacinth-biochar",
     title: "Water Hyacinth Biochar for Carbon Sequestration",
     trl: 7,
-    funding: 250000,
+    funding_goal: 300000,
+    funding_raised: 250000,
     status: "active",
+    phase: "TRL 7",
+    created_at: "2026-04-20",
+    updated_at: "2026-06-12",
     milestones: { total: 4, completed: 3, pending: 1 },
-    lastUpdated: "2026-06-12"
+    weeks_in_progress: 12,
+    investor_count: 15,
   },
   {
     id: "quantum-dots-solar",
     title: "Quantum Dot Enhanced Solar Cells",
     trl: 5,
-    funding: 125000,
+    funding_goal: 200000,
+    funding_raised: 125000,
     status: "active",
+    phase: "TRL 5",
+    created_at: "2026-05-01",
+    updated_at: "2026-06-05",
     milestones: { total: 4, completed: 2, pending: 2 },
-    lastUpdated: "2026-06-05"
+    weeks_in_progress: 7,
+    investor_count: 10,
   }
 ]
 
 export default function ResearcherDashboard() {
+  const { user } = useAuth()
   const [activeTab, setActiveTab] = useState<"projects" | "reports" | "funding">("projects")
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
+  const [projects, setProjects] = useState<Project[]>([])
+  const [loading, setLoading] = useState(true)
+
+  // Fetch projects from Supabase
+  useEffect(() => {
+    const fetchProjects = async () => {
+      if (!user) return
+
+      try {
+        const { data: projectData, error } = await supabase
+          .from('projects')
+          .select('*')
+          .eq('researcher_id', user.id)
+          .order('created_at', { ascending: false })
+
+        if (error) throw error
+
+        if (projectData) {
+          const transformedProjects: Project[] = projectData.map(p => ({
+            id: p.id,
+            title: p.title,
+            trl: p.trl,
+            funding_goal: p.funding_goal,
+            funding_raised: p.funding_raised,
+            status: p.phase === 'completed' ? 'completed' : 'active',
+            phase: p.phase,
+            created_at: p.created_at,
+            updated_at: p.updated_at,
+            milestones: { total: 4, completed: 0, pending: 4 }, // TODO: Fetch from milestones table
+            weeks_in_progress: Math.ceil((new Date().getTime() - new Date(p.created_at).getTime()) / (1000 * 60 * 60 * 24 * 7)),
+            investor_count: 0, // TODO: Fetch from investors table
+          }))
+          setProjects(transformedProjects)
+        }
+      } catch (error) {
+        console.error('Error fetching projects:', error)
+        // Fall back to mock data
+        setProjects(mockProjects)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchProjects()
+  }, [user])
+
+  // Use mock data if no projects or for demo
+  const displayProjects = projects.length > 0 ? projects : mockProjects
   
   // Generate AI reports from mock data
   const mockAIReports: AIReport[] = getAllMockReports().map(report => ({
@@ -92,7 +171,7 @@ export default function ResearcherDashboard() {
     trlScore: report.summary.trl,
     ipScore: report.summary.ipScore,
     dueDiligenceScore: report.summary.dueDiligenceScore,
-    overallScore: Math.round((report.summary.ipScore + report.summary.dueDiligenceScore) / 2),
+    overallScore: Math.round((report.summary.ipScore + (report.summary.dueDiligenceScore || 0)) / 2),
     generatedAt: new Date().toISOString(),
     status: "complete" as const
   }))
@@ -137,7 +216,7 @@ export default function ResearcherDashboard() {
 
       {/* Stats Overview */}
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <div className="grid gap-4 md:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <div className="rounded-xl border border-border/60 bg-card p-6">
             <div className="flex items-center gap-3">
               <div className="rounded-lg bg-primary/10 p-3">
@@ -145,7 +224,7 @@ export default function ResearcherDashboard() {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Total Projects</p>
-                <p className="text-2xl font-bold text-foreground">{mockProjects.length}</p>
+                <p className="text-2xl font-bold text-foreground">{displayProjects.length}</p>
               </div>
             </div>
           </div>
@@ -166,19 +245,23 @@ export default function ResearcherDashboard() {
                 <DollarSign className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Total Funding</p>
-                <p className="text-2xl font-bold text-foreground">$650,000</p>
+                <p className="text-sm text-muted-foreground">Total Raised</p>
+                <p className="text-2xl font-bold text-foreground">
+                  ${displayProjects.reduce((sum, p) => sum + p.funding_raised, 0).toLocaleString()}
+                </p>
               </div>
             </div>
           </div>
           <div className="rounded-xl border border-border/60 bg-card p-6">
             <div className="flex items-center gap-3">
               <div className="rounded-lg bg-primary/10 p-3">
-                <TrendingUp className="h-5 w-5 text-primary" />
+                <Users className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Avg. Score</p>
-                <p className="text-2xl font-bold text-foreground">78%</p>
+                <p className="text-sm text-muted-foreground">Total Investors</p>
+                <p className="text-2xl font-bold text-foreground">
+                  {displayProjects.reduce((sum, p) => sum + p.investor_count, 0)}
+                </p>
               </div>
             </div>
           </div>
@@ -225,7 +308,7 @@ export default function ResearcherDashboard() {
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {activeTab === "projects" && (
           <div className="space-y-4">
-            {mockProjects.map((project) => (
+            {displayProjects.map((project) => (
               <div
                 key={project.id}
                 className="rounded-xl border border-border/60 bg-card p-6 transition-all hover:shadow-lg"
@@ -238,20 +321,69 @@ export default function ResearcherDashboard() {
                         {project.status}
                       </span>
                     </div>
-                    <div className="grid gap-4 md:grid-cols-3">
+                    <div className="mb-4 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                       <div>
                         <p className="text-xs text-muted-foreground">TRL Level</p>
                         <p className="text-lg font-semibold text-foreground">TRL {project.trl}</p>
                       </div>
                       <div>
-                        <p className="text-xs text-muted-foreground">Funding</p>
-                        <p className="text-lg font-semibold text-foreground">${project.funding.toLocaleString()}</p>
+                        <p className="text-xs text-muted-foreground">Funding Raised</p>
+                        <p className="text-lg font-semibold text-foreground">${project.funding_raised.toLocaleString()}</p>
                       </div>
                       <div>
-                        <p className="text-xs text-muted-foreground">Milestones</p>
-                        <p className="text-lg font-semibold text-foreground">
+                        <p className="text-xs text-muted-foreground">Weeks in Progress</p>
+                        <p className="text-lg font-semibold text-foreground">{project.weeks_in_progress}w</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Investors</p>
+                        <p className="text-lg font-semibold text-foreground">{project.investor_count}</p>
+                      </div>
+                    </div>
+
+                    {/* Milestone Progress */}
+                    <div className="mb-4">
+                      <div className="mb-2 flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">Milestone Progress</span>
+                        <span className="font-medium text-foreground">
                           {project.milestones.completed}/{project.milestones.total}
-                        </p>
+                        </span>
+                      </div>
+                      <div className="h-2 overflow-hidden rounded-full bg-secondary/20">
+                        <div
+                          className="h-full rounded-full bg-primary transition-all"
+                          style={{ width: `${(project.milestones.completed / project.milestones.total) * 100}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Funding Progress */}
+                    <div className="mb-4">
+                      <div className="mb-2 flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">Funding Progress</span>
+                        <span className="font-medium text-foreground">
+                          {Math.round((project.funding_raised / project.funding_goal) * 100)}%
+                        </span>
+                      </div>
+                      <div className="h-2 overflow-hidden rounded-full bg-secondary/20">
+                        <div
+                          className="h-full rounded-full bg-emerald-500 transition-all"
+                          style={{ width: `${Math.round((project.funding_raised / project.funding_goal) * 100)}%` }}
+                        />
+                      </div>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        Goal: ${project.funding_goal.toLocaleString()}
+                      </p>
+                    </div>
+
+                    {/* Timeline */}
+                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                      <div className="flex items-center gap-1">
+                        <Calendar className="h-3.5 w-3.5" />
+                        <span>Started {new Date(project.created_at).toLocaleDateString()}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Clock className="h-3.5 w-3.5" />
+                        <span>Updated {new Date(project.updated_at).toLocaleDateString()}</span>
                       </div>
                     </div>
                   </div>
@@ -297,7 +429,7 @@ export default function ResearcherDashboard() {
                       </div>
                       <div>
                         <p className="text-xs text-muted-foreground">Due Diligence</p>
-                        <p className={`text-lg font-semibold ${getScoreColor(report.dueDiligenceScore)}`}>{report.dueDiligenceScore}%</p>
+                        <p className={`text-lg font-semibold ${getScoreColor(report.dueDiligenceScore || 0)}`}>{report.dueDiligenceScore || 0}%</p>
                       </div>
                       <div>
                         <p className="text-xs text-muted-foreground">Overall</p>
@@ -323,7 +455,7 @@ export default function ResearcherDashboard() {
 
         {activeTab === "funding" && (
           <div className="space-y-4">
-            {mockProjects.map((project) => (
+            {displayProjects.map((project) => (
               <div
                 key={project.id}
                 className="rounded-xl border border-border/60 bg-card p-6 transition-all hover:shadow-lg"
@@ -333,27 +465,39 @@ export default function ResearcherDashboard() {
                     <h3 className="mb-3 text-lg font-semibold text-foreground">{project.title}</h3>
                     <div className="mb-4">
                       <div className="mb-2 flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">${project.funding.toLocaleString()} raised</span>
+                        <span className="text-muted-foreground">${project.funding_raised.toLocaleString()} raised of ${project.funding_goal.toLocaleString()}</span>
                         <span className="font-medium text-foreground">
-                          {Math.round((project.funding / 250000) * 100)}%
+                          {Math.round((project.funding_raised / project.funding_goal) * 100)}%
                         </span>
                       </div>
-                      <div className="h-2 overflow-hidden rounded-full bg-secondary/20">
+                      <div className="h-3 overflow-hidden rounded-full bg-secondary/20">
                         <div
-                          className="h-full rounded-full bg-primary transition-all"
-                          style={{ width: `${Math.round((project.funding / 250000) * 100)}%` }}
+                          className="h-full rounded-full bg-gradient-to-r from-primary to-emerald-500 transition-all"
+                          style={{ width: `${Math.round((project.funding_raised / project.funding_goal) * 100)}%` }}
                         />
                       </div>
-                      <p className="mt-1 text-xs text-muted-foreground">Goal: $250,000</p>
                     </div>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      <div className="flex items-center gap-1">
-                        <Clock className="h-4 w-4" />
-                        <span>Updated {project.lastUpdated}</span>
+                    <div className="grid gap-4 md:grid-cols-3">
+                      <div className="flex items-center gap-2">
+                        <Users className="h-4 w-4 text-muted-foreground" />
+                        <div>
+                          <p className="text-xs text-muted-foreground">Investors</p>
+                          <p className="text-sm font-semibold text-foreground">{project.investor_count}</p>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <CheckCircle className="h-4 w-4" />
-                        <span>{project.milestones.completed} milestones completed</span>
+                      <div className="flex items-center gap-2">
+                        <Calendar className="h-4 w-4 text-muted-foreground" />
+                        <div>
+                          <p className="text-xs text-muted-foreground">Weeks Active</p>
+                          <p className="text-sm font-semibold text-foreground">{project.weeks_in_progress}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="h-4 w-4 text-muted-foreground" />
+                        <div>
+                          <p className="text-xs text-muted-foreground">Milestones</p>
+                          <p className="text-sm font-semibold text-foreground">{project.milestones.completed}/{project.milestones.total}</p>
+                        </div>
                       </div>
                     </div>
                   </div>

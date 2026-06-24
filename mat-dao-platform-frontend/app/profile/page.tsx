@@ -19,9 +19,11 @@ import { loadUserData } from "@/lib/trl-services/storage"
 import type { UserPlatformData } from "@/lib/trl-services/types"
 import { formatUsd } from "@/lib/ai-studio/api"
 import { ConnectButton } from '@rainbow-me/rainbowkit'
+import { useAccount } from 'wagmi'
 
 export default function ProfilePage() {
   const { user, isLoading } = useAuth()
+  const { address, isConnected: walletConnected } = useAccount()
   const [copied, setCopied] = useState(false)
   const [platformData, setPlatformData] = useState<UserPlatformData | null>(null)
 
@@ -131,17 +133,21 @@ export default function ProfilePage() {
               Wallet
             </h2>
 
-            {user.walletAddress ? (
+            {walletConnected && address ? (
               <div className="flex flex-col gap-4">
                 <div className="flex items-center justify-between rounded-lg bg-secondary/50 px-4 py-3">
                   <div>
                     <p className="text-xs text-muted-foreground">Connected Address</p>
                     <p className="mt-0.5 font-mono text-sm text-foreground">
-                      {user.walletAddress}
+                      {address}
                     </p>
                   </div>
                   <button
-                    onClick={handleCopyWallet}
+                    onClick={() => {
+                      navigator.clipboard.writeText(address)
+                      setCopied(true)
+                      setTimeout(() => setCopied(false), 2000)
+                    }}
                     className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
                     aria-label="Copy wallet address"
                   >
@@ -154,7 +160,7 @@ export default function ProfilePage() {
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="h-2 w-2 rounded-full bg-accent" />
-                  <span className="text-xs text-accent">Connected</span>
+                  <span className="text-xs text-accent">Connected via {user.walletAddress === address ? 'Email-linked' : 'Wallet only'}</span>
                 </div>
                 <ConnectButton />
               </div>

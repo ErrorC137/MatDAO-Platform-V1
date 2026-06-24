@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import {
   Upload,
   FileText,
@@ -9,7 +10,10 @@ import {
   ArrowRight,
   Beaker,
   Info,
+  Loader2,
 } from "lucide-react"
+import { supabase } from "@/lib/supabase/client"
+import { useAuth } from "@/context/auth-context"
 
 /* ------------------------------------------------------------------ */
 /*  Option data                                                        */
@@ -55,13 +59,110 @@ const fundingOptions = [
 /* ------------------------------------------------------------------ */
 
 export default function SubmitProjectPage() {
+  const { user } = useAuth()
+  const router = useRouter()
   const [trl, setTrl] = useState(2)
   const [fileName, setFileName] = useState<string | null>(null)
+  const [file, setFile] = useState<File | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) setFileName(file.name)
+    const selectedFile = e.target.files?.[0]
+    if (selectedFile) {
+      setFileName(selectedFile.name)
+      setFile(selectedFile)
+    }
+  }
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (!user) {
+      setError("Please sign in to submit a project")
+      return
+    }
+
+    setLoading(true)
+    setError(null)
+
+    try {
+      const formData = new FormData(e.currentTarget)
+      const title = formData.get("title") as string
+      const institution = formData.get("institution") as string
+      const email = formData.get("email") as string
+      const workingField = formData.get("workingField") as string
+      const partnerNeeded = formData.get("partnerNeeded") as string
+      const license = formData.get("license") as string
+      const fundingNeeded = formData.get("fundingNeeded") as string
+      const mainObstacle = formData.get("mainObstacle") as string
+      const whatProven = formData.get("whatProven") as string
+
+      if (!title || !institution || !email || !workingField || !fundingNeeded || !mainObstacle || !whatProven) {
+        setError("Please fill in all required fields")
+        setLoading(false)
+        return
+      }
+
+      // Create slug from title
+      const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-' + Date.now()
+
+      // Parse funding range
+      let fundingGoal = 50000
+      if (fundingNeeded.includes("< $10,000")) fundingGoal = 10000
+      else if (fundingNeeded.includes("$10,000 - $50,000")) fundingGoal = 50000
+      else if (fundingNeeded.includes("$50,000 - $100,000")) fundingGoal = 100000
+      else if (fundingNeeded.includes("$100,000 - $250,000")) fundingGoal = 250000
+      else if (fundingNeeded.includes("> $250,000")) fundingGoal = 500000
+
+      // Insert project into Supabase
+      const { data: projectData, error: projectError } = await supabase
+        .from('projects')
+        .insert({
+          title,
+          slug,
+          researcher_id: user.id,
+          trl,
+          phase: 'submission',
+          funding_goal: fundingGoal,
+          funding_raised: 0,
+          description: [
+            { key: 'institution', value: institution },
+            { key: 'email', value: email },
+            { key: 'workingField', value: workingField },
+            { key: 'partnerNeeded', value: partnerNeeded },
+            { key: 'license', value: license },
+            { key: 'fundingNeeded', value: fundingNeeded },
+          ],
+          technical_specs: [
+            { key: 'mainObstacle', value: mainObstacle },
+            { key: 'whatProven', value: whatProven },
+          ],
+          market_applications: [],
+          development_timeline: [],
+          team: [],
+          risk_factors: [],
+          competitive_advantage: [],
+          ip_status: { type: '', status: '', details: '' },
+        })
+        .select()
+        .single()
+
+      if (projectError) throw projectError
+
+      // If file uploaded, upload to Pinata (simplified - just store metadata for now)
+      if (file) {
+        console.log('File uploaded:', file.name)
+        // TODO: Implement actual file upload to Pinata
+      }
+
+      router.push(`/submit/milestone?projectId=${projectData.id}`)
+    } catch (err) {
+      console.error('Submission error:', err)
+      setError(err instanceof Error ? err.message : 'Failed to submit project')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -85,7 +186,12 @@ export default function SubmitProjectPage() {
       {/* ---- Form ---- */}
       <section className="px-4 py-12">
         <div className="mx-auto w-full max-w-2xl">
-          <form className="flex flex-col gap-10">
+          {error && (
+            <div className="mb-6 rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+              {error}
+            </div>
+          )}
+          <form onSubmit={handleSubmit} className="flex flex-col gap-10">
             {/* ====== Section: Basic Info ====== */}
             <div className="flex flex-col gap-1">
               <h2 className="text-lg font-semibold text-foreground">
@@ -102,6 +208,7 @@ export default function SubmitProjectPage() {
                 Project Title <span className="text-destructive">*</span>
               </label>
               <input
+                name="title"
                 type="text"
                 required
                 className="rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30"
@@ -116,6 +223,7 @@ export default function SubmitProjectPage() {
                   Institution <span className="text-destructive">*</span>
                 </label>
                 <input
+                  name="institution"
                   type="text"
                   required
                   className="rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30"
@@ -127,6 +235,7 @@ export default function SubmitProjectPage() {
                   Email <span className="text-destructive">*</span>
                 </label>
                 <input
+                  name="email"
                   type="email"
                   required
                   className="rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30"
@@ -143,6 +252,7 @@ export default function SubmitProjectPage() {
                 </label>
                 <div className="relative">
                   <select
+                    name="workingField"
                     required
                     className="w-full appearance-none rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30"
                   >
@@ -171,7 +281,7 @@ export default function SubmitProjectPage() {
                   Partner Needed
                 </label>
                 <div className="relative">
-                  <select className="w-full appearance-none rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30">
+                  <select name="partnerNeeded" className="w-full appearance-none rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30">
                     <option value="">Select partner type</option>
                     {partnerOptions.map((o) => (
                       <option key={o} value={o}>
@@ -258,7 +368,7 @@ export default function SubmitProjectPage() {
                   License
                 </label>
                 <div className="relative">
-                  <select className="w-full appearance-none rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30">
+                  <select name="license" className="w-full appearance-none rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30">
                     <option value="">Select license type</option>
                     {licenseOptions.map((o) => (
                       <option key={o} value={o}>
@@ -285,6 +395,7 @@ export default function SubmitProjectPage() {
                 </label>
                 <div className="relative">
                   <select
+                    name="fundingNeeded"
                     required
                     className="w-full appearance-none rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30"
                   >
@@ -329,6 +440,7 @@ export default function SubmitProjectPage() {
                 Main Obstacle <span className="text-destructive">*</span>
               </label>
               <textarea
+                name="mainObstacle"
                 rows={4}
                 required
                 className="resize-none rounded-xl border border-border bg-card px-4 py-3 text-sm leading-relaxed text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30"
@@ -342,6 +454,7 @@ export default function SubmitProjectPage() {
                 What you have proven? <span className="text-destructive">*</span>
               </label>
               <textarea
+                name="whatProven"
                 rows={4}
                 required
                 className="resize-none rounded-xl border border-border bg-card px-4 py-3 text-sm leading-relaxed text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30"
@@ -397,13 +510,23 @@ export default function SubmitProjectPage() {
 
             {/* Submit */}
             <div className="flex flex-col items-center gap-3 pt-4">
-              <Link
-                href="/submit/milestone"
-                className="flex items-center gap-2 rounded-full bg-primary px-8 py-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+              <button
+                type="submit"
+                disabled={loading}
+                className="flex items-center gap-2 rounded-full bg-primary px-8 py-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
               >
-                Create your milestones
-                <ArrowRight className="h-4 w-4" />
-              </Link>
+                {loading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Creating your milestones...
+                  </>
+                ) : (
+                  <>
+                    Create your milestones
+                    <ArrowRight className="h-4 w-4" />
+                  </>
+                )}
+              </button>
               <p className="text-xs text-muted-foreground">
                 You can save and return to this later.
               </p>
