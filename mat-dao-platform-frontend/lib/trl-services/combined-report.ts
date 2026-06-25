@@ -328,7 +328,14 @@ export async function runCombinedAssessment(
     
     return result
   } catch (error) {
-    console.warn('Backend analysis failed, using deterministic fallback:', error)
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    console.warn('Backend analysis failed, using deterministic fallback:', errorMessage)
+    
+    // Check if it's a rate limiting error
+    if (errorMessage.includes('429') || errorMessage.includes('rate limit') || errorMessage.includes('Too Many Requests')) {
+      console.warn('Rate limit detected - consider adding API rate limiting or caching')
+    }
+    
     // Use deterministic fallback when backend is unavailable
     const fallbackResult = generateDeterministicFallback(normalizedInput)
     analysisCache.set(inputHash, fallbackResult)

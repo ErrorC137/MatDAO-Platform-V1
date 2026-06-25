@@ -102,11 +102,64 @@ export default function ProjectAssessmentResultsPage() {
     setSaved(true)
   }
 
+  // Check if this is using fallback data (backend unavailable)
+  const isFallbackData = report?.ipReport?.document_profile?.note?.includes("fallback") || 
+                         report?.ipReport?.classification?.classifier_model?.includes("fallback")
+
   if (!report) return null
 
   return (
     <div className="relative px-5 py-12 sm:px-6">
       <div className="relative z-10 mx-auto max-w-4xl">
+        {/* Fallback Data Warning */}
+        {isFallbackData && (
+          <div className="mb-6 rounded-xl border border-yellow-500/40 bg-yellow-500/10 p-4">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-semibold text-yellow-400 mb-1">Analysis Using Fallback Data</p>
+                <p className="text-xs text-white/70">
+                  The backend AI analysis service is currently unavailable (rate limited). The results shown are generated using deterministic fallback data based on your input. For accurate analysis, please try again later when the service is available.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Document Summary Section */}
+        <div className="mb-8 rounded-2xl border border-white/10 bg-black/30 p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Brain className="w-5 h-5 text-[#6efcff]" />
+            <h2 className="font-headline text-lg font-bold text-white/95">Document Analysis Summary</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div className="rounded-lg border border-white/10 bg-black/20 p-4">
+              <p className="text-xs text-white/50 mb-1">Document Type</p>
+              <p className="text-sm font-semibold text-white/90">{report.ipReport?.document_profile?.document_type || "Research Paper"}</p>
+            </div>
+            <div className="rounded-lg border border-white/10 bg-black/20 p-4">
+              <p className="text-xs text-white/50 mb-1">Word Count</p>
+              <p className="text-sm font-semibold text-white/90">{report.ipReport?.document_profile?.word_count?.toLocaleString() || "N/A"}</p>
+            </div>
+            <div className="rounded-lg border border-white/10 bg-black/20 p-4">
+              <p className="text-xs text-white/50 mb-1">Classification</p>
+              <p className="text-sm font-semibold text-white/90">{report.ipReport?.classification?.sector_name || "N/A"}</p>
+            </div>
+            <div className="rounded-lg border border-white/10 bg-black/20 p-4">
+              <p className="text-xs text-white/50 mb-1">Primary Field</p>
+              <p className="text-sm font-semibold text-white/90">{(report.ipReport?.classification as any)?.field_classification?.primary || "Materials Science"}</p>
+            </div>
+          </div>
+          <div className="rounded-lg border border-white/10 bg-black/20 p-4">
+            <p className="text-xs text-white/50 mb-2">Analysis Overview</p>
+            <p className="text-sm text-white/70 leading-relaxed">
+              This document has been analyzed for {report.ipReport?.document_profile?.word_count?.toLocaleString() || "various"} words across {report.ipReport?.document_profile?.sections_found?.length || 3} sections. 
+              The research is classified under {report.ipReport?.classification?.sector_name || "various fields"} with primary focus on {(report.ipReport?.classification as any)?.field_classification?.primary || "materials science"}. 
+              The analysis indicates a TRL level of {report.trlProject.trl} with an IP novelty score of {report.summary.ipScore}/100.
+            </p>
+          </div>
+        </div>
+
         <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
           <div>
             <p className="mb-2 text-[11px] uppercase tracking-wider text-[#c5fdff]">Detailed Assessment Report</p>
@@ -142,24 +195,20 @@ export default function ProjectAssessmentResultsPage() {
                 Sign in to save
               </Link>
             )}
-            {user?.walletAddress && !minted && (
+            {false && user?.walletAddress && !minted && (
               <button
                 type="button"
                 onClick={handleMintIPNFT}
                 disabled={minting || isMintingPending}
-                className="inline-flex items-center gap-2 rounded-full border border-[#f59e0b]/40 bg-[#f59e0b]/10 px-5 py-2 text-sm font-semibold text-[#f59e0b] hover:bg-[#f59e0b]/20 disabled:opacity-60"
+                className="inline-flex items-center gap-2 rounded-full border border-[#6efcff]/40 bg-[#6efcff]/10 px-5 py-2 text-sm font-semibold text-[#c5fdff] hover:bg-[#6efcff]/20 disabled:opacity-60"
               >
-                {minting || isMintingPending ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Gem className="h-4 w-4" />
-                )}
+                {minting || isMintingPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Gem className="h-4 w-4" />}
                 {minting || isMintingPending ? "Minting..." : "Mint IP-NFT"}
               </button>
             )}
             {minted && (
               <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-5 py-2 text-sm font-semibold text-emerald-400">
-                <Check className="h-4 w-4" />
+                <Award className="h-4 w-4" />
                 IP-NFT Minted #{nftTokenId}
               </div>
             )}
