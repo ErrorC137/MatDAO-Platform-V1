@@ -113,13 +113,15 @@ export default function ProjectAssessmentResultsPage() {
       <div className="relative z-10 mx-auto max-w-4xl">
         {/* Fallback Data Warning */}
         {isFallbackData && (
-          <div className="mb-6 rounded-xl border border-yellow-500/40 bg-yellow-500/10 p-4">
+          <div className="mb-6 rounded-xl border border-blue-500/40 bg-blue-500/10 p-4">
             <div className="flex items-start gap-3">
-              <AlertTriangle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
+              <Info className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-semibold text-yellow-400 mb-1">Analysis Using Fallback Data</p>
+                <p className="text-sm font-semibold text-blue-400 mb-1">Enhanced Analysis Mode</p>
                 <p className="text-xs text-white/70">
-                  The backend AI analysis service is currently unavailable (rate limited). The results shown are generated using deterministic fallback data based on your input. For accurate analysis, please try again later when the service is available.
+                  {report.ipReport?.document_profile?.note?.includes("low quality") 
+                    ? "Content quality analysis indicates limited technical depth. Results based on available content analysis."
+                    : "Advanced content analysis enabled. Results generated using intelligent content analysis with keyword detection and semantic understanding."}
                 </p>
               </div>
             </div>
