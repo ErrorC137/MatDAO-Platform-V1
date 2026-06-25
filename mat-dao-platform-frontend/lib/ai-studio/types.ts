@@ -25,6 +25,12 @@ export interface AnalysisReport {
     sector_name: string
     classification_confidence: number
     classifier_model?: string
+    detected_keywords?: string[]
+    field_classification?: {
+      primary: string
+      secondary: string
+      tertiary: string
+    }
   }
   originality: {
     max_cosine_similarity: number
@@ -67,6 +73,16 @@ export interface AnalysisReport {
     hitl_reserved_pct: number
     automated_anchor_pct: number
     audit_trail?: AuditEntry[]
+    additional_factors?: {
+      market_size_multiplier: number
+      trl_adjustment_factor: number
+      team_quality_score: number
+      competitive_advantage_score: number
+      regulatory_risk_discount: number
+      time_to_market_months: number
+      patent_strength_score: number
+      commercial_readiness_score: number
+    }
   }
   trl_evaluation?: {
     trl: number
@@ -93,6 +109,30 @@ export interface AnalysisReport {
     timestamp_unix: number
     signature_sha256_hmac: string
     privacy_mode: string
+  }
+  value_chain_analysis?: {
+    upstream: Array<{
+      stage: string
+      description: string
+      key_suppliers: string[]
+      risk_level: string
+      cost_impact: string
+    }>
+    midstream: Array<{
+      stage: string
+      description: string
+      key_suppliers: string[]
+      risk_level: string
+      cost_impact: string
+    }>
+    downstream: Array<{
+      stage: string
+      description: string
+      key_suppliers: string[]
+      risk_level: string
+      cost_impact: string
+    }>
+    value_capture_opportunities: string[]
   }
 }
 

@@ -13,6 +13,9 @@ export interface AssessmentInput {
   category?: string
   author?: string
   file?: File | null
+  proposalFile?: File | null
+  pitchdeckFile?: File | null
+  financialsFile?: File | null
   userTrl?: number // Optional user-provided TRL (1-9)
 }
 
@@ -83,14 +86,48 @@ function generateDeterministicFallback(input: AssessmentInput): CombinedAssessme
         nace_code: "20.13",
         sector_name: deterministicCategory,
         classification_confidence: 0.78,
-        classifier_model: "fallback-deterministic"
+        classifier_model: "fallback-deterministic",
+        detected_keywords: [
+          "nanomaterials",
+          "synthesis",
+          "characterization",
+          "properties",
+          "applications",
+          "carbon",
+          "energy storage",
+          "composite materials"
+        ],
+        field_classification: {
+          primary: "Materials Science",
+          secondary: "Chemistry",
+          tertiary: "Engineering"
+        }
       },
       originality: {
         max_cosine_similarity: 0.35 + (Math.abs(hashSum) % 20) / 100,
         originality_premium_s: 1.0 + (Math.abs(hashSum) % 30) / 100,
         embedding_model: "fallback-embedding",
         patent_corpus_size: 100000,
-        top_patent_matches: []
+        top_patent_matches: [
+          {
+            patent_id: "US20240000000",
+            title: "Advanced material composition",
+            ipc: "C01B32/00",
+            cosine_similarity: 0.25 + (Math.abs(hashSum) % 15) / 100
+          },
+          {
+            patent_id: "US20230000000",
+            title: "Novel synthesis method",
+            ipc: "C01B33/00",
+            cosine_similarity: 0.20 + (Math.abs(hashSum) % 10) / 100
+          },
+          {
+            patent_id: "EP3500000",
+            title: "Material processing technique",
+            ipc: "B01J21/00",
+            cosine_similarity: 0.15 + (Math.abs(hashSum) % 8) / 100
+          }
+        ]
       },
       fto: {
         r_fto: 0.15 + (Math.abs(hashSum) % 25) / 100,
@@ -110,9 +147,19 @@ function generateDeterministicFallback(input: AssessmentInput): CombinedAssessme
         tokenization_anchor_usd: 1000000,
         royalty_rate_baseline: 0.05,
         sector_name: deterministicCategory,
-        formula: "V_target = V_baseline * S_originality * (1 - R_fto)",
+        formula: "V_target = V_baseline * S_originality * (1 - R_fto) * Market_Factor * TRL_Adj * Team_Quality",
         hitl_reserved_pct: 0.2,
-        automated_anchor_pct: 0.8
+        automated_anchor_pct: 0.8,
+        additional_factors: {
+          market_size_multiplier: 1.0 + (Math.abs(hashSum) % 40) / 100,
+          trl_adjustment_factor: 0.8 + (deterministicTRL / 10),
+          team_quality_score: 0.7 + (Math.abs(hashSum) % 30) / 100,
+          competitive_advantage_score: 0.6 + (Math.abs(hashSum) % 40) / 100,
+          regulatory_risk_discount: 0.05 + (Math.abs(hashSum) % 10) / 100,
+          time_to_market_months: 12 + (Math.abs(hashSum) % 24),
+          patent_strength_score: 0.7 + (Math.abs(hashSum) % 30) / 100,
+          commercial_readiness_score: 0.5 + (deterministicTRL / 18)
+        }
       },
       trl_evaluation: {
         trl: deterministicTRL,
@@ -139,6 +186,61 @@ function generateDeterministicFallback(input: AssessmentInput): CombinedAssessme
         timestamp_unix: Math.floor(Date.now() / 1000),
         signature_sha256_hmac: "fallback-signature",
         privacy_mode: "standard"
+      },
+      value_chain_analysis: {
+        upstream: [
+          {
+            stage: "Raw Materials",
+            description: "Sourcing of base materials and precursors",
+            key_suppliers: ["Chemical suppliers", "Material manufacturers"],
+            risk_level: "medium",
+            cost_impact: "high"
+          },
+          {
+            stage: "Processing",
+            description: "Material synthesis and processing",
+            key_suppliers: ["Specialty chemical companies", "Equipment manufacturers"],
+            risk_level: "medium",
+            cost_impact: "medium"
+          }
+        ],
+        midstream: [
+          {
+            stage: "Manufacturing",
+            description: "Component fabrication and assembly",
+            key_suppliers: ["Contract manufacturers", "Equipment providers"],
+            risk_level: "low",
+            cost_impact: "high"
+          },
+          {
+            stage: "Quality Control",
+            description: "Testing and validation processes",
+            key_suppliers: ["Testing laboratories", "Certification bodies"],
+            risk_level: "low",
+            cost_impact: "medium"
+          }
+        ],
+        downstream: [
+          {
+            stage: "Distribution",
+            description: "Logistics and supply chain management",
+            key_suppliers: ["Logistics providers", "Warehousing"],
+            risk_level: "medium",
+            cost_impact: "medium"
+          },
+          {
+            stage: "End Markets",
+            description: "Target applications and customer segments",
+            key_suppliers: ["OEM manufacturers", "Direct customers"],
+            risk_level: "low",
+            cost_impact: "high"
+          }
+        ],
+        value_capture_opportunities: [
+          "Vertical integration potential in material processing",
+          "Licensing opportunities for proprietary synthesis methods",
+          "Partnership opportunities with downstream manufacturers"
+        ]
       }
     },
     dueDiligenceReport: {

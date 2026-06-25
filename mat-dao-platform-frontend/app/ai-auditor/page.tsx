@@ -12,12 +12,17 @@ import {
   ThumbsUp,
   ThumbsDown,
   FileEdit,
+  Loader2,
+  Gem,
 } from "lucide-react"
 import { MarkdownReport } from "@/components/trl-services/MarkdownReport"
 import { TrlBackendStatus } from "@/components/trl-services/TrlBackendStatus"
 import { useAuth } from "@/context/auth-context"
 import { supabase } from "@/lib/supabase/client"
 import { MILESTONE_LABELS } from "@/lib/trl-services/storage"
+import { useMintIPNFT } from "@/lib/web3/hooks/useMintIPNFT"
+import { CONTRACT_ADDRESSES } from "@/lib/web3/config"
+import { uploadMetadataToIPFSAction } from "@/lib/ipfs/uploadMetadataToIPFSAction"
 import type { VerificationTask } from "@/lib/trl-services/types"
 
 export default function AiAuditorPage() {
@@ -26,6 +31,10 @@ export default function AiAuditorPage() {
   const [tasks, setTasks] = useState<VerificationTask[]>([])
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
+  const [minting, setMinting] = useState(false)
+  const [mintedProjectIds, setMintedProjectIds] = useState<Set<string>>(new Set())
+
+  const { mintIPNFT, isPending: isMintingPending, isSuccess: isMintSuccess } = useMintIPNFT()
 
   const [title, setTitle] = useState("")
   const [submittedBy, setSubmittedBy] = useState(user?.name || "")
@@ -157,7 +166,13 @@ export default function AiAuditorPage() {
   async function handleSaveEdit() {
     if (!editingTask || !editProofText) return
     try {
-      // In a real implementation, this would call an API to update the proof
+      const { error } = await supabase
+        .from('verification_tasks')
+        .update({ proof_text: editProofText })
+        .eq('id', editingTask.id)
+
+      if (error) throw error
+
       setTasks((prev) =>
         prev.map((t) => (t.id === editingTask.id ? { ...t, proofText: editProofText } : t))
       )
@@ -168,14 +183,119 @@ export default function AiAuditorPage() {
     }
   }
 
-  function handleApprove(task: VerificationTask) {
-    // In a real implementation, this would call an API to approve the verification
-    setTasks((prev) => prev.map((t) => (t.id === task.id ? { ...t, status: "verified", humanPassed: true, humanVoted: true } : t)))
+  async function handleApprove(task: VerificationTask) {
+    try {
+      const { error } = await supabase
+        .from('verification_tasks')
+        .update({
+          status: "verified",
+          human_passed: true,
+          human_voted: true,
+        })
+        .eq('id', task.id)
+
+      if (error) throw error
+
+      setTasks((prev) => prev.map((t) => (t.id === task.id ? { ...t, status: "verified", humanPassed: true, humanVoted: true } : t)))
+
+      // Check if all verifications for this project are approved, then approve project
+      const { data: projectData } = await supabase
+        .from('projects')
+        .select('*')
+        .eq('id', task.projectId)
+        .single()
+
+      if (projectData && projectData.phase !== 'approved') {
+        // Update project phase to approved
+        await supabase
+          .from('projects')
+          .update({ phase: 'approved' })
+          .eq('id', task.projectId)
+
+        // Trigger IP-NFT minting if researcher has wallet connected
+        if (projectData.researcher_id) {
+          const { data: researcherData } = await supabase
+            .from('profiles')
+            .select('wallet_address')
+            .eq('id', projectData.researcher_id)
+            .single()
+
+          if (researcherData?.wallet_address && !mintedProjectIds.has(task.projectId)) {
+            await handleMintIPNFT(task.projectId, projectData, researcherData.wallet_address)
+          }
+        }
+      }
+    } catch (err) {
+      setError("Failed to approve verification")
+    }
   }
 
-  function handleReject(task: VerificationTask) {
-    // In a real implementation, this would call an API to reject the verification
-    setTasks((prev) => prev.map((t) => (t.id === task.id ? { ...t, status: "rejected", humanPassed: false, humanVoted: true } : t)))
+  async function handleMintIPNFT(projectId: string, projectData: any, walletAddress: string) {
+    if (mintedProjectIds.has(projectId)) return
+
+    setMinting(true)
+    try {
+      // Upload metadata to IPFS
+      const metadataUri = await uploadMetadataToIPFSAction(
+        {
+          commercialViability: 85,
+          scientificIntegrity: 90,
+          ipNovelty: 88,
+          validationTier: "Tier A"
+        },
+        {
+          title: projectData.title,
+          description: `MatDAO IP-NFT representing validated material science research: ${projectData.title}`,
+          researchField: projectData.description?.[0]?.value || "Materials Science"
+        }
+      )
+
+      // Mint IP-NFT
+      await mintIPNFT({
+        researcher: walletAddress as `0x${string}`,
+        tokenURI: metadataUri,
+        contractAddress: CONTRACT_ADDRESSES.MATDAO_IPNFT || "0x0000000000000000000000000000000000000000"
+      })
+
+      setMintedProjectIds(prev => new Set(prev).add(projectId))
+
+      // Update project with NFT info
+      await supabase
+        .from('projects')
+        .update({
+          ip_status: {
+            type: 'IP-NFT',
+            status: 'minted',
+            details: metadataUri
+          }
+        })
+        .eq('id', projectId)
+
+    } catch (err) {
+      console.error("Error minting IP-NFT:", err)
+      setError("Failed to mint IP-NFT")
+    } finally {
+      setMinting(false)
+    }
+  }
+
+  async function handleReject(task: VerificationTask) {
+    try {
+      const { error } = await supabase
+        .from('verification_tasks')
+        .update({
+          status: "rejected",
+          human_passed: false,
+          human_voted: true,
+        })
+        .eq('id', task.id)
+
+      if (error) throw error
+
+      setTasks((prev) => prev.map((t) => (t.id === task.id ? { ...t, status: "rejected", humanPassed: false, humanVoted: true } : t)))
+    } catch (err) {
+      setError("Failed to reject verification")
+    }
   }
 
   function statusIcon(task: VerificationTask) {
@@ -353,10 +473,11 @@ export default function AiAuditorPage() {
                             <>
                               <button
                                 onClick={() => handleApprove(task)}
-                                className="rounded p-1.5 text-emerald-400 hover:bg-emerald-500/10"
+                                disabled={minting}
+                                className="rounded p-1.5 text-emerald-400 hover:bg-emerald-500/10 disabled:opacity-50"
                                 title="Approve"
                               >
-                                <ThumbsUp className="h-3.5 w-3.5" />
+                                {minting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ThumbsUp className="h-3.5 w-3.5" />}
                               </button>
                               <button
                                 onClick={() => handleReject(task)}

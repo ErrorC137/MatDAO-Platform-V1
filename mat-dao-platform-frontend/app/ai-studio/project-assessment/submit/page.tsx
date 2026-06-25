@@ -13,6 +13,9 @@ export default function ProjectAssessmentSubmitPage() {
   const [category, setCategory] = useState("Deep Tech")
   const [textContent, setTextContent] = useState("")
   const [file, setFile] = useState<File | null>(null)
+  const [proposalFile, setProposalFile] = useState<File | null>(null)
+  const [pitchdeckFile, setPitchdeckFile] = useState<File | null>(null)
+  const [financialsFile, setFinancialsFile] = useState<File | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [dragOver, setDragOver] = useState(false)
@@ -33,6 +36,9 @@ export default function ProjectAssessmentSubmitPage() {
         category,
         textContent: textContent || (file ? await file.text() : ""),
         file,
+        proposalFile,
+        pitchdeckFile,
+        financialsFile,
         userTrl: useUserTrl ? parseInt(userTrl) : undefined,
       })
       sessionStorage.setItem("matdao-combined-report", JSON.stringify(report))
@@ -42,7 +48,7 @@ export default function ProjectAssessmentSubmitPage() {
     } finally {
       setLoading(false)
     }
-  }, [title, author, category, textContent, file, router, useUserTrl, userTrl])
+  }, [title, author, category, textContent, file, proposalFile, pitchdeckFile, financialsFile, router, useUserTrl, userTrl])
 
   return (
     <div className="relative px-5 py-12 sm:px-6">
@@ -115,6 +121,44 @@ export default function ProjectAssessmentSubmitPage() {
             value={textContent}
             onChange={(e) => setTextContent(e.target.value)}
           />
+
+          {/* Additional Document Uploads */}
+          <div className="space-y-4 pt-4 border-t border-white/10">
+            <p className="text-xs font-semibold text-white/70 uppercase tracking-wider">Additional Documents (Optional)</p>
+            
+            <div className="rounded-xl border border-white/15 bg-black/20 p-4">
+              <label className="text-sm text-white/80 mb-2 block">Proposal Document</label>
+              <input
+                type="file"
+                accept=".pdf,.docx,.txt"
+                className="text-xs text-white/50"
+                onChange={(e) => setProposalFile(e.target.files?.[0] || null)}
+              />
+              {proposalFile && <p className="mt-1 text-xs text-[#c5fdff]">{proposalFile.name}</p>}
+            </div>
+
+            <div className="rounded-xl border border-white/15 bg-black/20 p-4">
+              <label className="text-sm text-white/80 mb-2 block">Pitch Deck</label>
+              <input
+                type="file"
+                accept=".pdf,.pptx,.ppt"
+                className="text-xs text-white/50"
+                onChange={(e) => setPitchdeckFile(e.target.files?.[0] || null)}
+              />
+              {pitchdeckFile && <p className="mt-1 text-xs text-[#c5fdff]">{pitchdeckFile.name}</p>}
+            </div>
+
+            <div className="rounded-xl border border-white/15 bg-black/20 p-4">
+              <label className="text-sm text-white/80 mb-2 block">Financials / Projections</label>
+              <input
+                type="file"
+                accept=".pdf,.xlsx,.xls,.csv"
+                className="text-xs text-white/50"
+                onChange={(e) => setFinancialsFile(e.target.files?.[0] || null)}
+              />
+              {financialsFile && <p className="mt-1 text-xs text-[#c5fdff]">{financialsFile.name}</p>}
+            </div>
+          </div>
 
           {/* Optional User TRL Input */}
           <div className="flex items-center gap-3">
