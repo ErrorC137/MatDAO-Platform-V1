@@ -80,6 +80,76 @@ function generateDeterministicFallback(input: AssessmentInput): CombinedAssessme
   }
   
   // Enhanced innovation scoring with multi-factor analysis
+  // Calculate due diligence scores based on actual content analysis
+  const calculateDueDiligenceScores = (
+    text: string,
+    keywords: string[],
+    wordCount: number,
+    isLowQuality: boolean
+  ) => {
+    const baseScore = isLowQuality ? 5 : 7
+    
+    // Technical feasibility - based on methodology depth
+    const methodologyTerms = ['method', 'approach', 'technique', 'procedure', 'protocol', 'experiment', 'test', 'validate']
+    const methodologyCount = methodologyTerms.filter(term => text.toLowerCase().includes(term)).length
+    const technicalFeasibility = Math.min(10, baseScore + methodologyCount)
+    
+    // Market potential - based on application/commercial terms
+    const marketTerms = ['market', 'commercial', 'industry', 'application', 'customer', 'revenue', 'business']
+    const marketCount = marketTerms.filter(term => text.toLowerCase().includes(term)).length
+    const marketPotential = Math.min(10, baseScore + marketCount)
+    
+    // Team capability - based on author/institution mentions
+    const teamTerms = ['team', 'researcher', 'author', 'institution', 'university', 'lab', 'collaboration']
+    const teamCount = teamTerms.filter(term => text.toLowerCase().includes(term)).length
+    const teamCapability = Math.min(10, baseScore + teamCount)
+    
+    // IP position - based on patent/IP terms
+    const ipTerms = ['patent', 'intellectual', 'property', 'invention', 'novel', 'unique', 'innovation']
+    const ipCount = ipTerms.filter(term => text.toLowerCase().includes(term)).length
+    const ipPosition = Math.min(10, baseScore + ipCount)
+    
+    // Scalability - based on scale/production terms
+    const scaleTerms = ['scale', 'production', 'manufacturing', 'commercial', 'industrial', 'large']
+    const scaleCount = scaleTerms.filter(term => text.toLowerCase().includes(term)).length
+    const scalability = Math.min(10, baseScore + scaleCount)
+    
+    // Regulatory path - based on regulatory/compliance terms
+    const regulatoryTerms = ['regulatory', 'compliance', 'fda', 'approval', 'certification', 'standard']
+    const regulatoryCount = regulatoryTerms.filter(term => text.toLowerCase().includes(term)).length
+    const regulatoryPath = Math.min(10, baseScore + regulatoryCount)
+    
+    // Financial viability - based on financial terms
+    const financialTerms = ['cost', 'budget', 'funding', 'investment', 'financial', 'economic']
+    const financialCount = financialTerms.filter(term => text.toLowerCase().includes(term)).length
+    const financialViability = Math.min(10, baseScore + financialCount)
+    
+    // Competitive advantage - based on competitive/advantage terms
+    const competitiveTerms = ['competitive', 'advantage', 'superior', 'better', 'leading', 'advanced']
+    const competitiveCount = competitiveTerms.filter(term => text.toLowerCase().includes(term)).length
+    const competitiveAdvantage = Math.min(10, baseScore + competitiveCount)
+    
+    // Risk management - based on risk/mitigation terms
+    const riskTerms = ['risk', 'mitigation', 'challenge', 'obstacle', 'barrier', 'issue']
+    const riskCount = riskTerms.filter(term => text.toLowerCase().includes(term)).length
+    const riskManagement = Math.min(10, baseScore + riskCount)
+    
+    return {
+      technicalFeasibility,
+      marketPotential,
+      teamCapability,
+      ipPosition,
+      scalability,
+      regulatoryPath,
+      financialViability,
+      competitiveAdvantage,
+      riskManagement
+    }
+  }
+  
+  const ddScores = calculateDueDiligenceScores(input.textContent, detectedKeywords, wordCount, isLowQuality)
+  
+  // Enhanced innovation scoring with multi-factor analysis
   const calculateInnovationScore = (
     text: string, 
     keywords: string[], 
@@ -394,20 +464,50 @@ function generateDeterministicFallback(input: AssessmentInput): CombinedAssessme
       documentName: input.title,
       wordCount: input.textContent.split(/\s+/).length,
       dimensions: [
-        { id: 1, name: "Technical Feasibility", score: 8 + (Math.abs(hashSum) % 2), maxScore: 10, weight: 0.15, evidence: ["Technical approach validated"], layer: "extraction" },
-        { id: 2, name: "Market Potential", score: 7 + (Math.abs(hashSum) % 3), maxScore: 10, weight: 0.15, evidence: ["Market opportunity identified"], layer: "enrichment" },
-        { id: 3, name: "Team Capability", score: 8 + (Math.abs(hashSum) % 2), maxScore: 10, weight: 0.15, evidence: ["Team expertise confirmed"], layer: "extraction" },
-        { id: 4, name: "IP Position", score: 7 + (Math.abs(hashSum) % 3), maxScore: 10, weight: 0.15, evidence: ["IP analysis completed"], layer: "enrichment" },
-        { id: 5, name: "Scalability", score: 7 + (Math.abs(hashSum) % 3), maxScore: 10, weight: 0.10, evidence: ["Scalability assessed"], layer: "extraction" },
-        { id: 6, name: "Regulatory Path", score: 7 + (Math.abs(hashSum) % 3), maxScore: 10, weight: 0.10, evidence: ["Regulatory requirements identified"], layer: "enrichment" },
-        { id: 7, name: "Financial Viability", score: 7 + (Math.abs(hashSum) % 3), maxScore: 10, weight: 0.10, evidence: ["Financial projections reviewed"], layer: "extraction" },
-        { id: 8, name: "Competitive Advantage", score: 7 + (Math.abs(hashSum) % 3), maxScore: 10, weight: 0.05, evidence: ["Competitive analysis done"], layer: "enrichment" },
-        { id: 9, name: "Risk Management", score: 8 + (Math.abs(hashSum) % 2), maxScore: 10, weight: 0.05, evidence: ["Risks identified and mitigated"], layer: "integrity" }
+        { id: 1, name: "Technical Feasibility", score: ddScores.technicalFeasibility, maxScore: 10, weight: 0.15, evidence: ["Technical approach validated"], layer: "extraction" },
+        { id: 2, name: "Market Potential", score: ddScores.marketPotential, maxScore: 10, weight: 0.15, evidence: ["Market opportunity identified"], layer: "enrichment" },
+        { id: 3, name: "Team Capability", score: ddScores.teamCapability, maxScore: 10, weight: 0.15, evidence: ["Team expertise confirmed"], layer: "extraction" },
+        { id: 4, name: "IP Position", score: ddScores.ipPosition, maxScore: 10, weight: 0.15, evidence: ["IP analysis completed"], layer: "enrichment" },
+        { id: 5, name: "Scalability", score: ddScores.scalability, maxScore: 10, weight: 0.10, evidence: ["Scalability assessed"], layer: "extraction" },
+        { id: 6, name: "Regulatory Path", score: ddScores.regulatoryPath, maxScore: 10, weight: 0.10, evidence: ["Regulatory requirements identified"], layer: "enrichment" },
+        { id: 7, name: "Financial Viability", score: ddScores.financialViability, maxScore: 10, weight: 0.10, evidence: ["Financial projections reviewed"], layer: "extraction" },
+        { id: 8, name: "Competitive Advantage", score: ddScores.competitiveAdvantage, maxScore: 10, weight: 0.05, evidence: ["Competitive analysis done"], layer: "enrichment" },
+        { id: 9, name: "Risk Management", score: ddScores.riskManagement, maxScore: 10, weight: 0.05, evidence: ["Risks identified and mitigated"], layer: "integrity" }
       ],
-      totalScore: 75 + (Math.abs(hashSum) % 20),
+      totalScore: Math.round(
+        (ddScores.technicalFeasibility * 0.15) +
+        (ddScores.marketPotential * 0.15) +
+        (ddScores.teamCapability * 0.15) +
+        (ddScores.ipPosition * 0.15) +
+        (ddScores.scalability * 0.10) +
+        (ddScores.regulatoryPath * 0.10) +
+        (ddScores.financialViability * 0.10) +
+        (ddScores.competitiveAdvantage * 0.05) +
+        (ddScores.riskManagement * 0.05)
+      ) * 10,
       maxTotalScore: 90,
       integrityGateTriggered: false,
-      investmentTier: deterministicScore >= 85 ? "pass" : deterministicScore >= 75 ? "review" : "fail",
+      investmentTier: (Math.round(
+        (ddScores.technicalFeasibility * 0.15) +
+        (ddScores.marketPotential * 0.15) +
+        (ddScores.teamCapability * 0.15) +
+        (ddScores.ipPosition * 0.15) +
+        (ddScores.scalability * 0.10) +
+        (ddScores.regulatoryPath * 0.10) +
+        (ddScores.financialViability * 0.10) +
+        (ddScores.competitiveAdvantage * 0.05) +
+        (ddScores.riskManagement * 0.05)
+      ) * 10) >= 90 ? "pass" : (Math.round(
+        (ddScores.technicalFeasibility * 0.15) +
+        (ddScores.marketPotential * 0.15) +
+        (ddScores.teamCapability * 0.15) +
+        (ddScores.ipPosition * 0.15) +
+        (ddScores.scalability * 0.10) +
+        (ddScores.regulatoryPath * 0.10) +
+        (ddScores.financialViability * 0.10) +
+        (ddScores.competitiveAdvantage * 0.05) +
+        (ddScores.riskManagement * 0.05)
+      ) * 10) >= 70 ? "review" : "fail",
       timestamp: Math.floor(Date.now() / 1000),
       analysisSource: "client",
       layers: {
@@ -419,9 +519,39 @@ function generateDeterministicFallback(input: AssessmentInput): CombinedAssessme
     summary: {
       trl: deterministicTRL,
       ipScore: deterministicScore,
-      valuationUsd: 750000 + (Math.abs(hashSum) % 750000),
-      dueDiligenceScore: 75 + (Math.abs(hashSum) % 20),
-      investmentTier: deterministicScore >= 85 ? "pass" : deterministicScore >= 75 ? "review" : "fail",
+      valuationUsd: valuationRange.mid,
+      dueDiligenceScore: Math.round(
+        (ddScores.technicalFeasibility * 0.15) +
+        (ddScores.marketPotential * 0.15) +
+        (ddScores.teamCapability * 0.15) +
+        (ddScores.ipPosition * 0.15) +
+        (ddScores.scalability * 0.10) +
+        (ddScores.regulatoryPath * 0.10) +
+        (ddScores.financialViability * 0.10) +
+        (ddScores.competitiveAdvantage * 0.05) +
+        (ddScores.riskManagement * 0.05)
+      ) * 10,
+      investmentTier: (Math.round(
+        (ddScores.technicalFeasibility * 0.15) +
+        (ddScores.marketPotential * 0.15) +
+        (ddScores.teamCapability * 0.15) +
+        (ddScores.ipPosition * 0.15) +
+        (ddScores.scalability * 0.10) +
+        (ddScores.regulatoryPath * 0.10) +
+        (ddScores.financialViability * 0.10) +
+        (ddScores.competitiveAdvantage * 0.05) +
+        (ddScores.riskManagement * 0.05)
+      ) * 10) >= 90 ? "pass" : (Math.round(
+        (ddScores.technicalFeasibility * 0.15) +
+        (ddScores.marketPotential * 0.15) +
+        (ddScores.teamCapability * 0.15) +
+        (ddScores.ipPosition * 0.15) +
+        (ddScores.scalability * 0.10) +
+        (ddScores.regulatoryPath * 0.10) +
+        (ddScores.financialViability * 0.10) +
+        (ddScores.competitiveAdvantage * 0.05) +
+        (ddScores.riskManagement * 0.05)
+      ) * 10) >= 70 ? "review" : "fail",
       recommendedNextSteps: [
         "Proceed with prototype development",
         "Initiate partnership discussions",
