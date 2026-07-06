@@ -72,7 +72,7 @@ export function Navbar() {
             })}
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           {/* RainbowKit Connect Button */}
           <div className="hidden sm:block">
             <ConnectButton accountStatus="avatar" chainStatus="icon" showBalance={false} />
@@ -82,30 +82,30 @@ export function Navbar() {
             <div className="relative" ref={dropdownRef}>
               <button 
                 onClick={() => setDropdownOpen(!dropdownOpen)} 
-                className="flex items-center gap-2.5 rounded-2xl border border-border/60 bg-secondary/40 px-3 py-2 text-sm text-foreground transition-all duration-200 hover:bg-secondary/60 hover:border-border/80 backdrop-blur-sm"
+                className="flex items-center gap-2 rounded-xl border border-border/60 bg-secondary/40 px-3 py-1.5 text-sm text-foreground transition-all duration-200 hover:bg-secondary/60 hover:border-border/80 backdrop-blur-sm"
               >
-                <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-gradient-to-br from-[#6efcff]/30 to-[#6efcff]/10 text-sm font-bold text-[#c5fdff] shadow-inner">
+                <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-gradient-to-br from-[#6efcff]/30 to-[#6efcff]/10 text-xs font-bold text-[#c5fdff] shadow-inner">
                   {user.name.charAt(0).toUpperCase()}
                 </div>
-                <span className="hidden md:inline font-medium">{user.name}</span>
-                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${dropdownOpen ? "rotate-180" : ""}`} />
+                <span className="hidden md:inline font-medium text-xs">{user.name}</span>
+                <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${dropdownOpen ? "rotate-180" : ""}`} />
               </button>
               {dropdownOpen && (
-                <div className="absolute right-0 top-full mt-3 w-56 rounded-2xl border border-border/60 bg-card/95 backdrop-blur-xl p-2 shadow-2xl shadow-black/20">
+                <div className="absolute right-0 top-full mt-2 w-48 rounded-xl border border-border/60 bg-card/95 backdrop-blur-xl p-1.5 shadow-2xl shadow-black/20">
                   <Link 
                     href="/profile" 
                     onClick={() => setDropdownOpen(false)} 
-                    className="flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm text-muted-foreground hover:bg-secondary/80 hover:text-foreground transition-colors"
+                    className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs text-muted-foreground hover:bg-secondary/80 hover:text-foreground transition-colors"
                   >
-                    <User className="h-4 w-4" /> 
+                    <User className="h-3.5 w-3.5" /> 
                     <span className="font-medium">Profile</span>
                   </Link>
                   <div className="my-1 h-px bg-border/40" />
                   <button 
                     onClick={() => { signOut(); setDropdownOpen(false); }} 
-                    className="flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm text-destructive hover:bg-destructive/10 transition-colors"
+                    className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs text-destructive hover:bg-destructive/10 transition-colors"
                   >
-                    <LogOut className="h-4 w-4" /> 
+                    <LogOut className="h-3.5 w-3.5" /> 
                     <span className="font-medium">Sign Out</span>
                   </button>
                 </div>
@@ -115,13 +115,13 @@ export function Navbar() {
             <div className="flex items-center gap-2">
               <Link 
                 href="/auth/sign-in" 
-                className="rounded-2xl border border-border/60 bg-secondary/40 px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-secondary/60 hover:text-foreground transition-all duration-200"
+                className="rounded-xl border border-border/60 bg-secondary/40 px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-secondary/60 hover:text-foreground transition-all duration-200"
               >
                 Sign In
               </Link>
               <Link 
                 href="/auth/sign-up" 
-                className="rounded-2xl bg-gradient-to-r from-[#6efcff] to-[#6efcff]/80 px-4 py-2 text-sm font-semibold text-black hover:from-[#6efcff]/90 hover:to-[#6efcff]/70 transition-all duration-200 shadow-lg shadow-[#6efcff]/20"
+                className="rounded-xl bg-gradient-to-r from-[#6efcff] to-[#6efcff]/80 px-3 py-1.5 text-xs font-semibold text-black hover:from-[#6efcff]/90 hover:to-[#6efcff]/70 transition-all duration-200 shadow-lg shadow-[#6efcff]/20"
               >
                 Launch App
               </Link>
