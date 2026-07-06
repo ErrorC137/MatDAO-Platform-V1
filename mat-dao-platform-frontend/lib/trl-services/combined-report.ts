@@ -79,14 +79,43 @@ function generateDeterministicFallback(input: AssessmentInput): CombinedAssessme
     deterministicTRL = Math.max(2, Math.min(8, deterministicTRL))
   }
   
-  // Adjust score based on content quality
-  let deterministicScore
-  if (isLowQuality || !hasTechnicalContent) {
-    deterministicScore = Math.floor(10 + (Math.abs(hashSum) % 20)) // Low score for BS
-  } else {
-    deterministicScore = Math.floor(50 + (detectedKeywords.length * 5) + (Math.abs(hashSum) % 30))
-    deterministicScore = Math.min(95, deterministicScore)
+  // Enhanced innovation scoring with multi-factor analysis
+  const calculateInnovationScore = (
+    text: string, 
+    keywords: string[], 
+    wordCount: number, 
+    sentences: string[]
+  ) => {
+    let score = 0
+    
+    // Factor 1: Technical depth (0-25 points)
+    const technicalDepth = Math.min(25, Math.floor(wordCount / 50) + keywords.length * 3)
+    score += technicalDepth
+    
+    // Factor 2: Novelty indicators (0-25 points)
+    const noveltyTerms = ['novel', 'innovative', 'breakthrough', 'pioneering', 'revolutionary', 'first', 'unique', 'unprecedented', 'cutting-edge', 'state-of-the-art']
+    const noveltyCount = noveltyTerms.filter(term => text.toLowerCase().includes(term)).length
+    score += Math.min(25, noveltyCount * 8)
+    
+    // Factor 3: Methodology quality (0-25 points)
+    const methodologyIndicators = ['experiment', 'validation', 'testing', 'demonstrated', 'verified', 'proven', 'confirmed', 'data', 'results', 'analysis']
+    const methodologyCount = methodologyIndicators.filter(term => text.toLowerCase().includes(term)).length
+    score += Math.min(25, methodologyCount * 4)
+    
+    // Factor 4: Impact potential (0-25 points)
+    const impactTerms = ['application', 'commercial', 'market', 'industry', 'scalable', 'practical', 'implement', 'deploy', 'solution', 'benefit']
+    const impactCount = impactTerms.filter(term => text.toLowerCase().includes(term)).length
+    score += Math.min(25, impactCount * 4)
+    
+    // Adjust for content quality
+    if (isLowQuality || !hasTechnicalContent) {
+      score = Math.floor(score * 0.3) // Heavy penalty for low quality
+    }
+    
+    return Math.min(100, Math.max(0, score))
   }
+  
+  let deterministicScore = calculateInnovationScore(input.textContent, detectedKeywords, wordCount, sentences)
   
   // Determine category from actual content
   const categoryKeywords = {
@@ -142,9 +171,19 @@ function generateDeterministicFallback(input: AssessmentInput): CombinedAssessme
     cosine_similarity: Math.max(0.05, 0.35 - (i * 0.08) + (Math.abs(hashSum) % 15) / 100)
   }))
   
-  // Generate realistic valuation based on TRL and content quality
+  // Generate realistic valuation with narrower ranges based on TRL and content quality
   const baseValuation = isLowQuality ? 50000 : 200000 + (deterministicTRL * 100000)
   const valuationMultiplier = hasTechnicalContent ? 1.0 + (detectedKeywords.length * 0.1) : 0.5
+  const estimatedValuation = baseValuation * valuationMultiplier
+  
+  // Narrower confidence intervals based on content quality
+  const confidenceInterval = isLowQuality ? 0.20 : (deterministicTRL >= 6 ? 0.10 : 0.15)
+  const valuationRange = {
+    low: Math.floor(estimatedValuation * (1 - confidenceInterval)),
+    mid: Math.floor(estimatedValuation),
+    high: Math.floor(estimatedValuation * (1 + confidenceInterval)),
+    confidence_interval: confidenceInterval
+  }
   
   return {
     id: `assessment-${Date.now()}`,
@@ -177,10 +216,10 @@ function generateDeterministicFallback(input: AssessmentInput): CombinedAssessme
       scoreReasoning: {
         innovation: isLowQuality 
           ? "Innovation score limited due to insufficient technical depth and lack of detailed methodology documentation."
-          : `Innovation score of ${deterministicScore}/100 reflects strong technical novelty in ${detectedKeywords.slice(0, 2).join(' and ')}. The research demonstrates ${detectedKeywords.length >= 5 ? 'significant' : 'moderate'} advancement over existing approaches with ${detectedKeywords.length} key technical indicators identified.`,
+          : `Innovation score of ${deterministicScore}/100 based on multi-factor analysis: Technical depth (${Math.min(25, Math.floor(wordCount / 50) + detectedKeywords.length * 3)}/25), Novelty indicators (${Math.min(25, ['novel', 'innovative', 'breakthrough', 'pioneering', 'revolutionary', 'first', 'unique', 'unprecedented', 'cutting-edge', 'state-of-the-art'].filter(term => input.textContent.toLowerCase().includes(term)).length * 8)}/25), Methodology quality (${Math.min(25, ['experiment', 'validation', 'testing', 'demonstrated', 'verified', 'proven', 'confirmed', 'data', 'results', 'analysis'].filter(term => input.textContent.toLowerCase().includes(term)).length * 4)}/25), Impact potential (${Math.min(25, ['application', 'commercial', 'market', 'industry', 'scalable', 'practical', 'implement', 'deploy', 'solution', 'benefit'].filter(term => input.textContent.toLowerCase().includes(term)).length * 4)}/25).`,
         commercialViability: isLowQuality
           ? "Commercial viability uncertain due to limited technical validation and unclear market positioning."
-          : `Commercial potential supported by ${deterministicTRL >= 5 ? 'prototype validation' : 'proof of concept'} in ${deterministicCategory}. Market opportunities identified in ${detectedKeywords.slice(0, 2).join(' and ')} applications with estimated valuation range of ${formatUsd(baseValuation * valuationMultiplier)}.`,
+          : `Commercial potential supported by ${deterministicTRL >= 5 ? 'prototype validation' : 'proof of concept'} in ${deterministicCategory}. Market opportunities identified in ${detectedKeywords.slice(0, 2).join(' and ')} applications with estimated valuation range of $${(valuationRange.low / 1000).toFixed(0)}K - $${(valuationRange.high / 1000).toFixed(0)}K (±${(valuationRange.confidence_interval * 100).toFixed(0)}% confidence interval).`,
         scientificRigor: isLowQuality
           ? "Scientific rigor assessment limited by incomplete methodology documentation and insufficient experimental data."
           : `Scientific rigor indicated by ${sentences.length} analyzed sections with focus on ${keyData.methodology.toLowerCase().includes('experimental') ? 'experimental methodology' : 'systematic approach'}. Validation through ${detectedKeywords.filter(k => k.includes('test') || k.includes('validation')).length} testing procedures noted.`,
@@ -240,12 +279,13 @@ function generateDeterministicFallback(input: AssessmentInput): CombinedAssessme
         analysis_source: "fallback-content-analysis"
       },
       valuation: {
-        v_baseline_usd: Math.floor(baseValuation * valuationMultiplier),
+        v_baseline_usd: valuationRange.mid,
+        valuation_range_usd: valuationRange,
         s_originality: isLowQuality ? 0.5 : 1.0 + (Math.abs(hashSum) % 30) / 100,
         r_fto: isLowQuality ? 0.5 : 0.85 - (Math.abs(hashSum) % 20) / 100,
-        v_target_usd: Math.floor(baseValuation * valuationMultiplier * 1.5),
-        valuation_floor_usd: Math.floor(baseValuation * valuationMultiplier * 0.5),
-        tokenization_anchor_usd: Math.floor(baseValuation * valuationMultiplier * 2),
+        v_target_usd: valuationRange.high,
+        valuation_floor_usd: valuationRange.low,
+        tokenization_anchor_usd: Math.floor(valuationRange.high * 1.3),
         royalty_rate_baseline: isLowQuality ? 0.02 : 0.05,
         sector_name: deterministicCategory,
         formula: "V_target = V_baseline * S_originality * (1 - R_fto) * Market_Factor * TRL_Adj * Team_Quality",

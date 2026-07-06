@@ -237,7 +237,12 @@ export default function ProjectAssessmentResultsPage() {
           />
           <EnhancedMetric 
             label="IP Valuation" 
-            value={report.summary.valuationUsd ? formatUsd(report.summary.valuationUsd) : "N/A"}
+            value={report.ipReport?.valuation?.valuation_range_usd 
+              ? `${formatUsd(report.ipReport.valuation.valuation_range_usd.low)} - ${formatUsd(report.ipReport.valuation.valuation_range_usd.high)}`
+              : report.summary.valuationUsd 
+                ? formatUsd(report.summary.valuationUsd) 
+                : "N/A"
+            }
             icon={<Gem className="w-5 h-5" />}
           />
           <EnhancedMetric 

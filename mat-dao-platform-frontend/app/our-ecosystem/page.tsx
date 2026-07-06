@@ -1,200 +1,130 @@
 "use client"
 
 import { useState } from "react"
-import { Award, Atom, Battery, Flame, Leaf, Microscope, Sparkles, Wind, Zap, Droplets, Cpu, Globe } from "lucide-react"
+import { Award, Atom, Battery, Flame, Leaf, Microscope, Sparkles, Wind, Zap, Droplets, Cpu, Globe, Beaker } from "lucide-react"
 
-const dummyProjects = [
-  // TRL 8-9 (Top - 4 projects)
+// Project data from Project page - maintaining TRL consistency
+const ecosystemProjects = [
   {
-    id: 1,
-    title: "Solid-State Battery Electrolytes",
-    trl: 9,
-    score: 95,
-    description: "Next-generation solid-state electrolytes with 10x higher ionic conductivity for electric vehicle applications. Commercial production ready.",
-    icon: Battery,
-    color: "#6efcff",
-  },
-  {
-    id: 2,
-    title: "Biodegradable Polymers",
-    trl: 8,
-    score: 92,
-    description: "Marine-degradable bioplastics from agricultural waste with industrial-scale production ready. Full commercial deployment.",
-    icon: Leaf,
-    color: "#34d399",
-  },
-  {
-    id: 3,
-    title: "Advanced Carbon Capture",
-    trl: 8,
-    score: 91,
-    description: "Direct air capture systems with 50% lower energy consumption. Commercial plants operational in 3 regions.",
-    icon: Wind,
-    color: "#a78bfa",
-  },
-  {
-    id: 4,
-    title: "Quantum Computing Materials",
-    trl: 9,
-    score: 94,
-    description: "Room-temperature superconducting materials for quantum computing applications. Patented and licensed.",
-    icon: Atom,
-    color: "#f472b6",
-  },
-  // TRL 6-7 (Middle - 6 projects)
-  {
-    id: 5,
-    title: "AI-Designed Catalysts",
-    trl: 7,
-    score: 88,
-    description: "Machine learning-optimized catalysts for green hydrogen production with 3x efficiency gains. Pilot testing complete.",
-    icon: Sparkles,
-    color: "#f59e0b",
-  },
-  {
-    id: 6,
-    title: "Thermal Energy Storage",
-    trl: 6,
-    score: 86,
-    description: "Phase-change materials for grid-scale thermal energy storage with 24-hour discharge capability. Demo plant running.",
-    icon: Flame,
-    color: "#fb923c",
-  },
-  {
-    id: 7,
-    title: "Nanocomposite Coatings",
-    trl: 7,
-    score: 89,
-    description: "Self-healing nanocomposite coatings for aerospace applications with extreme temperature resistance. Flight testing.",
-    icon: Microscope,
-    color: "#60a5fa",
-  },
-  {
-    id: 8,
-    title: "Smart Grid Materials",
-    trl: 6,
-    score: 85,
-    description: "Conductive polymers for smart grid infrastructure. Field trials in progress with utility partners.",
-    icon: Zap,
-    color: "#fbbf24",
-  },
-  {
-    id: 9,
-    title: "Water Purification Membranes",
-    trl: 7,
-    score: 87,
-    description: "Graphene oxide membranes for desalination with 99.9% rejection rate. Pilot deployment in 2 municipalities.",
-    icon: Droplets,
-    color: "#38bdf8",
-  },
-  {
-    id: 10,
-    title: "Biomedical Sensors",
-    trl: 6,
-    score: 84,
-    description: "Flexible biosensors for continuous health monitoring. Clinical trials underway.",
-    icon: Cpu,
-    color: "#a78bfa",
-  },
-  // TRL 3-5 (Bottom - 10 projects)
-  {
-    id: 11,
-    title: "Smart Concrete",
+    id: "000001",
+    title: "CNT Power Cable",
     trl: 5,
     score: 82,
-    description: "Self-sensing concrete with embedded nanomaterials for real-time structural health monitoring. Lab validation complete.",
-    icon: Award,
-    color: "#a78bfa",
+    description: "Carbon nanotube-based power cables with enhanced conductivity for energy transmission applications. Currently in validation phase.",
+    image: "https://6ibpna7m8edwyvzk.public.blob.vercel-storage.com/24225-cinta-black.webp",
+    researcher: "Dr. Sarah Chen",
+    institution: "MIT",
+    category: "Equity",
+    phase: "Validation",
+    fundingRaised: 95000,
+    fundingGoal: 150000,
   },
   {
-    id: 12,
-    title: "Perovskite Solar Cells",
-    trl: 4,
-    score: 80,
-    description: "Stable perovskite solar cells with 25% efficiency. Stability testing in progress.",
-    icon: Atom,
-    color: "#f472b6",
-  },
-  {
-    id: 13,
-    title: "Hydrogen Storage Alloys",
-    trl: 5,
-    score: 81,
-    description: "Metal hydride alloys for solid-state hydrogen storage. Prototype testing successful.",
-    icon: Battery,
-    color: "#6efcff",
-  },
-  {
-    id: 14,
-    title: "Bio-based Adhesives",
+    id: "000002",
+    title: "MOF Water Harvesting",
     trl: 4,
     score: 79,
-    description: "Sustainable adhesives from lignin for construction applications. Scale-up feasibility study.",
-    icon: Leaf,
-    color: "#34d399",
+    description: "Metal-organic framework membranes for atmospheric water harvesting. Lab testing phase with promising results.",
+    image: "https://6ibpna7m8edwyvzk.public.blob.vercel-storage.com/0_5nmrfh2KtQ5KjByN.png",
+    researcher: "Prof. James Okafor",
+    institution: "Stanford",
+    category: "Initiative",
+    phase: "Lab Testing",
+    fundingRaised: 45000,
+    fundingGoal: 80000,
   },
   {
-    id: 15,
-    title: "Carbon Fiber Recycling",
-    trl: 5,
-    score: 83,
-    description: "Chemical recycling process for end-of-life carbon fiber composites. Pilot plant construction.",
-    icon: Flame,
-    color: "#fb923c",
-  },
-  {
-    id: 16,
-    title: "Thermoelectric Materials",
-    trl: 4,
-    score: 78,
-    description: "High-efficiency thermoelectric materials for waste heat recovery. Material optimization phase.",
-    icon: Sparkles,
-    color: "#f59e0b",
-  },
-  {
-    id: 17,
-    title: "Self-healing Polymers",
+    id: "000003",
+    title: "Aluminum-Air Battery",
     trl: 3,
     score: 76,
-    description: "Autonomous self-healing polymer systems for infrastructure. Proof-of-concept demonstrated.",
-    icon: Microscope,
-    color: "#60a5fa",
+    description: "High-energy density aluminum-air battery technology for grid storage. Proof of concept demonstrated.",
+    image: "https://6ibpna7m8edwyvzk.public.blob.vercel-storage.com/Aluminum-Air-Experimental-Power-Cell.jpg",
+    researcher: "Dr. Mei Lin",
+    institution: "Tsinghua",
+    category: "Equity",
+    phase: "Proof of Concept",
+    fundingRaised: 5000,
+    fundingGoal: 25000,
   },
   {
-    id: 18,
-    title: "Sustainable Insulation",
+    id: "000004",
+    title: "G-Cap 500",
+    trl: 6,
+    score: 85,
+    description: "Advanced graphene-based supercapacitor technology for rapid energy storage and discharge. Scale-up phase.",
+    image: "https://6ibpna7m8edwyvzk.public.blob.vercel-storage.com/ImageForArticle_6053_16478598102957979.webp",
+    researcher: "Prof. Dr. Arnon Jenkins",
+    institution: "MIT",
+    category: "Equity",
+    phase: "Scale-Up",
+    fundingRaised: 180000,
+    fundingGoal: 250000,
+  },
+  {
+    id: "000005",
+    title: "Cassava-Bioplast",
     trl: 4,
     score: 80,
-    description: "Cellulose-based insulation materials with superior thermal properties. Lab-scale production.",
-    icon: Wind,
-    color: "#a78bfa",
+    description: "Biodegradable plastics derived from cassava starch for sustainable packaging applications.",
+    image: "https://6ibpna7m8edwyvzk.public.blob.vercel-storage.com/bot_san_day_0_bc14fddbd3.jpg",
+    researcher: "Dr. Amina Bello",
+    institution: "U. Lagos",
+    category: "Initiative",
+    phase: "Lab Testing",
+    fundingRaised: 80000,
+    fundingGoal: 120000,
   },
   {
-    id: 19,
-    title: "Ocean Plastic Upcycling",
+    id: "000006",
+    title: "Perovskite Solar Film",
     trl: 5,
-    score: 82,
-    description: "Chemical upcycling of ocean plastics into value-added materials. Process validation complete.",
-    icon: Globe,
-    color: "#38bdf8",
+    score: 83,
+    description: "Flexible perovskite solar cell films for building-integrated photovoltaics. Validation phase.",
+    image: "https://6ibpna7m8edwyvzk.public.blob.vercel-storage.com/Solliance-perovskite-solar-cell.jpg",
+    researcher: "Dr. Ravi Patel",
+    institution: "Oxford",
+    category: "Equity",
+    phase: "Validation",
+    fundingRaised: 134000,
+    fundingGoal: 200000,
   },
   {
-    id: 20,
-    title: "Magnetic Cooling Materials",
+    id: "000007",
+    title: "Graphene Nano-Filter",
     trl: 3,
     score: 77,
-    description: "Magnetocaloric materials for solid-state cooling. Fundamental research phase.",
-    icon: Zap,
-    color: "#fbbf24",
+    description: "Graphene-based nanofiltration membranes for water purification and desalination.",
+    image: "https://6ibpna7m8edwyvzk.public.blob.vercel-storage.com/f0367148-800px-wm.jpg",
+    researcher: "Dr. Lena Svenson",
+    institution: "KTH Stockholm",
+    category: "Initiative",
+    phase: "Proof of Concept",
+    fundingRaised: 22000,
+    fundingGoal: 60000,
+  },
+  {
+    id: "000008",
+    title: "Mycelium Composite",
+    trl: 4,
+    score: 78,
+    description: "Mycelium-based composite materials for sustainable construction and packaging.",
+    image: "https://6ibpna7m8edwyvzk.public.blob.vercel-storage.com/image.imageformat.930.1580458024.jpg",
+    researcher: "Dr. Kai Tanaka",
+    institution: "U. Tokyo",
+    category: "Equity",
+    phase: "Lab Testing",
+    fundingRaised: 41000,
+    fundingGoal: 90000,
   },
 ]
 
 export default function OurEcosystemPage() {
-  const [hoveredProject, setHoveredProject] = useState<number | null>(null)
+  const [hoveredProject, setHoveredProject] = useState<string | null>(null)
 
-  const topProjects = dummyProjects.filter((p) => p.trl >= 8)
-  const middleProjects = dummyProjects.filter((p) => p.trl >= 6 && p.trl <= 7)
-  const bottomProjects = dummyProjects.filter((p) => p.trl >= 3 && p.trl <= 5)
+  const topProjects = ecosystemProjects.filter((p) => p.trl >= 6)
+  const middleProjects = ecosystemProjects.filter((p) => p.trl >= 4 && p.trl <= 5)
+  const bottomProjects = ecosystemProjects.filter((p) => p.trl >= 3 && p.trl <= 3)
 
   return (
     <div className="relative min-h-[calc(100dvh-4rem)] px-5 py-12 sm:px-6">
@@ -216,56 +146,61 @@ export default function OurEcosystemPage() {
 
         {/* Pyramid Structure */}
         <div className="space-y-6">
-          {/* Top Tier - TRL 8-9 */}
-          <div>
-            <div className="mb-3 flex items-center gap-2">
-              <span className="rounded-full bg-[#6efcff]/20 px-3 py-1 text-[10px] font-semibold text-[#c5fdff]">
-                TRL 8-9
-              </span>
-              <span className="text-xs text-white/50">Commercial Deployment</span>
+          {/* Top Tier - TRL 6+ */}
+          {topProjects.length > 0 && (
+            <div>
+              <div className="mb-3 flex items-center gap-2">
+                <span className="rounded-full bg-[#6efcff]/20 px-3 py-1 text-[10px] font-semibold text-[#c5fdff]">
+                  TRL 6+
+                </span>
+                <span className="text-xs text-white/50">Development & Scale-Up</span>
+              </div>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {topProjects.map((project) => (
+                  <ProjectCard key={project.id} project={project} hoveredProject={hoveredProject} setHoveredProject={setHoveredProject} />
+                ))}
+              </div>
             </div>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {topProjects.map((project) => (
-                <ProjectCard key={project.id} project={project} hoveredProject={hoveredProject} setHoveredProject={setHoveredProject} />
-              ))}
-            </div>
-          </div>
+          )}
 
-          {/* Middle Tier - TRL 6-7 */}
-          <div>
-            <div className="mb-3 flex items-center gap-2">
-              <span className="rounded-full bg-[#34d399]/20 px-3 py-1 text-[10px] font-semibold text-[#34d399]">
-                TRL 6-7
-              </span>
-              <span className="text-xs text-white/50">Development & Pilot</span>
+          {/* Middle Tier - TRL 4-5 */}
+          {middleProjects.length > 0 && (
+            <div>
+              <div className="mb-3 flex items-center gap-2">
+                <span className="rounded-full bg-[#34d399]/20 px-3 py-1 text-[10px] font-semibold text-[#34d399]">
+                  TRL 4-5
+                </span>
+                <span className="text-xs text-white/50">Lab Testing & Validation</span>
+              </div>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {middleProjects.map((project) => (
+                  <ProjectCard key={project.id} project={project} hoveredProject={hoveredProject} setHoveredProject={setHoveredProject} />
+                ))}
+              </div>
             </div>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {middleProjects.map((project) => (
-                <ProjectCard key={project.id} project={project} hoveredProject={hoveredProject} setHoveredProject={setHoveredProject} />
-              ))}
-            </div>
-          </div>
+          )}
 
-          {/* Bottom Tier - TRL 3-5 */}
-          <div>
-            <div className="mb-3 flex items-center gap-2">
-              <span className="rounded-full bg-[#f59e0b]/20 px-3 py-1 text-[10px] font-semibold text-[#f59e0b]">
-                TRL 3-5
-              </span>
-              <span className="text-xs text-white/50">Early Research & Validation</span>
+          {/* Bottom Tier - TRL 3 */}
+          {bottomProjects.length > 0 && (
+            <div>
+              <div className="mb-3 flex items-center gap-2">
+                <span className="rounded-full bg-[#f59e0b]/20 px-3 py-1 text-[10px] font-semibold text-[#f59e0b]">
+                  TRL 3
+                </span>
+                <span className="text-xs text-white/50">Proof of Concept</span>
+              </div>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+                {bottomProjects.map((project) => (
+                  <ProjectCard key={project.id} project={project} hoveredProject={hoveredProject} setHoveredProject={setHoveredProject} />
+                ))}
+              </div>
             </div>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
-              {bottomProjects.map((project) => (
-                <ProjectCard key={project.id} project={project} hoveredProject={hoveredProject} setHoveredProject={setHoveredProject} />
-              ))}
-            </div>
-          </div>
+          )}
         </div>
 
         <div className="mt-12 rounded-2xl border border-white/10 bg-white/3 px-6 py-5 text-center">
           <p className="text-xs text-white/50">
-            These are representative projects showcasing the types of material science innovations tracked on the MatDAO
-            platform. Real project data will be populated from the backend.
+            Projects sourced from the Project marketplace. TRL levels are synchronized across the platform for consistency.
           </p>
         </div>
       </div>
@@ -273,33 +208,40 @@ export default function OurEcosystemPage() {
   )
 }
 
-function ProjectCard({ project, hoveredProject, setHoveredProject }: { project: typeof dummyProjects[0]; hoveredProject: number | null; setHoveredProject: (id: number | null) => void }) {
-  const Icon = project.icon
+function ProjectCard({ project, hoveredProject, setHoveredProject }: { project: typeof ecosystemProjects[0]; hoveredProject: string | null; setHoveredProject: (id: string | null) => void }) {
   return (
     <div
-      className="group workflow-panel relative rounded-2xl p-5 transition-all hover:-translate-y-1"
+      className="group workflow-panel relative rounded-2xl overflow-hidden transition-all hover:-translate-y-1"
       onMouseEnter={() => setHoveredProject(project.id)}
       onMouseLeave={() => setHoveredProject(null)}
     >
-      <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-black/40">
-        <Icon className="h-6 w-6" style={{ color: project.color }} />
+      <div className="aspect-video w-full overflow-hidden bg-black/40">
+        <img 
+          src={project.image} 
+          alt={project.title}
+          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+        />
       </div>
-      <div className="mb-2 flex gap-2">
-        <span
-          className="rounded-full border px-2 py-0.5 text-[9px] uppercase tracking-wider text-white/60"
-          style={{ borderColor: `${project.color}40`, color: project.color }}
-        >
-          TRL {project.trl}
-        </span>
-        <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[9px] text-white/60">
-          {project.score}
-        </span>
+      <div className="p-4">
+        <div className="mb-2 flex gap-2">
+          <span className="rounded-full border border-[#6efcff]/30 bg-[#6efcff]/10 px-2 py-0.5 text-[9px] uppercase tracking-wider text-[#c5fdff]">
+            TRL {project.trl}
+          </span>
+          <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[9px] text-white/60">
+            {project.score}
+          </span>
+        </div>
+        <h3 className="font-headline mb-1 text-sm font-bold text-white/95 leading-tight">{project.title}</h3>
+        <p className="text-[10px] text-white/40">{project.researcher} · {project.institution}</p>
       </div>
-      <h3 className="font-headline mb-1 text-sm font-bold text-white/95 leading-tight">{project.title}</h3>
       
       {hoveredProject === project.id && (
-        <div className="absolute inset-x-0 bottom-0 rounded-b-2xl border-t border-white/10 bg-black/95 p-3 backdrop-blur-sm transition-all">
-          <p className="text-[10px] leading-relaxed text-white/70">{project.description}</p>
+        <div className="absolute inset-x-0 bottom-0 rounded-b-2xl border-t border-white/10 bg-black/95 p-4 backdrop-blur-sm transition-all">
+          <p className="mb-2 text-[10px] leading-relaxed text-white/70">{project.description}</p>
+          <div className="flex items-center justify-between text-[9px] text-white/50">
+            <span>${(project.fundingRaised / 1000).toFixed(0)}K raised</span>
+            <span>{project.phase}</span>
+          </div>
         </div>
       )}
     </div>
