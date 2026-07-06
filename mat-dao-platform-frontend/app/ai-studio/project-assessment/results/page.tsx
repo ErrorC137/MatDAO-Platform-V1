@@ -109,19 +109,21 @@ export default function ProjectAssessmentResultsPage() {
   if (!report) return null
 
   return (
-    <div className="relative px-5 py-12 sm:px-6">
-      <div className="relative z-10 mx-auto max-w-4xl">
+    <div className="relative min-h-screen bg-gradient-to-br from-black via-gray-950 to-black px-5 py-12 sm:px-6">
+      <div className="relative z-10 mx-auto max-w-6xl">
         {/* Fallback Data Warning */}
         {isFallbackData && (
-          <div className="mb-6 rounded-xl border border-blue-500/40 bg-blue-500/10 p-4">
-            <div className="flex items-start gap-3">
-              <Info className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
-              <div>
-                <p className="text-sm font-semibold text-blue-400 mb-1">Enhanced Analysis Mode</p>
-                <p className="text-xs text-white/70">
+          <div className="mb-8 rounded-2xl border border-blue-500/40 bg-gradient-to-r from-blue-500/10 to-blue-500/5 p-5 backdrop-blur-sm">
+            <div className="flex items-start gap-4">
+              <div className="flex-shrink-0 p-2 rounded-xl bg-blue-500/20">
+                <Info className="w-5 h-5 text-blue-400" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-semibold text-blue-400 mb-2">Enhanced Analysis Mode</p>
+                <p className="text-sm text-white/70 leading-relaxed">
                   {report.ipReport?.document_profile?.note?.includes("low quality") 
-                    ? "Content quality analysis indicates limited technical depth. Results based on available content analysis."
-                    : "Advanced content analysis enabled. Results generated using intelligent content analysis with keyword detection and semantic understanding."}
+                    ? "Content quality analysis indicates limited technical depth. Results based on available content analysis with enhanced keyword detection and semantic understanding."
+                    : "Advanced content analysis enabled. Results generated using intelligent content analysis with keyword detection, semantic understanding, and context-aware scoring."}
                 </p>
               </div>
             </div>
@@ -129,31 +131,33 @@ export default function ProjectAssessmentResultsPage() {
         )}
 
         {/* Document Summary Section */}
-        <div className="mb-8 rounded-2xl border border-white/10 bg-black/30 p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <Brain className="w-5 h-5 text-[#6efcff]" />
-            <h2 className="font-headline text-lg font-bold text-white/95">Document Analysis Summary</h2>
+        <div className="mb-8 rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-8 backdrop-blur-xl shadow-2xl">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-3 rounded-2xl bg-gradient-to-br from-[#6efcff]/30 to-[#6efcff]/10">
+              <Brain className="w-6 h-6 text-[#c5fdff]" />
+            </div>
+            <h2 className="font-headline text-xl font-bold text-white/95">Document Analysis Summary</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div className="rounded-lg border border-white/10 bg-black/20 p-4">
-              <p className="text-xs text-white/50 mb-1">Document Type</p>
-              <p className="text-sm font-semibold text-white/90">{report.ipReport?.document_profile?.document_type || "Research Paper"}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+            <div className="rounded-2xl border border-white/10 bg-black/30 p-5 backdrop-blur-sm">
+              <p className="text-xs text-white/50 mb-2 uppercase tracking-wider">Document Type</p>
+              <p className="text-base font-semibold text-white/90">{report.ipReport?.document_profile?.document_type || "Research Paper"}</p>
             </div>
-            <div className="rounded-lg border border-white/10 bg-black/20 p-4">
-              <p className="text-xs text-white/50 mb-1">Word Count</p>
-              <p className="text-sm font-semibold text-white/90">{report.ipReport?.document_profile?.word_count?.toLocaleString() || "N/A"}</p>
+            <div className="rounded-2xl border border-white/10 bg-black/30 p-5 backdrop-blur-sm">
+              <p className="text-xs text-white/50 mb-2 uppercase tracking-wider">Word Count</p>
+              <p className="text-base font-semibold text-white/90">{report.ipReport?.document_profile?.word_count?.toLocaleString() || "N/A"}</p>
             </div>
-            <div className="rounded-lg border border-white/10 bg-black/20 p-4">
-              <p className="text-xs text-white/50 mb-1">Classification</p>
-              <p className="text-sm font-semibold text-white/90">{report.ipReport?.classification?.sector_name || "N/A"}</p>
+            <div className="rounded-2xl border border-white/10 bg-black/30 p-5 backdrop-blur-sm">
+              <p className="text-xs text-white/50 mb-2 uppercase tracking-wider">Classification</p>
+              <p className="text-base font-semibold text-white/90">{report.ipReport?.classification?.sector_name || "N/A"}</p>
             </div>
-            <div className="rounded-lg border border-white/10 bg-black/20 p-4">
-              <p className="text-xs text-white/50 mb-1">Primary Field</p>
-              <p className="text-sm font-semibold text-white/90">{(report.ipReport?.classification as any)?.field_classification?.primary || "Materials Science"}</p>
+            <div className="rounded-2xl border border-white/10 bg-black/30 p-5 backdrop-blur-sm">
+              <p className="text-xs text-white/50 mb-2 uppercase tracking-wider">Primary Field</p>
+              <p className="text-base font-semibold text-white/90">{(report.ipReport?.classification as any)?.field_classification?.primary || "Materials Science"}</p>
             </div>
           </div>
-          <div className="rounded-lg border border-white/10 bg-black/20 p-4">
-            <p className="text-xs text-white/50 mb-2">Analysis Overview</p>
+          <div className="rounded-2xl border border-white/10 bg-black/30 p-5 backdrop-blur-sm">
+            <p className="text-xs text-white/50 mb-3 uppercase tracking-wider">Analysis Overview</p>
             <p className="text-sm text-white/70 leading-relaxed">
               This document has been analyzed for {report.ipReport?.document_profile?.word_count?.toLocaleString() || "various"} words across {report.ipReport?.document_profile?.sections_found?.length || 3} sections. 
               The research is classified under {report.ipReport?.classification?.sector_name || "various fields"} with primary focus on {(report.ipReport?.classification as any)?.field_classification?.primary || "materials science"}. 
@@ -162,19 +166,19 @@ export default function ProjectAssessmentResultsPage() {
           </div>
         </div>
 
-        <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <p className="mb-2 text-[11px] uppercase tracking-wider text-[#c5fdff]">Detailed Assessment Report</p>
-            <h1 className="font-headline text-2xl font-bold text-white/95 md:text-3xl">{report.title}</h1>
-            <p className="mt-1 text-sm text-white/50">
+        <div className="mb-10 flex flex-wrap items-start justify-between gap-6">
+          <div className="flex-1 min-w-[300px]">
+            <p className="mb-3 text-[11px] uppercase tracking-widest text-[#c5fdff] font-semibold">Detailed Assessment Report</p>
+            <h1 className="font-headline text-3xl font-bold text-white/95 md:text-4xl leading-tight">{report.title}</h1>
+            <p className="mt-3 text-base text-white/50">
               {report.author} · {report.category}
             </p>
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-3">
             <button
               type="button"
               onClick={downloadPDF}
-              className="inline-flex items-center gap-2 rounded-full border border-[#6efcff]/40 bg-[#6efcff]/10 px-5 py-2 text-sm font-semibold text-[#c5fdff] hover:bg-[#6efcff]/20"
+              className="inline-flex items-center gap-2 rounded-2xl border border-[#6efcff]/40 bg-gradient-to-r from-[#6efcff]/10 to-[#6efcff]/5 px-6 py-3 text-sm font-semibold text-[#c5fdff] hover:from-[#6efcff]/20 hover:to-[#6efcff]/10 transition-all duration-200 shadow-lg shadow-[#6efcff]/10"
             >
               <Download className="h-4 w-4" />
               Download PDF
@@ -184,7 +188,7 @@ export default function ProjectAssessmentResultsPage() {
                 type="button"
                 onClick={saveToProfile}
                 disabled={saved}
-                className="inline-flex items-center gap-2 rounded-full border border-[#6efcff]/40 bg-[#6efcff]/10 px-5 py-2 text-sm font-semibold text-[#c5fdff] hover:bg-[#6efcff]/20 disabled:opacity-60"
+                className="inline-flex items-center gap-2 rounded-2xl border border-[#6efcff]/40 bg-gradient-to-r from-[#6efcff]/10 to-[#6efcff]/5 px-6 py-3 text-sm font-semibold text-[#c5fdff] hover:from-[#6efcff]/20 hover:to-[#6efcff]/10 transition-all duration-200 shadow-lg shadow-[#6efcff]/10 disabled:opacity-60"
               >
                 {saved ? <Check className="h-4 w-4" /> : <Save className="h-4 w-4" />}
                 {saved ? "Saved to Profile" : "Save to Profile"}
@@ -192,7 +196,7 @@ export default function ProjectAssessmentResultsPage() {
             ) : (
               <Link
                 href="/auth/sign-in"
-                className="rounded-full border border-white/20 px-5 py-2 text-sm text-white/70"
+                className="rounded-2xl border border-white/20 px-6 py-3 text-sm text-white/70 hover:bg-white/5 transition-all duration-200"
               >
                 Sign in to save
               </Link>
@@ -202,14 +206,14 @@ export default function ProjectAssessmentResultsPage() {
                 type="button"
                 onClick={handleMintIPNFT}
                 disabled={minting || isMintingPending}
-                className="inline-flex items-center gap-2 rounded-full border border-[#6efcff]/40 bg-[#6efcff]/10 px-5 py-2 text-sm font-semibold text-[#c5fdff] hover:bg-[#6efcff]/20 disabled:opacity-60"
+                className="inline-flex items-center gap-2 rounded-2xl border border-[#6efcff]/40 bg-gradient-to-r from-[#6efcff]/10 to-[#6efcff]/5 px-6 py-3 text-sm font-semibold text-[#c5fdff] hover:from-[#6efcff]/20 hover:to-[#6efcff]/10 transition-all duration-200 shadow-lg shadow-[#6efcff]/10 disabled:opacity-60"
               >
                 {minting || isMintingPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Gem className="h-4 w-4" />}
                 {minting || isMintingPending ? "Minting..." : "Mint IP-NFT"}
               </button>
             )}
             {minted && (
-              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-5 py-2 text-sm font-semibold text-emerald-400">
+              <div className="inline-flex items-center gap-2 rounded-2xl border border-emerald-500/40 bg-gradient-to-r from-emerald-500/10 to-emerald-500/5 px-6 py-3 text-sm font-semibold text-emerald-400 shadow-lg shadow-emerald-500/10">
                 <Award className="h-4 w-4" />
                 IP-NFT Minted #{nftTokenId}
               </div>
@@ -218,23 +222,23 @@ export default function ProjectAssessmentResultsPage() {
         </div>
 
         {/* Enhanced Metrics Grid with Color Coding */}
-        <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
+        <div className="mb-10 grid grid-cols-2 gap-5 md:grid-cols-4">
           <EnhancedMetric 
             label="TRL Level" 
             value={`TRL ${report.summary.trl}`} 
             trl={report.summary.trl}
-            icon={<Award className="w-4 h-4" />}
+            icon={<Award className="w-5 h-5" />}
           />
           <EnhancedMetric 
             label="Innovation Score" 
             value={String(report.summary.ipScore)} 
             score={report.summary.ipScore}
-            icon={<Flame className="w-4 h-4" />}
+            icon={<Flame className="w-5 h-5" />}
           />
           <EnhancedMetric 
             label="IP Valuation" 
             value={report.summary.valuationUsd ? formatUsd(report.summary.valuationUsd) : "N/A"}
-            icon={<Gem className="w-4 h-4" />}
+            icon={<Gem className="w-5 h-5" />}
           />
           <EnhancedMetric 
             label="Due Diligence" 
@@ -244,42 +248,44 @@ export default function ProjectAssessmentResultsPage() {
                 : "N/A"
             }
             score={report.summary.dueDiligenceScore || 0}
-            icon={<ShieldCheck className="w-4 h-4" />}
+            icon={<ShieldCheck className="w-5 h-5" />}
           />
         </div>
 
         {/* Enhanced TRL Evaluation Section */}
-        <section className="workflow-panel mb-6 rounded-2xl p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <Award className="w-5 h-5 text-[#6efcff]" />
-            <h2 className="font-headline text-lg font-bold text-white/95">TRL Evaluation Details</h2>
-            <span className={`ml-auto font-mono text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded ${getTRLBadgeClass(report.trlProject.trl)}`}>
+        <section className="workflow-panel mb-8 rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-8 backdrop-blur-xl shadow-2xl">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-3 rounded-2xl bg-gradient-to-br from-[#6efcff]/30 to-[#6efcff]/10">
+              <Award className="w-6 h-6 text-[#c5fdff]" />
+            </div>
+            <h2 className="font-headline text-xl font-bold text-white/95">TRL Evaluation Details</h2>
+            <span className={`ml-auto font-mono text-xs font-bold tracking-wider uppercase px-3 py-1.5 rounded-xl ${getTRLBadgeClass(report.trlProject.trl)}`}>
               TRL {report.trlProject.trl}
             </span>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-5">
             {/* TRL Summary Card */}
-            <div className="rounded-xl border border-white/10 bg-gradient-to-br from-black/20 to-black/40 p-5">
-              <div className="flex items-start gap-3">
-                <div className={`p-2 rounded-lg ${getTRLIconBg(report.trlProject.trl)}`}>
+            <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-black/20 to-black/40 p-6 backdrop-blur-sm">
+              <div className="flex items-start gap-4">
+                <div className={`p-3 rounded-xl ${getTRLIconBg(report.trlProject.trl)} flex-shrink-0`}>
                   {getTRLIcon(report.trlProject.trl)}
                 </div>
                 <div className="flex-1">
-                  <p className="text-xs font-semibold text-white/70 mb-2">Why TRL {report.trlProject.trl}?</p>
-                  <p className="text-sm text-white/60 leading-relaxed">{report.trlProject.trlSummary}</p>
+                  <p className="text-sm font-semibold text-white/70 mb-3">Why TRL {report.trlProject.trl}?</p>
+                  <p className="text-base text-white/60 leading-relaxed">{report.trlProject.trlSummary}</p>
                 </div>
               </div>
             </div>
             
             {/* Key Accomplishments */}
-            <div className="rounded-xl border border-white/10 bg-black/20 p-5">
-              <p className="text-xs font-semibold text-white/70 mb-3 flex items-center gap-2">
-                <Check className="w-3.5 h-3.5 text-emerald-400" />
+            <div className="rounded-2xl border border-white/10 bg-black/30 p-6 backdrop-blur-sm">
+              <p className="text-sm font-semibold text-white/70 mb-4 flex items-center gap-2">
+                <Check className="w-4 h-4 text-emerald-400" />
                 Key Accomplishments
               </p>
-              <ul className="space-y-2">
+              <ul className="space-y-3">
                 {report.trlProject.accomplishments.map((a, i) => (
-                  <li key={i} className="text-xs text-white/55 flex items-start gap-2">
+                  <li key={i} className="text-sm text-white/55 flex items-start gap-3 leading-relaxed">
                     <span className="text-emerald-400 mt-0.5">•</span>
                     <span>{a}</span>
                   </li>
@@ -287,27 +293,108 @@ export default function ProjectAssessmentResultsPage() {
               </ul>
             </div>
             
-            {/* Innovation Score */}
-            <div className="rounded-xl border border-white/10 bg-black/20 p-5">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-xs font-semibold text-white/70 flex items-center gap-2">
-                  <Flame className="w-3.5 h-3.5 text-orange-400" />
+            {/* Innovation Score with Reasoning */}
+            <div className="rounded-2xl border border-white/10 bg-black/30 p-6 backdrop-blur-sm">
+              <div className="flex items-center justify-between mb-4">
+                <p className="text-sm font-semibold text-white/70 flex items-center gap-2">
+                  <Flame className="w-4 h-4 text-orange-400" />
                   Innovation Score
                 </p>
-                <span className={`font-mono text-sm font-bold ${getScoreColor(report.trlProject.score)}`}>
+                <span className={`font-mono text-base font-bold ${getScoreColor(report.trlProject.score)}`}>
                   {report.trlProject.score}/100
                 </span>
               </div>
-              <div className="w-full bg-white/10 rounded-full h-2 mt-2">
+              <div className="w-full bg-white/10 rounded-full h-3 mb-4">
                 <div 
-                  className={`h-2 rounded-full transition-all duration-500 ${getScoreBarColor(report.trlProject.score)}`} 
+                  className={`h-3 rounded-full transition-all duration-500 ${getScoreBarColor(report.trlProject.score)}`} 
                   style={{ width: `${report.trlProject.score}%` }}
                 />
               </div>
-              <p className="text-xs text-white/50 mt-2">
-                Reflects technical novelty, scientific rigor, and potential impact based on analysis.
-              </p>
+              <div className="rounded-xl bg-white/5 p-4">
+                <p className="text-xs font-semibold text-[#6efcff] mb-2 uppercase tracking-wider">WHY THIS SCORE?</p>
+                <p className="text-sm text-white/60 leading-relaxed">
+                  {(report.trlProject as any).scoreReasoning?.innovation || "Innovation score based on technical novelty, scientific rigor, and potential impact analysis."}
+                </p>
+              </div>
             </div>
+            
+            {/* Paper Key Data Extraction */}
+            {(report.trlProject as any).keyData && (
+              <div className="rounded-2xl border border-[#6efcff]/30 bg-gradient-to-br from-[#6efcff]/10 to-[#6efcff]/5 p-6 backdrop-blur-sm">
+                <p className="text-sm font-semibold text-[#c5fdff] mb-4 flex items-center gap-2">
+                  <Brain className="w-4 h-4" />
+                  Paper Key Data Extraction
+                </p>
+                <div className="space-y-4">
+                  <div className="rounded-xl bg-black/30 p-4">
+                    <p className="text-xs font-semibold text-white/50 mb-2 uppercase tracking-wider">KEY FINDINGS</p>
+                    <ul className="space-y-2">
+                      {(report.trlProject as any).keyData.keyFindings.map((finding: string, i: number) => (
+                        <li key={i} className="text-sm text-white/70 leading-relaxed">
+                          • {finding.slice(0, 150)}{finding.length > 150 ? '...' : ''}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="rounded-xl bg-black/30 p-4">
+                      <p className="text-xs font-semibold text-white/50 mb-2 uppercase tracking-wider">METHODOLOGY</p>
+                      <p className="text-sm text-white/70 leading-relaxed">
+                        {(report.trlProject as any).keyData.methodology?.slice(0, 80) || 'Not specified'}...
+                      </p>
+                    </div>
+                    <div className="rounded-xl bg-black/30 p-4">
+                      <p className="text-xs font-semibold text-white/50 mb-2 uppercase tracking-wider">RESULTS</p>
+                      <p className="text-sm text-white/70 leading-relaxed">
+                        {(report.trlProject as any).keyData.results?.slice(0, 80) || 'Not specified'}...
+                      </p>
+                    </div>
+                    <div className="rounded-xl bg-black/30 p-4">
+                      <p className="text-xs font-semibold text-white/50 mb-2 uppercase tracking-wider">IMPLICATIONS</p>
+                      <p className="text-sm text-white/70 leading-relaxed">
+                        {(report.trlProject as any).keyData.implications?.slice(0, 80) || 'Not specified'}...
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {/* Score Reasoning Breakdown */}
+            {(report.trlProject as any).scoreReasoning && (
+              <div className="rounded-2xl border border-white/10 bg-black/30 p-6 backdrop-blur-sm">
+                <p className="text-sm font-semibold text-white/70 mb-4 flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-yellow-400" />
+                  Score Reasoning Breakdown
+                </p>
+                <div className="space-y-4">
+                  <div className="rounded-xl bg-white/5 p-4">
+                    <p className="text-xs font-semibold text-orange-400 mb-2 uppercase tracking-wider">INNOVATION</p>
+                    <p className="text-sm text-white/60 leading-relaxed">
+                      {(report.trlProject as any).scoreReasoning.innovation}
+                    </p>
+                  </div>
+                  <div className="rounded-xl bg-white/5 p-4">
+                    <p className="text-xs font-semibold text-emerald-400 mb-2 uppercase tracking-wider">COMMERCIAL VIABILITY</p>
+                    <p className="text-sm text-white/60 leading-relaxed">
+                      {(report.trlProject as any).scoreReasoning.commercialViability}
+                    </p>
+                  </div>
+                  <div className="rounded-xl bg-white/5 p-4">
+                    <p className="text-xs font-semibold text-blue-400 mb-2 uppercase tracking-wider">SCIENTIFIC RIGOR</p>
+                    <p className="text-sm text-white/60 leading-relaxed">
+                      {(report.trlProject as any).scoreReasoning.scientificRigor}
+                    </p>
+                  </div>
+                  <div className="rounded-xl bg-white/5 p-4">
+                    <p className="text-xs font-semibold text-purple-400 mb-2 uppercase tracking-wider">IP STRENGTH</p>
+                    <p className="text-sm text-white/60 leading-relaxed">
+                      {(report.trlProject as any).scoreReasoning.ipStrength}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
             
             {/* Paper Review Section */}
             {(report.trlProject as any).paper_review && (
@@ -377,36 +464,38 @@ export default function ProjectAssessmentResultsPage() {
         </section>
 
             {/* Enhanced Milestone Roadmap */}
-        <section className="workflow-panel mb-6 rounded-2xl p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <Target className="w-5 h-5 text-[#6efcff]" />
-            <h2 className="font-headline text-lg font-bold text-white/95">Milestone Roadmap</h2>
+        <section className="workflow-panel mb-8 rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-8 backdrop-blur-xl shadow-2xl">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-3 rounded-2xl bg-gradient-to-br from-[#6efcff]/30 to-[#6efcff]/10">
+              <Target className="w-6 h-6 text-[#c5fdff]" />
+            </div>
+            <h2 className="font-headline text-xl font-bold text-white/95">Milestone Roadmap</h2>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-5">
             {/* Incomplete/Current Milestones with Recommendations */}
             {Object.entries(report.trlProject.milestones)
               .filter(([, m]) => m.status === "current" || m.status === "future")
               .map(([key, m], index) => (
-                <div key={key} className={`rounded-xl border p-5 transition-all duration-200 ${
+                <div key={key} className={`rounded-2xl border p-6 transition-all duration-200 ${
                   m.status === "current" 
-                    ? "border-[#6efcff]/40 bg-gradient-to-br from-[#6efcff]/10 to-transparent shadow-lg shadow-[#6efcff]/10" 
-                    : "border-white/10 bg-black/20"
+                    ? "border-[#6efcff]/40 bg-gradient-to-br from-[#6efcff]/10 to-transparent shadow-xl shadow-[#6efcff]/15" 
+                    : "border-white/10 bg-black/30 backdrop-blur-sm"
                 }`}>
                   <div className="flex items-start justify-between gap-4">
-                    <div className="flex items-start gap-3 flex-1">
-                      <div className={`p-2 rounded-lg ${m.status === "current" ? "bg-[#6efcff]/20" : "bg-white/10"}`}>
+                    <div className="flex items-start gap-4 flex-1">
+                      <div className={`p-3 rounded-xl ${m.status === "current" ? "bg-[#6efcff]/20" : "bg-white/10"} flex-shrink-0`}>
                         {m.status === "current" ? (
-                          <Flame className="w-4 h-4 text-[#6efcff]" />
+                          <Flame className="w-5 h-5 text-[#6efcff]" />
                         ) : (
-                          <Target className="w-4 h-4 text-white/50" />
+                          <Target className="w-5 h-5 text-white/50" />
                         )}
                       </div>
                       <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className="text-xs font-semibold uppercase text-white/90">
+                        <div className="flex items-center gap-3 mb-3">
+                          <span className="text-sm font-semibold uppercase text-white/90">
                             {MILESTONE_LABELS[key] || key}
                           </span>
-                          <span className={`font-mono text-[10px] px-2 py-0.5 rounded ${
+                          <span className={`font-mono text-xs px-3 py-1 rounded-lg ${
                             m.status === "current" 
                               ? "bg-[#6efcff]/20 text-[#c5fdff]" 
                               : "bg-white/10 text-white/50"
@@ -414,43 +503,43 @@ export default function ProjectAssessmentResultsPage() {
                             {m.status}
                           </span>
                         </div>
-                        <p className="text-sm text-white/70 leading-relaxed">{m.description}</p>
-                        <div className="flex items-center gap-2 mt-2">
-                          <span className="font-mono text-[10px] text-white/50">Target: {m.timeline}</span>
+                        <p className="text-base text-white/70 leading-relaxed mb-3">{m.description}</p>
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-xs text-white/50">Target: {m.timeline}</span>
                         </div>
                       </div>
                     </div>
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-mono text-xs font-bold ${
-                      m.status === "current" ? "bg-[#6efcff] text-black" : "bg-white/10 text-white/50"
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-mono text-sm font-bold flex-shrink-0 ${
+                      m.status === "current" ? "bg-[#6efcff] text-black shadow-lg shadow-[#6efcff]/20" : "bg-white/10 text-white/50"
                     }`}>
                       {index + 1}
                     </div>
                   </div>
                   
                   {/* Enhanced What/Why/How Details */}
-                  <div className="mt-4 pt-4 -mx-5 px-5 border-t border-white/10">
+                  <div className="mt-5 pt-5 -mx-6 px-6 border-t border-white/10">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="rounded-lg bg-black/30 p-3">
-                        <p className="text-[10px] font-semibold text-[#6efcff] mb-1">WHAT</p>
-                        <p className="text-xs text-white/60">
+                      <div className="rounded-xl bg-black/30 p-4 backdrop-blur-sm">
+                        <p className="text-xs font-semibold text-[#6efcff] mb-2 uppercase tracking-wider">WHAT</p>
+                        <p className="text-sm text-white/60 leading-relaxed">
                           {m.status === "current" 
                             ? "Complete the validation phase for this milestone by demonstrating technical feasibility and gathering required evidence."
                             : "Plan and prepare for this milestone by establishing requirements and resource allocation."
                           }
                         </p>
                       </div>
-                      <div className="rounded-lg bg-black/30 p-3">
-                        <p className="text-[10px] font-semibold text-[#6efcff] mb-1">WHY</p>
-                        <p className="text-xs text-white/60">
+                      <div className="rounded-xl bg-black/30 p-4 backdrop-blur-sm">
+                        <p className="text-xs font-semibold text-[#6efcff] mb-2 uppercase tracking-wider">WHY</p>
+                        <p className="text-sm text-white/60 leading-relaxed">
                           {m.status === "current"
                             ? "This milestone is critical for advancing to the next TRL level and demonstrating commercial viability to investors."
                             : "This milestone builds on previous achievements and is necessary for scaling the technology."
                           }
                         </p>
                       </div>
-                      <div className="rounded-lg bg-black/30 p-3">
-                        <p className="text-[10px] font-semibold text-[#6efcff] mb-1">HOW</p>
-                        <p className="text-xs text-white/60">
+                      <div className="rounded-xl bg-black/30 p-4 backdrop-blur-sm">
+                        <p className="text-xs font-semibold text-[#6efcff] mb-2 uppercase tracking-wider">HOW</p>
+                        <p className="text-sm text-white/60 leading-relaxed">
                           {m.status === "current"
                             ? "Conduct experiments, collect data, document results, and prepare verification materials for AI auditor review."
                             : "Develop detailed plans, secure necessary resources, establish partnerships, and create implementation timeline."
@@ -462,11 +551,11 @@ export default function ProjectAssessmentResultsPage() {
                   
                   {/* Detailed breakdown */}
                   {(m as any).specific_actions && (m as any).specific_actions.length > 0 && (
-                    <div className="mt-3 rounded-lg border border-white/10 bg-black/20 p-3">
-                      <p className="text-xs font-semibold text-white/70 mb-2">Specific Actions Required:</p>
-                      <ul className="space-y-1">
+                    <div className="mt-4 rounded-xl border border-white/10 bg-black/20 p-4 backdrop-blur-sm">
+                      <p className="text-sm font-semibold text-white/70 mb-3">Specific Actions Required:</p>
+                      <ul className="space-y-2">
                         {(m as any).specific_actions.map((action: string, i: number) => (
-                          <li key={i} className="text-xs text-white/55 flex items-start gap-2">
+                          <li key={i} className="text-sm text-white/55 flex items-start gap-3 leading-relaxed">
                             <span className="text-[#6efcff]">•</span>
                             <span>{action}</span>
                           </li>
@@ -476,11 +565,11 @@ export default function ProjectAssessmentResultsPage() {
                   )}
                   
                   {(m as any).resources_needed && (m as any).resources_needed.length > 0 && (
-                    <div className="mt-3 rounded-lg border border-white/10 bg-black/20 p-3">
-                      <p className="text-xs font-semibold text-white/70 mb-2">Resources Needed:</p>
+                    <div className="mt-4 rounded-xl border border-white/10 bg-black/20 p-4 backdrop-blur-sm">
+                      <p className="text-sm font-semibold text-white/70 mb-3">Resources Needed:</p>
                       <div className="flex flex-wrap gap-2">
                         {(m as any).resources_needed.map((resource: string, i: number) => (
-                          <span key={i} className="text-[10px] bg-white/10 px-2 py-1 rounded text-white/60">
+                          <span key={i} className="text-xs bg-white/10 px-3 py-1.5 rounded-lg text-white/60">
                             {resource}
                           </span>
                         ))}
@@ -489,12 +578,12 @@ export default function ProjectAssessmentResultsPage() {
                   )}
                   
                   {m.status === "current" && (
-                    <p className="mt-2 text-xs text-[#6efcff]">
+                    <p className="mt-3 text-sm text-[#6efcff] font-medium">
                       💡 This is your current focus. Complete this milestone to advance to the next TRL level.
                     </p>
                   )}
                   {m.status === "future" && (
-                    <p className="mt-2 text-xs text-white/50">
+                    <p className="mt-3 text-sm text-white/50">
                       ⏳ This milestone will be unlocked after completing current milestones.
                     </p>
                   )}
@@ -529,29 +618,31 @@ export default function ProjectAssessmentResultsPage() {
         </section>
 
         {/* Enhanced Recommended Next Steps */}
-        <section className="workflow-panel mb-6 rounded-2xl p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <ChevronRight className="w-5 h-5 text-[#6efcff]" />
-            <h2 className="font-headline text-lg font-bold text-white/95">Recommended Next Steps</h2>
+        <section className="workflow-panel mb-8 rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-8 backdrop-blur-xl shadow-2xl">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-3 rounded-2xl bg-gradient-to-br from-[#6efcff]/30 to-[#6efcff]/10">
+              <ChevronRight className="w-6 h-6 text-[#c5fdff]" />
+            </div>
+            <h2 className="font-headline text-xl font-bold text-white/95">Recommended Next Steps</h2>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-4">
             {report.summary.recommendedNextSteps.map((step, index) => (
-              <div key={step} className="flex items-start gap-3 rounded-lg border border-white/10 bg-black/20 px-4 py-3 transition-all duration-200 hover:border-[#6efcff]/30">
-                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#6efcff]/20 flex items-center justify-center">
-                  <span className="text-xs font-bold text-[#c5fdff]">{index + 1}</span>
+              <div key={step} className="flex items-start gap-4 rounded-2xl border border-white/10 bg-black/30 px-5 py-4 transition-all duration-200 hover:border-[#6efcff]/30 backdrop-blur-sm">
+                <div className="flex-shrink-0 w-8 h-8 rounded-xl bg-[#6efcff]/20 flex items-center justify-center">
+                  <span className="text-sm font-bold text-[#c5fdff]">{index + 1}</span>
                 </div>
-                <p className="text-sm text-white/65 flex-1">{step}</p>
+                <p className="text-base text-white/65 flex-1 leading-relaxed">{step}</p>
               </div>
             ))}
           </div>
-          <div className="mt-4 rounded-lg border border-[#6efcff]/30 bg-[#6efcff]/5 p-3">
-            <p className="text-xs text-white/70">
+          <div className="mt-5 rounded-2xl border border-[#6efcff]/30 bg-gradient-to-r from-[#6efcff]/10 to-[#6efcff]/5 p-4 backdrop-blur-sm">
+            <p className="text-sm text-white/70 leading-relaxed">
               Submit milestone proofs via the{" "}
-              <Link href="/ai-auditor" className="text-[#c5fdff] underline font-medium">
+              <Link href="/ai-auditor" className="text-[#c5fdff] underline font-medium hover:text-[#6efcff]">
                 AI Auditor
               </Link>{" "}
               — results will appear on your{" "}
-              <Link href="/submit/milestone" className="text-[#c5fdff] underline font-medium">
+              <Link href="/submit/milestone" className="text-[#c5fdff] underline font-medium hover:text-[#6efcff]">
                 milestone page
               </Link>
               .

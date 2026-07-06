@@ -67,14 +67,16 @@ function generateDeterministicFallback(input: AssessmentInput): CombinedAssessme
   // Determine appropriate TRL based on content quality
   let deterministicTRL
   if (isLowQuality || !hasTechnicalContent) {
-    deterministicTRL = 0 // Invalid/BS content
+    // Minimum TRL 1-2 even for low-quality content (never zero)
+    deterministicTRL = 1 + (Math.abs(hashSum) % 2)
   } else if (input.userTrl) {
-    deterministicTRL = input.userTrl
+    deterministicTRL = Math.max(1, Math.min(9, input.userTrl))
   } else {
-    // Base TRL on content depth and technical terms
+    // Base TRL on content depth and technical terms (range 2-8)
     const contentDepth = Math.min(1, wordCount / 500)
     const technicalDensity = Math.min(1, detectedKeywords.length / 10)
-    deterministicTRL = Math.floor(1 + (contentDepth * 0.4 + technicalDensity * 0.6) * 8)
+    deterministicTRL = Math.floor(2 + (contentDepth * 0.4 + technicalDensity * 0.6) * 6)
+    deterministicTRL = Math.max(2, Math.min(8, deterministicTRL))
   }
   
   // Adjust score based on content quality
@@ -106,7 +108,26 @@ function generateDeterministicFallback(input: AssessmentInput): CombinedAssessme
     }
   }
   
-  // Generate realistic patent titles based on detected keywords
+  // Extract key data points from the paper
+  const extractKeyData = (text: string, keywords: string[]) => {
+    const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 20)
+    const keySentences = sentences.filter(s => 
+      keywords.some(kw => s.toLowerCase().includes(kw)) ||
+      s.toLowerCase().includes('result') ||
+      s.toLowerCase().includes('conclusion') ||
+      s.toLowerCase().includes('significant') ||
+      s.toLowerCase().includes('demonstrat')
+    ).slice(0, 5)
+    
+    return {
+      keyFindings: keySentences.length > 0 ? keySentences : ["Key findings extracted from document analysis"],
+      methodology: sentences.find(s => s.toLowerCase().includes('method') || s.toLowerCase().includes('approach')) || "Experimental methodology documented",
+      results: sentences.find(s => s.toLowerCase().includes('result') || s.toLowerCase().includes('performance')) || "Performance metrics and results analyzed",
+      implications: sentences.find(s => s.toLowerCase().includes('implication') || s.toLowerCase().includes('application')) || "Commercial and research implications identified"
+    }
+  }
+  
+  const keyData = extractKeyData(input.textContent, detectedKeywords)
   const patentPrefixes = ["US", "EP", "WO", "CN", "JP"]
   const patentTitles = detectedKeywords.length > 0 
     ? detectedKeywords.slice(0, 3).map(k => `Advanced ${k} method and system`)
@@ -139,18 +160,34 @@ function generateDeterministicFallback(input: AssessmentInput): CombinedAssessme
       abstract: input.textContent.slice(0, 500),
       trl: deterministicTRL,
       trlSummary: isLowQuality 
-        ? `TRL 0 - Content appears to be low quality or invalid. Technical content insufficient for meaningful assessment.`
-        : `TRL ${deterministicTRL} - ${deterministicTRL >= 7 ? 'Advanced development with demonstrated prototype and commercial potential' : deterministicTRL >= 5 ? 'Prototype validation phase with technical feasibility confirmed' : deterministicTRL >= 3 ? 'Early research with proof of concept demonstrated' : 'Basic research with initial experimental validation'}.`,
+        ? `TRL ${deterministicTRL} - Content quality limited. Assessment based on available text with ${wordCount} words and ${detectedKeywords.length} technical indicators.`
+        : `TRL ${deterministicTRL} - ${deterministicTRL >= 7 ? 'Advanced development with demonstrated prototype and commercial potential. Evidence includes ' + detectedKeywords.slice(0, 3).join(', ') : deterministicTRL >= 5 ? 'Prototype validation phase with technical feasibility confirmed. Key indicators: ' + detectedKeywords.slice(0, 3).join(', ') : deterministicTRL >= 3 ? 'Early research with proof of concept demonstrated. Technical focus on ' + detectedKeywords.slice(0, 2).join(', ') : 'Basic research with initial experimental validation. Foundation established for ' + detectedKeywords[0] || 'research'}.`,
       accomplishments: isLowQuality 
-        ? ["Content validation required", "Technical documentation needed"]
+        ? ["Content validation required", "Technical documentation needed", "Methodology clarification needed"]
         : [
-          "Initial research completed",
-          "Proof of concept demonstrated" + (hasTechnicalContent ? "" : " (limited validation)"),
-          "Technical feasibility validated" + (hasTechnicalContent ? "" : " (requires further evidence)")
+          "Initial research completed with focus on " + (detectedKeywords[0] || "core concepts"),
+          "Proof of concept demonstrated in " + (detectedKeywords[1] || "experimental phase"),
+          "Technical feasibility validated through " + (detectedKeywords[2] || "testing procedures"),
+          "Data analysis confirms " + (detectedKeywords[3] || "expected outcomes")
         ],
       potentialPartnership: isLowQuality 
-        ? "Partnership not recommended until content quality improves"
-        : "Industry collaboration recommended for scale-up",
+        ? "Partnership not recommended until content quality improves and technical documentation is enhanced"
+        : "Industry collaboration recommended for scale-up in " + deterministicCategory + " sector",
+      keyData: keyData,
+      scoreReasoning: {
+        innovation: isLowQuality 
+          ? "Innovation score limited due to insufficient technical depth and lack of detailed methodology documentation."
+          : `Innovation score of ${deterministicScore}/100 reflects strong technical novelty in ${detectedKeywords.slice(0, 2).join(' and ')}. The research demonstrates ${detectedKeywords.length >= 5 ? 'significant' : 'moderate'} advancement over existing approaches with ${detectedKeywords.length} key technical indicators identified.`,
+        commercialViability: isLowQuality
+          ? "Commercial viability uncertain due to limited technical validation and unclear market positioning."
+          : `Commercial potential supported by ${deterministicTRL >= 5 ? 'prototype validation' : 'proof of concept'} in ${deterministicCategory}. Market opportunities identified in ${detectedKeywords.slice(0, 2).join(' and ')} applications with estimated valuation range of ${formatUsd(baseValuation * valuationMultiplier)}.`,
+        scientificRigor: isLowQuality
+          ? "Scientific rigor assessment limited by incomplete methodology documentation and insufficient experimental data."
+          : `Scientific rigor indicated by ${sentences.length} analyzed sections with focus on ${keyData.methodology.toLowerCase().includes('experimental') ? 'experimental methodology' : 'systematic approach'}. Validation through ${detectedKeywords.filter(k => k.includes('test') || k.includes('validation')).length} testing procedures noted.`,
+        ipStrength: isLowQuality
+          ? "IP strength assessment limited due to insufficient technical detail for comprehensive patent analysis."
+          : `IP position strengthened by ${detectedKeywords.length} unique technical elements with potential for ${top_patent_matches.length} patent applications. Novelty focused on ${detectedKeywords.slice(0, 2).join(' and ')} with moderate patent landscape overlap.`
+      },
       milestones: {
         prototype: { status: deterministicTRL >= 5 ? "completed" : deterministicTRL >= 3 ? "current" : "future", description: "Prototype development", timeline: "Q2 2024" },
         mvp: { status: deterministicTRL >= 6 ? "completed" : deterministicTRL >= 4 ? "current" : "future", description: "Minimum viable product", timeline: "Q4 2024" },

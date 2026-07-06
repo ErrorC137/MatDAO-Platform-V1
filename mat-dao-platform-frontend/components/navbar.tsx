@@ -35,47 +35,96 @@ export function Navbar() {
   }, [])
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
-        <Link href="/" className="flex items-center gap-2">
-          <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Add%20a%20subheading%284%29-8oEDuOtVsHXvDTX1gdv6hBkwYJak4N.png" alt="MatDAO Logo" className="h-8" />
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-xl">
+      <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-6">
+        <Link href="/" className="flex items-center gap-3 group">
+          <div className="relative">
+            <img 
+              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Add%20a%20subheading%284%29-8oEDuOtVsHXvDTX1gdv6hBkwYJak4N.png" 
+              alt="MatDAO Logo" 
+              className="h-10 transition-transform group-hover:scale-105" 
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#6efcff]/20 to-transparent rounded-lg blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+          </div>
         </Link>
 
-        <nav className="hidden items-center rounded-full border border-border/60 bg-secondary/50 px-1 py-1 md:flex">
+        <nav className="hidden items-center gap-1 rounded-2xl border border-border/60 bg-secondary/40 px-2 py-2 md:flex backdrop-blur-sm">
           {navLinks
             .filter((link) => !link.roles || (user && link.roles.includes(user.role)))
             .map((link) => {
               const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href))
               return (
-                <Link key={link.href} href={link.href} className={`rounded-full px-5 py-1.5 text-sm font-medium transition-colors ${isActive ? "bg-muted-foreground/20 text-foreground" : "text-muted-foreground hover:text-foreground"}`}>
+                <Link 
+                  key={link.href} 
+                  href={link.href} 
+                  className={`relative rounded-xl px-5 py-2.5 text-sm font-medium transition-all duration-200 ${
+                    isActive 
+                      ? "bg-gradient-to-r from-[#6efcff]/20 to-[#6efcff]/5 text-[#c5fdff] shadow-lg shadow-[#6efcff]/10" 
+                      : "text-muted-foreground hover:text-foreground hover:bg-white/5"
+                  }`}
+                >
                   {link.label}
+                  {isActive && (
+                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-gradient-to-r from-transparent via-[#6efcff] to-transparent rounded-full" />
+                  )}
                 </Link>
               )
             })}
         </nav>
 
-        <div className="flex items-center gap-3">
-          {/* เปลี่ยนปุ่มเดิมเป็น ConnectButton ของ RainbowKit */}
-          <ConnectButton accountStatus="avatar" chainStatus="icon" />
+        <div className="flex items-center gap-4">
+          {/* RainbowKit Connect Button */}
+          <div className="hidden sm:block">
+            <ConnectButton accountStatus="avatar" chainStatus="icon" showBalance={false} />
+          </div>
 
           {user ? (
             <div className="relative" ref={dropdownRef}>
-              <button onClick={() => setDropdownOpen(!dropdownOpen)} className="flex items-center gap-2 rounded-full border border-border/60 bg-secondary/50 px-4 py-1.5 text-sm text-foreground transition-colors hover:bg-secondary/80">
-                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/20 text-xs font-bold text-primary">{user.name.charAt(0).toUpperCase()}</div>
-                <span className="hidden md:inline">{user.name}</span>
-                <ChevronDown className={`h-4 w-4 ${dropdownOpen ? "rotate-180" : ""}`} />
+              <button 
+                onClick={() => setDropdownOpen(!dropdownOpen)} 
+                className="flex items-center gap-3 rounded-2xl border border-border/60 bg-secondary/40 px-4 py-2.5 text-sm text-foreground transition-all duration-200 hover:bg-secondary/60 hover:border-border/80 backdrop-blur-sm"
+              >
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-[#6efcff]/30 to-[#6efcff]/10 text-sm font-bold text-[#c5fdff] shadow-inner">
+                  {user.name.charAt(0).toUpperCase()}
+                </div>
+                <span className="hidden md:inline font-medium">{user.name}</span>
+                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${dropdownOpen ? "rotate-180" : ""}`} />
               </button>
               {dropdownOpen && (
-                <div className="absolute right-0 top-full mt-2 w-56 rounded-xl border border-border/60 bg-card p-2 shadow-lg">
-                  <Link href="/profile" onClick={() => setDropdownOpen(false)} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:bg-secondary hover:text-foreground"><User className="h-4 w-4" /> Profile</Link>
-                  <button onClick={() => { signOut(); setDropdownOpen(false); }} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-destructive hover:bg-destructive/10"><LogOut className="h-4 w-4" /> Sign Out</button>
+                <div className="absolute right-0 top-full mt-3 w-64 rounded-2xl border border-border/60 bg-card/95 backdrop-blur-xl p-2 shadow-2xl shadow-black/20">
+                  <Link 
+                    href="/profile" 
+                    onClick={() => setDropdownOpen(false)} 
+                    className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-muted-foreground hover:bg-secondary/80 hover:text-foreground transition-colors"
+                  >
+                    <User className="h-4 w-4" /> 
+                    <span className="font-medium">Profile</span>
+                  </Link>
+                  <div className="my-1 h-px bg-border/40" />
+                  <button 
+                    onClick={() => { signOut(); setDropdownOpen(false); }} 
+                    className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm text-destructive hover:bg-destructive/10 transition-colors"
+                  >
+                    <LogOut className="h-4 w-4" /> 
+                    <span className="font-medium">Sign Out</span>
+                  </button>
                 </div>
               )}
             </div>
           ) : (
-            <div className="flex items-center gap-2">
-              <Link href="/auth/sign-in" className="rounded-full border border-border/60 bg-secondary/50 px-4 py-1.5 text-sm font-medium text-muted-foreground hover:bg-secondary/80">Sign In</Link>
-              <Link href="/auth/sign-up" className="rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground hover:bg-primary/90">Launch App</Link>
+            <div className="flex items-center gap-3">
+              <Link 
+                href="/auth/sign-in" 
+                className="rounded-2xl border border-border/60 bg-secondary/40 px-5 py-2.5 text-sm font-medium text-muted-foreground hover:bg-secondary/60 hover:text-foreground transition-all duration-200"
+              >
+                Sign In
+              </Link>
+              <Link 
+                href="/auth/sign-up" 
+                className="rounded-2xl bg-gradient-to-r from-[#6efcff] to-[#6efcff]/80 px-5 py-2.5 text-sm font-semibold text-black hover:from-[#6efcff]/90 hover:to-[#6efcff]/70 transition-all duration-200 shadow-lg shadow-[#6efcff]/20"
+              >
+                Launch App
+              </Link>
             </div>
           )}
         </div>
