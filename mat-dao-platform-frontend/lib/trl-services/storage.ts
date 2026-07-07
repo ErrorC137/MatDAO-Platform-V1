@@ -65,6 +65,29 @@ export function addMatchReport(
   saveUserData(userId, data)
 }
 
+export function clearUserData(userId: string) {
+  if (typeof window === "undefined") return
+  localStorage.removeItem(storageKey(userId))
+}
+
+export function clearAssessments(userId: string) {
+  const data = loadUserData(userId)
+  data.assessments = []
+  saveUserData(userId, data)
+}
+
+export function clearMilestones(userId: string) {
+  const data = loadUserData(userId)
+  data.submittedMilestones = []
+  saveUserData(userId, data)
+}
+
+export function clearMatchReports(userId: string) {
+  const data = loadUserData(userId)
+  data.matchReports = []
+  saveUserData(userId, data)
+}
+
 export const MILESTONE_LABELS: Record<string, string> = {
   prototype: "Prototype",
   mvp: "MVP / Bench Asset",

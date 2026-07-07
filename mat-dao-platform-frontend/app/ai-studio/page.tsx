@@ -1,7 +1,10 @@
 "use client"
 
 import Link from "next/link"
-import { ArrowRight, Brain, FileSearch, Layers, Scale, Shield, Target, BookOpen } from "lucide-react"
+import { ArrowRight, Brain, FileSearch, Layers, Scale, Shield, Target, BookOpen, Trash2 } from "lucide-react"
+import { clearUserData } from "@/lib/trl-services/storage"
+import { useAuth } from "@/context/auth-context"
+import { useState } from "react"
 
 const tools = [
   {
@@ -73,6 +76,18 @@ const tools = [
 ]
 
 export default function AiStudioPage() {
+  const { user } = useAuth()
+  const [showClearConfirm, setShowClearConfirm] = useState(false)
+
+  const handleClearData = () => {
+    if (user) {
+      clearUserData(user.id)
+      setShowClearConfirm(false)
+      // Force page reload to clear any cached data
+      window.location.reload()
+    }
+  }
+
   return (
     <div className="relative px-5 py-12 sm:px-6 md:py-16">
       <div className="pointer-events-none absolute inset-0">
@@ -93,7 +108,38 @@ export default function AiStudioPage() {
           <p className="mx-auto max-w-2xl text-sm text-white/70 md:text-lg">
             Choose your analysis approach: run all three tools together for comprehensive insights, or use individual tools for specific needs.
           </p>
+          {user && (
+            <button
+              onClick={() => setShowClearConfirm(true)}
+              className="mt-4 inline-flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-2 text-xs text-red-400 hover:bg-red-500/20 transition-colors"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+              Clear All Previous Entries
+            </button>
+          )}
         </div>
+
+        {showClearConfirm && (
+          <div className="mb-6 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-center">
+            <p className="mb-3 text-sm text-white/80">
+              Are you sure you want to clear all previous analysis entries? This action cannot be undone.
+            </p>
+            <div className="flex justify-center gap-3">
+              <button
+                onClick={() => setShowClearConfirm(false)}
+                className="rounded-lg border border-white/20 bg-white/5 px-4 py-2 text-xs text-white/70 hover:bg-white/10 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleClearData}
+                className="rounded-lg border border-red-500/50 bg-red-500/20 px-4 py-2 text-xs text-red-400 hover:bg-red-500/30 transition-colors"
+              >
+                Clear All Data
+              </button>
+            </div>
+          </div>
+        )}
 
         <div className="grid gap-6 md:grid-cols-2">
           {tools.map((tool) => (
