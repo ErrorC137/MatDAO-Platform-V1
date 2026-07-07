@@ -215,7 +215,7 @@ function ProjectCard({ project, hoveredProject, setHoveredProject }: { project: 
       onMouseEnter={() => setHoveredProject(project.id)}
       onMouseLeave={() => setHoveredProject(null)}
     >
-      <div className="aspect-video w-full overflow-hidden bg-black/40">
+      <div className="aspect-square w-full overflow-hidden bg-black/40">
         <img 
           src={project.image} 
           alt={project.title}

@@ -57,7 +57,7 @@ export function PartnersCarousel() {
       
       <div 
         ref={scrollRef}
-        className="flex gap-12 overflow-x-hidden"
+        className="flex gap-16 overflow-x-hidden px-12"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
       >
@@ -72,7 +72,7 @@ export function PartnersCarousel() {
             <img
               src={partner.logo}
               alt={partner.name}
-              className="h-12 w-auto opacity-60 hover:opacity-100 transition-opacity"
+              className="h-16 w-auto max-w-48 object-contain opacity-60 hover:opacity-100 transition-opacity"
             />
           </a>
         ))}

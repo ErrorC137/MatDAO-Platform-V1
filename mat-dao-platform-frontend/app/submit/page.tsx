@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import {
@@ -11,9 +11,11 @@ import {
   Beaker,
   Info,
   Loader2,
+  Sparkles,
 } from "lucide-react"
 import { supabase } from "@/lib/supabase/client"
 import { useAuth } from "@/context/auth-context"
+import { useDemoMode } from "@/components/demo-mode"
 
 /* ------------------------------------------------------------------ */
 /*  Option data                                                        */
@@ -61,12 +63,42 @@ const fundingOptions = [
 export default function SubmitProjectPage() {
   const { user } = useAuth()
   const router = useRouter()
+  const { isEnabled: demoMode } = useDemoMode()
   const [trl, setTrl] = useState(2)
   const [fileName, setFileName] = useState<string | null>(null)
   const [file, setFile] = useState<File | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
+  const formRef = useRef<HTMLFormElement>(null)
+
+  // Demo mode autofill
+  useEffect(() => {
+    if (demoMode && formRef.current) {
+      const form = formRef.current
+      // Pre-fill form with demo data from AI analysis
+      const titleInput = form.querySelector('[name="title"]') as HTMLInputElement
+      const institutionInput = form.querySelector('[name="institution"]') as HTMLInputElement
+      const emailInput = form.querySelector('[name="email"]') as HTMLInputElement
+      const workingFieldSelect = form.querySelector('[name="workingField"]') as HTMLSelectElement
+      const partnerNeededSelect = form.querySelector('[name="partnerNeeded"]') as HTMLSelectElement
+      const licenseSelect = form.querySelector('[name="license"]') as HTMLSelectElement
+      const fundingNeededSelect = form.querySelector('[name="fundingNeeded"]') as HTMLSelectElement
+      const mainObstacleTextarea = form.querySelector('[name="mainObstacle"]') as HTMLTextAreaElement
+      const whatProvenTextarea = form.querySelector('[name="whatProven"]') as HTMLTextAreaElement
+
+      if (titleInput) titleInput.value = "Graphene-Based Supercapacitor for Grid Storage"
+      if (institutionInput) institutionInput.value = "MIT"
+      if (emailInput) emailInput.value = "researcher@mit.edu"
+      if (workingFieldSelect) workingFieldSelect.value = "Energy Storage"
+      if (partnerNeededSelect) partnerNeededSelect.value = "Industry Partner"
+      if (licenseSelect) licenseSelect.value = "University License"
+      if (fundingNeededSelect) fundingNeededSelect.value = "$100,000 - $250,000"
+      if (mainObstacleTextarea) mainObstacleTextarea.value = "Scaling production while maintaining high energy density and cycle life. Current lab-scale synthesis is too expensive for commercial deployment."
+      if (whatProvenTextarea) whatProvenTextarea.value = "Achieved 95% of theoretical capacitance in lab tests. Demonstrated 10,000 charge/discharge cycles with <5% degradation. Published results in Nature Materials."
+      setTrl(5)
+    }
+  }, [demoMode])
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0]
@@ -194,7 +226,18 @@ export default function SubmitProjectPage() {
               {error}
             </div>
           )}
-          <form onSubmit={handleSubmit} className="flex flex-col gap-10">
+          <form ref={formRef} onSubmit={handleSubmit} className="flex flex-col gap-10">
+            {/* Demo Mode Indicator */}
+            {demoMode && (
+              <div className="rounded-xl border border-[#6efcff]/30 bg-[#6efcff]/10 p-4">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-[#c5fdff]" />
+                  <span className="text-sm font-medium text-[#c5fdff]">Demo Mode: Form auto-filled with AI analysis data</span>
+                </div>
+                <p className="mt-1 text-xs text-white/60">You can edit the pre-filled data or submit as-is for the demo.</p>
+              </div>
+            )}
+
             {/* ====== Section: Basic Info ====== */}
             <div className="flex flex-col gap-1">
               <h2 className="text-lg font-semibold text-foreground">
