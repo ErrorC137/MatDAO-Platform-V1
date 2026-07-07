@@ -159,7 +159,6 @@ export default function SubmitProjectPage() {
           funding_goal: fundingGoal,
           funding_raised: 0,
           investors_count: 0,
-          days_remaining: 60, // Default 60 days for demo
           is_raising: true, // Enable raising status
           description: [
             { key: 'institution', value: institution },
