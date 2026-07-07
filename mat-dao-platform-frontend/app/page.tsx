@@ -4,7 +4,6 @@ import { StatsSection } from "@/components/home/stats-section"
 import { FooterSection } from "@/components/home/footer-section"
 import { TeamSection } from "@/components/home/team-section"
 import { SolutionSection } from "@/components/home/solution-section"
-import { PartnersCarousel } from "@/components/partners-carousel"
 
 export default function HomePage() {
   return (
@@ -14,7 +13,6 @@ export default function HomePage() {
       <FeaturesSection />
       <TeamSection />
       <StatsSection />
-      <PartnersCarousel />
       <FooterSection />
     </div>
   )

@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { PartnersCarousel } from "@/components/partners-carousel"
 import { Wallet, Send } from "lucide-react"
+import { useDemoMode } from "@/components/demo-mode"
 
 interface ProjectDetailClientProps {
   project: {
@@ -25,6 +26,7 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
   const [investAmount, setInvestAmount] = useState("")
   const [walletConnected, setWalletConnected] = useState(false)
   const [walletAddress, setWalletAddress] = useState("")
+  const { isEnabled: demoMode, autoApprove, instantInvestment } = useDemoMode()
 
   const handleConnectWallet = () => {
     // Demo wallet connection
@@ -35,7 +37,11 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
 
   const handleInvest = () => {
     // Demo investment
-    alert(`Investment of $${investAmount} sent successfully! (Demo)`)
+    if (instantInvestment) {
+      alert(`Investment of $${investAmount} sent successfully! (Demo Mode - Instant)`)
+    } else {
+      alert(`Investment of $${investAmount} sent successfully! (Demo)`)
+    }
     setShowInvestModal(false)
     setInvestAmount("")
   }
@@ -63,7 +69,7 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
                   <Wallet className="h-4 w-4 text-green-400" />
                   <span className="text-sm text-green-400">{walletAddress}</span>
                 </div>
-              ) : (
+              ) : !instantInvestment && (
                 <button
                   onClick={() => setShowWalletModal(true)}
                   className="flex items-center gap-2 rounded-lg border border-[#6efcff]/30 bg-[#6efcff]/10 px-4 py-2 text-sm text-[#c5fdff] hover:bg-[#6efcff]/20 transition-colors"
@@ -120,6 +126,11 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
           <div className="w-full max-w-md rounded-2xl border border-white/20 bg-black/90 p-6">
             <h3 className="mb-4 text-xl font-bold text-white">Invest in {project.title}</h3>
+            {instantInvestment && (
+              <div className="mb-4 rounded-lg border border-[#6efcff]/30 bg-[#6efcff]/10 p-3">
+                <p className="text-xs text-[#c5fdff]">⚡ Demo Mode: Instant investment enabled</p>
+              </div>
+            )}
             <div className="mb-4">
               <label className="mb-2 block text-sm text-white/70">Investment Amount (USD)</label>
               <input
@@ -143,7 +154,7 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
             <div className="space-y-3">
               <button
                 onClick={handleInvest}
-                disabled={!investAmount || !walletConnected}
+                disabled={!investAmount || (!instantInvestment && !walletConnected)}
                 className="w-full rounded-full bg-gradient-to-r from-[#6efcff] to-[#a78bfa] px-4 py-3 text-sm font-semibold text-black hover:opacity-90 transition-opacity disabled:opacity-50"
               >
                 Confirm Investment

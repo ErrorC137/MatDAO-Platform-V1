@@ -16,6 +16,7 @@ import {
 } from "lucide-react"
 import { useAuth } from "@/context/auth-context"
 import { loadUserData } from "@/lib/trl-services/storage"
+import { PartnersCarousel } from "@/components/partners-carousel"
 
 /* ------------------------------------------------------------------ */
 /*  Static data (would come from API in production)                    */
@@ -535,6 +536,9 @@ export default function ProjectMarketPage() {
           </div>
         </div>
       </section>
+
+      {/* Partners Carousel */}
+      <PartnersCarousel />
     </div>
   )
 }
