@@ -9,14 +9,11 @@ interface Partner {
 }
 
 const PARTNERS: Partner[] = [
-  { name: "1kx", logo: "https://cdn.prod.website-files.com/68270a6148d6b472673039a1/68270a6148d6b47267303c44_1kx-1.png", url: "https://1kx.network" },
-  { name: "50y", logo: "https://cdn.prod.website-files.com/68270a6148d6b472673039a1/68270a6148d6b47267303c5f_50y.webp", url: "https://50y.com" },
-  { name: "YZi Labs", logo: "https://cdn.prod.website-files.com/68270a6148d6b472673039a1/68270a6148d6b47267303c6f_YZi_Labs_Logo_3.webp", url: "https://yzi.io" },
-  { name: "Coinbase", logo: "https://cdn.prod.website-files.com/68270a6148d6b472673039a1/68270a6148d6b47267303c7c_coinbase.webp", url: "https://coinbase.com" },
-  { name: "a16z", logo: "https://cdn.prod.website-files.com/68270a6148d6b472673039a1/68270a6148d6b47267303c8a_a16z.webp", url: "https://a16z.com" },
-  { name: "Paradigm", logo: "https://cdn.prod.website-files.com/68270a6148d6b472673039a1/68270a6148d6b47267303c98_paradigm.webp", url: "https://paradigm.xyz" },
-  { name: "Binance Labs", logo: "https://cdn.prod.website-files.com/68270a6148d6b472673039a1/68270a6148d6b47267303ca6_binance.webp", url: "https://binance.com" },
-  { name: "Polychain", logo: "https://cdn.prod.website-files.com/68270a6148d6b472673039a1/68270a6148d6b47267303cb4_polychain.webp", url: "https://polychain.capital" },
+  { name: "CDA", logo: "/CDA-Pitchdeck.png" },
+  { name: "Co Space", logo: "/Co Space(1).png" },
+  { name: "Kaldera.AI", logo: "/Kaldera.AI(1).png" },
+  { name: "CUBS.ai", logo: "/LOGO CUBS.ai(1).png" },
+  { name: "Terra Tech Planter", logo: "/Terra_Tech Planter.png" },
 ]
 
 export function PartnersCarousel() {
