@@ -27,6 +27,30 @@ export default function ProjectAssessmentSubmitPage() {
       setError("Provide a title and abstract text or upload a file.")
       return
     }
+    
+    // Validate PDF file if uploaded
+    if (file && file.type === "application/pdf") {
+      const fileSizeMB = file.size / (1024 * 1024)
+      if (fileSizeMB > 50) {
+        setError("PDF file is too large. Please use a smaller file or paste the text content directly.")
+        return
+      }
+      
+      // Check if PDF might be corrupted by trying to read first few bytes
+      try {
+        const header = await file.slice(0, 4).arrayBuffer()
+        const headerView = new Uint8Array(header)
+        // PDF files should start with %PDF
+        if (String.fromCharCode(headerView[0], headerView[1], headerView[2], headerView[3]) !== '%PDF') {
+          setError("The uploaded file doesn't appear to be a valid PDF. Please try a different file or paste the text content directly.")
+          return
+        }
+      } catch (e) {
+        // If we can't read the header, still try to proceed but warn user
+        console.warn("Could not validate PDF header, proceeding anyway")
+      }
+    }
+    
     setLoading(true)
     setError(null)
     try {
@@ -41,10 +65,25 @@ export default function ProjectAssessmentSubmitPage() {
         financialsFile,
         userTrl: useUserTrl ? parseInt(userTrl) : undefined,
       })
+      
+      // Check if the analysis indicates poor text extraction
+      if (report.ipReport?.document_stats?.abstract_chars === 0 && file) {
+        setError("Warning: The PDF text extraction may have failed. Consider pasting the text content directly for better results.")
+      }
+      
       sessionStorage.setItem("matdao-combined-report", JSON.stringify(report))
       router.push("/ai-studio/project-assessment/results")
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Assessment failed")
+      const errorMessage = err instanceof Error ? err.message : "Assessment failed"
+      
+      // Provide helpful suggestions based on error type
+      if (errorMessage.includes("PDF parsing error") || errorMessage.includes("could not be properly extracted")) {
+        setError("PDF text extraction failed. This PDF may be image-based or corrupted. Please try pasting the text content directly instead of uploading the file.")
+      } else if (errorMessage.includes("Backend analysis failed")) {
+        setError("Backend analysis is currently unavailable. Using fallback analysis. For best results, ensure the backend is running.")
+      } else {
+        setError(errorMessage)
+      }
     } finally {
       setLoading(false)
     }
