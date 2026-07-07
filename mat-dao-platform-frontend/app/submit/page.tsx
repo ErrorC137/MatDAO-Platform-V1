@@ -158,7 +158,6 @@ export default function SubmitProjectPage() {
           phase: 'raising', // Set to raising for demo scenario
           funding_goal: fundingGoal,
           funding_raised: 0,
-          investors_count: 0,
           is_raising: true, // Enable raising status
           description: [
             { key: 'institution', value: institution },
