@@ -115,7 +115,7 @@ export default function SubmitProjectPage() {
       else if (fundingNeeded.includes("$100,000 - $250,000")) fundingGoal = 250000
       else if (fundingNeeded.includes("> $250,000")) fundingGoal = 500000
 
-      // Insert project into Supabase
+      // Insert project into Supabase with raising status for demo
       const { data: projectData, error: projectError } = await supabase
         .from('projects')
         .insert({
@@ -123,9 +123,12 @@ export default function SubmitProjectPage() {
           slug,
           researcher_id: user.id,
           trl,
-          phase: 'submission',
+          phase: 'raising', // Set to raising for demo scenario
           funding_goal: fundingGoal,
           funding_raised: 0,
+          investors_count: 0,
+          days_remaining: 60, // Default 60 days for demo
+          is_raising: true, // Enable raising status
           description: [
             { key: 'institution', value: institution },
             { key: 'email', value: email },

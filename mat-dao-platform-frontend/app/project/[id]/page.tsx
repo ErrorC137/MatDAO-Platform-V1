@@ -1,8 +1,6 @@
-"use client"
-
-import { useState } from "react"
 import { ProjectDataRoom } from "@/components/project/ProjectDataRoom"
 import { LegalRegistryPanel } from "@/components/project/LegalRegistryPanel"
+import { ProjectDetailClient } from "@/components/project/project-detail-client"
 
 const projectData: Record<
   string,
@@ -27,6 +25,11 @@ const projectData: Record<
     iptAddress?: string
     ipnftAddress?: string
     swapAddress?: string
+    isRaising?: boolean
+    raisedAmount?: number
+    targetAmount?: number
+    investors?: number
+    daysRemaining?: number
   }
 > = {
   "g-cap-500": {
@@ -35,6 +38,11 @@ const projectData: Record<
     researcher: "Prof. Dr. Arnon Jenkins (MIT)",
     funding: 180000,
     trl: 6,
+    isRaising: true,
+    raisedAmount: 125000,
+    targetAmount: 180000,
+    investors: 47,
+    daysRemaining: 23,
     description: [
       "G-Cap 500 represents a breakthrough in energy storage through Vertically Aligned Graphene Array (VAGA) technology, designed to solve the two major bottlenecks of today's Li-ion batteries: slow charging and short lifespan.",
       "Thanks to graphene's status as one of the most electrically conductive materials in the world, G-Cap 500 can absorb extremely high current instantaneously. This enables 0-80% charging in just 5 minutes (compared to 1-2 hours for conventional Li-ion batteries) and delivers a lifespan 10-50 times longer than standard batteries.",
@@ -117,6 +125,11 @@ const projectData: Record<
     researcher: "Dr. Somchai Tanaka (Chulalongkorn)",
     funding: 95000,
     trl: 4,
+    isRaising: true,
+    raisedAmount: 42000,
+    targetAmount: 95000,
+    investors: 23,
+    daysRemaining: 45,
     description: [
       "CNT Power Cable uses carbon nanotube technology to create next-generation power transmission cables with significantly lower energy loss.",
       "Traditional copper cables lose 5-8% of energy during transmission. CNT cables reduce this to below 1%, making long-distance power transmission far more efficient.",
@@ -254,38 +267,65 @@ export default async function ProjectDetailPage({
   return (
     <div className="flex flex-col">
       {/* Hero Banner */}
-      <section className="relative flex min-h-[50vh] items-center justify-center overflow-hidden">
+      <section className="relative flex min-h-[60vh] items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
           <img
             src="https://6ibpna7m8edwyvzk.public.blob.vercel-storage.com/graphene-what-is-it-and-what-is-it-used-for-393831-640x360.jpg"
             alt=""
             className="h-full w-full object-cover"
           />
-          <div className="absolute inset-0 bg-background/60" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/80" />
         </div>
         <div className="relative z-10 flex flex-col items-center gap-4 px-4 text-center">
-          <h1 className="text-4xl font-bold text-foreground md:text-5xl">
+          <h1 className="text-5xl font-bold text-white md:text-6xl">
             {project.title}
           </h1>
           <div className="flex items-center gap-3">
-            <span className="rounded-full border border-pink-500/40 bg-pink-500/10 px-4 py-1 text-sm font-medium text-pink-400">
+            <span className="rounded-full border border-[#6efcff]/40 bg-[#6efcff]/10 px-4 py-1 text-sm font-medium text-[#c5fdff]">
               {project.phase}
             </span>
-            <span className="rounded-full border border-border/60 bg-card px-4 py-1 text-sm text-muted-foreground">
+            <span className="rounded-full border border-white/30 bg-white/10 px-4 py-1 text-sm text-white/80">
               {project.researcher}
             </span>
+            {project.isRaising && (
+              <span className="rounded-full border border-green-500/40 bg-green-500/10 px-4 py-1 text-sm font-medium text-green-400 animate-pulse">
+                🔥 Raising
+              </span>
+            )}
           </div>
-          <div className="mt-2 flex items-center gap-3">
-            <div className="rounded-full bg-secondary/60 px-6 py-2 text-lg font-semibold text-foreground backdrop-blur-sm">
-              {"Funding : $"}
-              {project.funding.toLocaleString()}
+          <div className="mt-4 flex items-center gap-4">
+            <div className="rounded-full bg-[#6efcff]/20 px-6 py-3 text-xl font-bold text-[#c5fdff] backdrop-blur-sm border border-[#6efcff]/30">
+              ${project.funding.toLocaleString()}
             </div>
-            <div className="rounded-full border border-accent/30 bg-accent/10 px-4 py-2 text-sm font-medium text-accent">
+            <div className="rounded-full border border-[#6efcff]/30 bg-[#6efcff]/10 px-4 py-3 text-sm font-medium text-[#c5fdff]">
               TRL {project.trl}
             </div>
           </div>
+          
+          {/* Raising Progress Bar */}
+          {project.isRaising && (
+            <div className="mt-6 w-full max-w-2xl">
+              <div className="flex justify-between text-sm text-white/70 mb-2">
+                <span>${(project.raisedAmount || 0).toLocaleString()} raised</span>
+                <span>${project.targetAmount?.toLocaleString()} target</span>
+              </div>
+              <div className="h-3 bg-white/10 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-gradient-to-r from-[#6efcff] to-[#a78bfa] transition-all duration-500"
+                  style={{ width: `${((project.raisedAmount || 0) / (project.targetAmount || 1)) * 100}%` }}
+                />
+              </div>
+              <div className="flex justify-between text-xs text-white/50 mt-1">
+                <span>{project.investors} investors</span>
+                <span>{project.daysRemaining} days remaining</span>
+              </div>
+            </div>
+          )}
         </div>
       </section>
+
+      {/* Client Component for Interactive Elements */}
+      <ProjectDetailClient project={project} />
 
       {/* Content */}
       <section className="py-16">
