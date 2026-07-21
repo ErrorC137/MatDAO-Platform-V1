@@ -1,581 +1,131 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useRef } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import {
-  Upload,
-  FileText,
-  X,
-  ArrowRight,
-  Beaker,
-  Info,
-  Loader2,
-  Sparkles,
-} from "lucide-react"
+import { Beaker } from "lucide-react"
 import { supabase } from "@/lib/supabase/client"
 import { useAuth } from "@/context/auth-context"
 import { useDemoMode } from "@/components/demo-mode"
-
-/* ------------------------------------------------------------------ */
-/*  Option data                                                        */
-/* ------------------------------------------------------------------ */
-
-const workingFields = [
-  "Energy Storage",
-  "Nanomaterials",
-  "Biomaterials",
-  "Polymers",
-  "Ceramics",
-  "Composites",
-  "Metals & Alloys",
-  "Semiconductors",
-  "Catalysis",
-  "Photovoltaics",
-]
-
-const partnerOptions = [
-  "Industry Partner",
-  "Academic Collaborator",
-  "Government Lab",
-  "Not Needed",
-]
-
-const licenseOptions = [
-  "Open Source",
-  "University License",
-  "Exclusive License",
-  "Pending",
-]
-
-const fundingOptions = [
-  "< $10,000",
-  "$10,000 - $50,000",
-  "$50,000 - $100,000",
-  "$100,000 - $250,000",
-  "> $250,000",
-]
-
-/* ------------------------------------------------------------------ */
-/*  Component                                                          */
-/* ------------------------------------------------------------------ */
+import { MultiStepForm } from "@/components/submit/multi-step-form"
 
 export default function SubmitProjectPage() {
   const { user } = useAuth()
   const router = useRouter()
   const { isEnabled: demoMode } = useDemoMode()
-  const [trl, setTrl] = useState(2)
-  const [fileName, setFileName] = useState<string | null>(null)
-  const [file, setFile] = useState<File | null>(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const fileRef = useRef<HTMLInputElement>(null)
-  const formRef = useRef<HTMLFormElement>(null)
 
-  // Demo mode autofill
-  useEffect(() => {
-    if (demoMode && formRef.current) {
-      const form = formRef.current
-      // Pre-fill form with demo data from AI analysis
-      const titleInput = form.querySelector('[name="title"]') as HTMLInputElement
-      const institutionInput = form.querySelector('[name="institution"]') as HTMLInputElement
-      const emailInput = form.querySelector('[name="email"]') as HTMLInputElement
-      const workingFieldSelect = form.querySelector('[name="workingField"]') as HTMLSelectElement
-      const partnerNeededSelect = form.querySelector('[name="partnerNeeded"]') as HTMLSelectElement
-      const licenseSelect = form.querySelector('[name="license"]') as HTMLSelectElement
-      const fundingNeededSelect = form.querySelector('[name="fundingNeeded"]') as HTMLSelectElement
-      const mainObstacleTextarea = form.querySelector('[name="mainObstacle"]') as HTMLTextAreaElement
-      const whatProvenTextarea = form.querySelector('[name="whatProven"]') as HTMLTextAreaElement
-
-      if (titleInput) titleInput.value = "Graphene-Based Supercapacitor for Grid Storage"
-      if (institutionInput) institutionInput.value = "MIT"
-      if (emailInput) emailInput.value = "researcher@mit.edu"
-      if (workingFieldSelect) workingFieldSelect.value = "Energy Storage"
-      if (partnerNeededSelect) partnerNeededSelect.value = "Industry Partner"
-      if (licenseSelect) licenseSelect.value = "University License"
-      if (fundingNeededSelect) fundingNeededSelect.value = "$100,000 - $250,000"
-      if (mainObstacleTextarea) mainObstacleTextarea.value = "Scaling production while maintaining high energy density and cycle life. Current lab-scale synthesis is too expensive for commercial deployment."
-      if (whatProvenTextarea) whatProvenTextarea.value = "Achieved 95% of theoretical capacitance in lab tests. Demonstrated 10,000 charge/discharge cycles with <5% degradation. Published results in Nature Materials."
-      setTrl(5)
+  const handleSubmit = async (formData: any) => {
+    if (!user) {
+      throw new Error("Please sign in to submit a project")
     }
-  }, [demoMode])
 
-  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0]
-    if (selectedFile) {
-      setFileName(selectedFile.name)
-      setFile(selectedFile)
+    // Parse funding range
+    let fundingGoal = 50000
+    if (formData.fundingNeeded.includes("< $10,000")) fundingGoal = 10000
+    else if (formData.fundingNeeded.includes("$10,000 - $50,000")) fundingGoal = 50000
+    else if (formData.fundingNeeded.includes("$50,000 - $100,000")) fundingGoal = 100000
+    else if (formData.fundingNeeded.includes("$100,000 - $250,000")) fundingGoal = 250000
+    else if (formData.fundingNeeded.includes("> $250,000")) fundingGoal = 500000
+
+    // Create slug from title
+    const slug = formData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-' + Date.now()
+
+    // Insert project into Supabase with raising status for demo
+    const { data: projectData, error: projectError } = await supabase
+      .from('projects')
+      .insert({
+        title: formData.title,
+        slug,
+        researcher_id: user.id,
+        trl: formData.trl,
+        phase: 'raising',
+        funding_goal: fundingGoal,
+        funding_raised: 0,
+        is_raising: true,
+        description: [
+          { key: 'institution', value: formData.institution },
+          { key: 'email', value: formData.email },
+          { key: 'workingField', value: formData.workingField },
+          { key: 'partnerNeeded', value: formData.partnerNeeded },
+          { key: 'license', value: formData.license },
+          { key: 'fundingNeeded', value: formData.fundingNeeded },
+          { key: 'targetAudience', value: formData.targetAudience },
+          { key: 'painPoints', value: formData.painPoints },
+          { key: 'marketSize', value: formData.marketSize },
+        ],
+        technical_specs: [
+          { key: 'businessModel', value: formData.businessModel },
+          { key: 'milestones', value: formData.milestones },
+          { key: 'timeline', value: formData.timeline },
+        ],
+        market_applications: [],
+        development_timeline: [],
+        team: [],
+        risk_factors: [],
+        competitive_advantage: [],
+        ip_status: { type: '', status: '', details: '' },
+      })
+      .select()
+      .single()
+
+    if (projectError) throw projectError
+
+    // Handle file uploads (simplified for demo)
+    if (formData.pitchDeck) {
+      console.log('Pitch deck uploaded:', formData.pitchDeck.name)
     }
+    if (formData.prototype) {
+      console.log('Prototype uploaded:', formData.prototype.name)
+    }
+    if (formData.additionalDocs) {
+      console.log('Additional docs uploaded:', formData.additionalDocs.name)
+    }
+
+    router.push(`/submit/milestone?projectId=${projectData.id}`)
   }
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    if (!user) {
-      setError("Please sign in to submit a project")
-      return
-    }
-
-    setLoading(true)
-    setError(null)
-
-    try {
-      const formData = new FormData(e.currentTarget)
-      const title = formData.get("title") as string
-      const institution = formData.get("institution") as string
-      const email = formData.get("email") as string
-      const workingField = formData.get("workingField") as string
-      const partnerNeeded = formData.get("partnerNeeded") as string
-      const license = formData.get("license") as string
-      const fundingNeeded = formData.get("fundingNeeded") as string
-      const mainObstacle = formData.get("mainObstacle") as string
-      const whatProven = formData.get("whatProven") as string
-
-      if (!title || !institution || !email || !workingField || !fundingNeeded || !mainObstacle || !whatProven) {
-        setError("Please fill in all required fields")
-        setLoading(false)
-        return
-      }
-
-      // Create slug from title
-      const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-' + Date.now()
-
-      // Parse funding range
-      let fundingGoal = 50000
-      if (fundingNeeded.includes("< $10,000")) fundingGoal = 10000
-      else if (fundingNeeded.includes("$10,000 - $50,000")) fundingGoal = 50000
-      else if (fundingNeeded.includes("$50,000 - $100,000")) fundingGoal = 100000
-      else if (fundingNeeded.includes("$100,000 - $250,000")) fundingGoal = 250000
-      else if (fundingNeeded.includes("> $250,000")) fundingGoal = 500000
-
-      // Insert project into Supabase with raising status for demo
-      const { data: projectData, error: projectError } = await supabase
-        .from('projects')
-        .insert({
-          title,
-          slug,
-          researcher_id: user.id,
-          trl,
-          phase: 'raising', // Set to raising for demo scenario
-          funding_goal: fundingGoal,
-          funding_raised: 0,
-          is_raising: true, // Enable raising status
-          description: [
-            { key: 'institution', value: institution },
-            { key: 'email', value: email },
-            { key: 'workingField', value: workingField },
-            { key: 'partnerNeeded', value: partnerNeeded },
-            { key: 'license', value: license },
-            { key: 'fundingNeeded', value: fundingNeeded },
-          ],
-          technical_specs: [
-            { key: 'mainObstacle', value: mainObstacle },
-            { key: 'whatProven', value: whatProven },
-          ],
-          market_applications: [],
-          development_timeline: [],
-          team: [],
-          risk_factors: [],
-          competitive_advantage: [],
-          ip_status: { type: '', status: '', details: '' },
-        })
-        .select()
-        .single()
-
-      if (projectError) throw projectError
-
-      // If file uploaded, upload to Pinata (simplified - just store metadata for now)
-      if (file) {
-        console.log('File uploaded:', file.name)
-        // TODO: Implement actual file upload to Pinata
-      }
-
-      router.push(`/submit/milestone?projectId=${projectData.id}`)
-    } catch (err) {
-      console.error('Submission error:', err)
-      setError(err instanceof Error ? err.message : 'Failed to submit project')
-    } finally {
-      setLoading(false)
-    }
+  const demoData = {
+    title: "Graphene-Based Supercapacitor for Grid Storage",
+    institution: "MIT",
+    email: "researcher@mit.edu",
+    workingField: "Energy Storage",
+    trl: 5,
+    targetAudience: "Electric vehicle manufacturers, data centers, renewable energy providers",
+    painPoints: "Slow charging times, energy loss during transmission, high costs of current battery technology",
+    marketSize: "$50B global market by 2030",
+    businessModel: "Licensing to manufacturers, direct sales for specialized applications, service contracts",
+    fundingNeeded: "$100,000 - $250,000",
+    partnerNeeded: "Industry Partner",
+    license: "University License",
+    milestones: "Proof of Concept (6 months), Prototype (12 months), Pilot (18 months), Commercialization (24 months)",
+    timeline: "6 months for PoC validation, 12 months for prototype development, 18 months for pilot deployment, 24 months for commercial launch",
   }
 
   return (
     <div className="flex flex-col">
-      {/* ---- Hero header ---- */}
-      <section className="border-b border-border/40 bg-card/50 px-4 py-14">
-        <div className="mx-auto max-w-2xl text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-primary/30 bg-primary/10">
-            <Beaker className="h-6 w-6 text-primary" />
+      {/* Hero header */}
+      <section className="border-b border-white/10 bg-black/40 backdrop-blur-sm px-4 py-14">
+        <div className="mx-auto max-w-4xl text-center">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-[#6efcff]/30 bg-[#6efcff]/10">
+            <Beaker className="h-6 w-6 text-[#c5fdff]" />
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
-            {"Let\u2019s understand your research"}
+          <h1 className="text-3xl font-bold tracking-tight text-white/95 md:text-4xl">
+            Submit Your Innovation
           </h1>
-          <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
-            This helps us match your project with the right milestone structure
-            and connect you with funding opportunities in the MatDAO ecosystem.
+          <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-white/60">
+            Guide your research through the MatDAO protocol. Our multi-step process helps us match your project with the right funding and milestone structure.
           </p>
         </div>
       </section>
 
-      {/* ---- Form ---- */}
+      {/* Multi-step form */}
       <section className="px-4 py-12">
-        <div className="mx-auto w-full max-w-2xl">
-          {error && (
-            <div className="mb-6 rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-              {error}
-            </div>
-          )}
-          <form ref={formRef} onSubmit={handleSubmit} className="flex flex-col gap-10">
-            {/* Demo Mode Indicator */}
-            {demoMode && (
-              <div className="rounded-xl border border-[#6efcff]/30 bg-[#6efcff]/10 p-4">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="h-4 w-4 text-[#c5fdff]" />
-                  <span className="text-sm font-medium text-[#c5fdff]">Demo Mode: Form auto-filled with AI analysis data</span>
-                </div>
-                <p className="mt-1 text-xs text-white/60">You can edit the pre-filled data or submit as-is for the demo.</p>
-              </div>
-            )}
-
-            {/* ====== Section: Basic Info ====== */}
-            <div className="flex flex-col gap-1">
-              <h2 className="text-lg font-semibold text-foreground">
-                Basic Information
-              </h2>
-              <p className="text-xs text-muted-foreground">
-                Tell us about your project and yourself.
-              </p>
-            </div>
-
-            {/* Project Title */}
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium text-foreground">
-                Project Title <span className="text-destructive">*</span>
-              </label>
-              <input
-                name="title"
-                type="text"
-                required
-                className="rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30"
-                placeholder="e.g. Vertically Aligned Graphene Supercapacitor"
-              />
-            </div>
-
-            {/* Institution & Email */}
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium text-foreground">
-                  Institution <span className="text-destructive">*</span>
-                </label>
-                <input
-                  name="institution"
-                  type="text"
-                  required
-                  className="rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30"
-                  placeholder="MIT, Stanford, etc."
-                />
-              </div>
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium text-foreground">
-                  Email <span className="text-destructive">*</span>
-                </label>
-                <input
-                  name="email"
-                  type="email"
-                  required
-                  className="rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30"
-                  placeholder="you@university.edu"
-                />
-              </div>
-            </div>
-
-            {/* Working Field & Partner */}
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium text-foreground">
-                  Working Field <span className="text-destructive">*</span>
-                </label>
-                <div className="relative">
-                  <select
-                    name="workingField"
-                    required
-                    className="w-full appearance-none rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30"
-                  >
-                    <option value="">Select a field</option>
-                    {workingFields.map((f) => (
-                      <option key={f} value={f}>
-                        {f}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                    <svg
-                      className="h-4 w-4"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="m6 9 6 6 6-6" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium text-foreground">
-                  Partner Needed
-                </label>
-                <div className="relative">
-                  <select name="partnerNeeded" className="w-full appearance-none rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30">
-                    <option value="">Select partner type</option>
-                    {partnerOptions.map((o) => (
-                      <option key={o} value={o}>
-                        {o}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                    <svg
-                      className="h-4 w-4"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="m6 9 6 6 6-6" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Divider */}
-            <div className="h-px bg-border/40" />
-
-            {/* ====== Section: Technical Details ====== */}
-            <div className="flex flex-col gap-1">
-              <h2 className="text-lg font-semibold text-foreground">
-                Technical Details
-              </h2>
-              <p className="text-xs text-muted-foreground">
-                Describe your current research readiness and needs.
-              </p>
-            </div>
-
-            {/* Current TRL */}
-            <div className="flex flex-col gap-3">
-              <div className="flex items-center gap-2">
-                <label className="text-sm font-medium text-foreground">
-                  Current TRL <span className="text-destructive">*</span>
-                </label>
-                <div className="group relative">
-                  <Info className="h-3.5 w-3.5 text-muted-foreground" />
-                  <div className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 w-56 -translate-x-1/2 rounded-lg border border-border bg-card p-2.5 text-xs leading-relaxed text-muted-foreground opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
-                    Technology Readiness Level (1-9). TRL 1 = basic principles,
-                    TRL 9 = market ready.
-                  </div>
-                </div>
-              </div>
-              <div className="rounded-xl border border-border bg-card p-4">
-                <input
-                  type="range"
-                  min={1}
-                  max={9}
-                  value={trl}
-                  onChange={(e) => setTrl(Number(e.target.value))}
-                  className="mb-3 w-full accent-primary"
-                />
-                <div className="flex justify-between">
-                  {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => (
-                    <button
-                      key={n}
-                      type="button"
-                      onClick={() => setTrl(n)}
-                      className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-medium transition-colors ${
-                        n === trl
-                          ? "bg-primary text-primary-foreground"
-                          : n <= trl
-                          ? "bg-primary/20 text-primary"
-                          : "text-muted-foreground hover:text-foreground"
-                      }`}
-                    >
-                      {n}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* License & Funding */}
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium text-foreground">
-                  License
-                </label>
-                <div className="relative">
-                  <select name="license" className="w-full appearance-none rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30">
-                    <option value="">Select license type</option>
-                    {licenseOptions.map((o) => (
-                      <option key={o} value={o}>
-                        {o}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                    <svg
-                      className="h-4 w-4"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="m6 9 6 6 6-6" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium text-foreground">
-                  Funding Needed <span className="text-destructive">*</span>
-                </label>
-                <div className="relative">
-                  <select
-                    name="fundingNeeded"
-                    required
-                    className="w-full appearance-none rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30"
-                  >
-                    <option value="">Select funding range</option>
-                    {fundingOptions.map((o) => (
-                      <option key={o} value={o}>
-                        {o}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                    <svg
-                      className="h-4 w-4"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="m6 9 6 6 6-6" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Divider */}
-            <div className="h-px bg-border/40" />
-
-            {/* ====== Section: Narrative ====== */}
-            <div className="flex flex-col gap-1">
-              <h2 className="text-lg font-semibold text-foreground">
-                Research Narrative
-              </h2>
-              <p className="text-xs text-muted-foreground">
-                Help reviewers understand your challenges and achievements.
-              </p>
-            </div>
-
-            {/* Main Obstacle */}
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium text-foreground">
-                Main Obstacle <span className="text-destructive">*</span>
-              </label>
-              <textarea
-                name="mainObstacle"
-                rows={4}
-                required
-                className="resize-none rounded-xl border border-border bg-card px-4 py-3 text-sm leading-relaxed text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30"
-                placeholder="What is the primary technical or market challenge you face? (e.g. difficulty scaling from lab to pilot production)"
-              />
-            </div>
-
-            {/* What you have proven */}
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium text-foreground">
-                What you have proven? <span className="text-destructive">*</span>
-              </label>
-              <textarea
-                name="whatProven"
-                rows={4}
-                required
-                className="resize-none rounded-xl border border-border bg-card px-4 py-3 text-sm leading-relaxed text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30"
-                placeholder="Describe your key results, published data, or validated prototypes so far."
-              />
-            </div>
-
-            {/* PDF Upload */}
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium text-foreground">
-                Supporting Document (PDF)
-              </label>
-              <input
-                ref={fileRef}
-                type="file"
-                accept=".pdf"
-                className="hidden"
-                onChange={handleFile}
-              />
-              {fileName ? (
-                <div className="flex items-center justify-between rounded-xl border border-border bg-card px-4 py-3">
-                  <div className="flex items-center gap-3">
-                    <FileText className="h-5 w-5 text-primary" />
-                    <span className="text-sm text-foreground">{fileName}</span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setFileName(null)
-                      if (fileRef.current) fileRef.current.value = ""
-                    }}
-                    className="text-muted-foreground hover:text-foreground"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => fileRef.current?.click()}
-                  className="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-card py-10 transition-colors hover:border-primary/50 hover:bg-card/80"
-                >
-                  <Upload className="h-8 w-8 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">
-                    Click to upload a PDF
-                  </span>
-                  <span className="text-xs text-muted-foreground/60">
-                    Max 25 MB
-                  </span>
-                </button>
-              )}
-            </div>
-
-            {/* Submit */}
-            <div className="flex flex-col items-center gap-3 pt-4">
-              <button
-                type="submit"
-                disabled={loading}
-                className="flex items-center gap-2 rounded-full bg-primary px-8 py-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Creating your milestones...
-                  </>
-                ) : (
-                  <>
-                    Create your milestones
-                    <ArrowRight className="h-4 w-4" />
-                  </>
-                )}
-              </button>
-              <p className="text-xs text-muted-foreground">
-                You can save and return to this later.
-              </p>
-            </div>
-          </form>
+        <div className="mx-auto w-full max-w-4xl">
+          <MultiStepForm 
+            onSubmit={handleSubmit} 
+            demoMode={demoMode}
+            demoData={demoData}
+          />
         </div>
       </section>
     </div>

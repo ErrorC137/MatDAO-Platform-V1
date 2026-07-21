@@ -14,6 +14,11 @@ import {
   FileEdit,
   Loader2,
   Gem,
+  Sparkles,
+  Clock,
+  TrendingUp,
+  Award,
+  Zap,
 } from "lucide-react"
 import { MarkdownReport } from "@/components/trl-services/MarkdownReport"
 import { TrlBackendStatus } from "@/components/trl-services/TrlBackendStatus"
@@ -313,10 +318,10 @@ export default function AiAuditorPage() {
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/16 via-black/26 to-black/56" />
       <div className="relative z-10 mx-auto max-w-6xl">
         <div className="mb-8">
-          <p className="mb-3 inline-flex items-center gap-2 rounded-full border border-[#6efcff]/35 bg-[#6efcff]/10 px-4 py-1 text-[11px] uppercase tracking-[0.18em] text-[#c5fdff]">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#6efcff]/35 bg-[#6efcff]/10 px-4 py-1.5 text-[11px] uppercase tracking-[0.18em] text-[#c5fdff]">
             <Shield className="h-3.5 w-3.5" />
             AI Scientific Auditor
-          </p>
+          </div>
           <h1 className="font-headline mb-2 text-3xl font-extrabold text-white/95">
             {isStaff ? "Staff Verification Dashboard" : "Milestone Proof Verification"}
           </h1>
@@ -331,6 +336,41 @@ export default function AiAuditorPage() {
             )}
             {!isStaff && "."}
           </p>
+          
+          {/* Stats Cards */}
+          <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
+            <div className="rounded-xl border border-white/10 bg-black/40 backdrop-blur-sm p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <Clock className="h-4 w-4 text-[#6efcff]" />
+                <span className="text-xs text-white/50">Pending</span>
+              </div>
+              <p className="text-2xl font-bold text-white">{tasks.filter((t) => t.status === "pending").length}</p>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-black/40 backdrop-blur-sm p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <CheckCircle className="h-4 w-4 text-green-400" />
+                <span className="text-xs text-white/50">Verified</span>
+              </div>
+              <p className="text-2xl font-bold text-white">{tasks.filter((t) => t.status === "verified").length}</p>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-black/40 backdrop-blur-sm p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <TrendingUp className="h-4 w-4 text-[#a78bfa]" />
+                <span className="text-xs text-white/50">AI Pass Rate</span>
+              </div>
+              <p className="text-2xl font-bold text-white">
+                {tasks.length > 0 ? Math.round((tasks.filter((t) => t.aiPassed).length / tasks.length) * 100) : 0}%
+              </p>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-black/40 backdrop-blur-sm p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <Award className="h-4 w-4 text-[#6efcff]" />
+                <span className="text-xs text-white/50">NFTs Minted</span>
+              </div>
+              <p className="text-2xl font-bold text-white">{mintedProjectIds.size}</p>
+            </div>
+          </div>
+
           <div className="mt-4">
             <TrlBackendStatus />
           </div>

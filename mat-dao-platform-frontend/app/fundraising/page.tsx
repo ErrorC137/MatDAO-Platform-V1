@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Clock, TrendingUp, Target, DollarSign, Calendar, Users } from "lucide-react"
+import { Clock, TrendingUp, Target, DollarSign, Calendar, Users, Wallet, Sparkles, ChevronRight, Shield, Zap } from "lucide-react"
 
 interface FundraisingCampaign {
   id: string
@@ -15,6 +15,8 @@ interface FundraisingCampaign {
   image: string
   researcher: string
   trl: number
+  vaultAddress?: string
+  acceptedCurrencies?: string[]
 }
 
 const campaigns: FundraisingCampaign[] = [
@@ -30,6 +32,8 @@ const campaigns: FundraisingCampaign[] = [
     image: "https://6ibpna7m8edwyvzk.public.blob.vercel-storage.com/graphene-what-is-it-and-what-is-it-used-for-393831-640x360.jpg",
     researcher: "Dr. Sarah Chen",
     trl: 7,
+    vaultAddress: "0x1234...5678",
+    acceptedCurrencies: ["USDC", "USDT", "ETH"],
   },
   {
     id: "g-cap-500",
@@ -43,6 +47,8 @@ const campaigns: FundraisingCampaign[] = [
     image: "https://6ibpna7m8edwyvzk.public.blob.vercel-storage.com/graphene-what-is-it-and-what-is-it-used-for-393831-640x360.jpg",
     researcher: "Prof. Dr. Arnon Jenkins",
     trl: 6,
+    vaultAddress: "0xabcd...efgh",
+    acceptedCurrencies: ["USDC", "USDT"],
   },
   {
     id: "cnt-power-cable",
@@ -56,6 +62,8 @@ const campaigns: FundraisingCampaign[] = [
     image: "https://6ibpna7m8edwyvzk.public.blob.vercel-storage.com/graphene-what-is-it-and-what-is-it-used-for-393831-640x360.jpg",
     researcher: "Dr. Somchai Tanaka",
     trl: 4,
+    vaultAddress: "0x9876...5432",
+    acceptedCurrencies: ["USDC"],
   },
   {
     id: "quantum-dots-solar",
@@ -69,6 +77,8 @@ const campaigns: FundraisingCampaign[] = [
     image: "https://6ibpna7m8edwyvzk.public.blob.vercel-storage.com/graphene-what-is-it-and-what-is-it-used-for-393831-640x360.jpg",
     researcher: "Dr. Michael Torres",
     trl: 5,
+    vaultAddress: "0xfedc...ba98",
+    acceptedCurrencies: ["USDC", "USDT", "ETH"],
   },
 ]
 
@@ -93,21 +103,32 @@ export default function FundraisingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-b from-[#0a0a1a] via-[#0d1a2d] to-[#050510]">
+      {/* Animated background elements */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#6efcff]/10 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#a78bfa]/10 rounded-full blur-3xl animate-pulse delay-1000" />
+      </div>
+
       {/* Header */}
-      <div className="border-b border-border/60 bg-card/50 backdrop-blur-sm">
+      <div className="relative border-b border-white/10 bg-black/40 backdrop-blur-xl">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-foreground">Active Fundraising</h1>
-              <p className="mt-2 text-muted-foreground">
-                Support breakthrough material science projects with time-limited funding campaigns
+              <div className="flex items-center gap-3 mb-2">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#6efcff]/30 bg-[#6efcff]/10">
+                  <Sparkles className="h-5 w-5 text-[#c5fdff]" />
+                </div>
+                <h1 className="text-3xl font-bold text-white/95">Active Fundraising Vaults</h1>
+              </div>
+              <p className="text-sm text-white/60">
+                Invest in breakthrough material science projects through protocol-controlled vaults
               </p>
             </div>
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 rounded-lg border border-border/60 bg-secondary/20 px-4 py-2">
-                <Clock className="h-4 w-4 text-primary" />
-                <span className="text-sm font-medium text-foreground">
+              <div className="flex items-center gap-2 rounded-xl border border-[#6efcff]/30 bg-[#6efcff]/10 px-4 py-2">
+                <Clock className="h-4 w-4 text-[#c5fdff]" />
+                <span className="text-sm font-medium text-white">
                   Campaigns end July 20, 2026
                 </span>
               </div>
@@ -117,49 +138,49 @@ export default function FundraisingPage() {
       </div>
 
       {/* Stats */}
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <div className="relative mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         <div className="grid gap-4 md:grid-cols-4">
-          <div className="rounded-xl border border-border/60 bg-card p-6">
+          <div className="rounded-2xl border border-white/10 bg-black/40 backdrop-blur-sm p-6">
             <div className="flex items-center gap-3">
-              <div className="rounded-lg bg-primary/10 p-3">
-                <TrendingUp className="h-5 w-5 text-primary" />
+              <div className="rounded-xl bg-[#6efcff]/10 p-3">
+                <TrendingUp className="h-5 w-5 text-[#6efcff]" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Total Raised</p>
-                <p className="text-2xl font-bold text-foreground">$715,000</p>
+                <p className="text-sm text-white/50">Total Raised</p>
+                <p className="text-2xl font-bold text-white">$715,000</p>
               </div>
             </div>
           </div>
-          <div className="rounded-xl border border-border/60 bg-card p-6">
+          <div className="rounded-2xl border border-white/10 bg-black/40 backdrop-blur-sm p-6">
             <div className="flex items-center gap-3">
-              <div className="rounded-lg bg-primary/10 p-3">
-                <Target className="h-5 w-5 text-primary" />
+              <div className="rounded-xl bg-[#a78bfa]/10 p-3">
+                <Target className="h-5 w-5 text-[#a78bfa]" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Active Campaigns</p>
-                <p className="text-2xl font-bold text-foreground">4</p>
+                <p className="text-sm text-white/50">Active Vaults</p>
+                <p className="text-2xl font-bold text-white">4</p>
               </div>
             </div>
           </div>
-          <div className="rounded-xl border border-border/60 bg-card p-6">
+          <div className="rounded-2xl border border-white/10 bg-black/40 backdrop-blur-sm p-6">
             <div className="flex items-center gap-3">
-              <div className="rounded-lg bg-primary/10 p-3">
-                <Users className="h-5 w-5 text-primary" />
+              <div className="rounded-xl bg-[#6efcff]/10 p-3">
+                <Users className="h-5 w-5 text-[#6efcff]" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Total Backers</p>
-                <p className="text-2xl font-bold text-foreground">426</p>
+                <p className="text-sm text-white/50">Total Backers</p>
+                <p className="text-2xl font-bold text-white">426</p>
               </div>
             </div>
           </div>
-          <div className="rounded-xl border border-border/60 bg-card p-6">
+          <div className="rounded-2xl border border-white/10 bg-black/40 backdrop-blur-sm p-6">
             <div className="flex items-center gap-3">
-              <div className="rounded-lg bg-primary/10 p-3">
-                <DollarSign className="h-5 w-5 text-primary" />
+              <div className="rounded-xl bg-[#a78bfa]/10 p-3">
+                <DollarSign className="h-5 w-5 text-[#a78bfa]" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Avg. Contribution</p>
-                <p className="text-2xl font-bold text-foreground">$1,678</p>
+                <p className="text-sm text-white/50">Avg. Contribution</p>
+                <p className="text-2xl font-bold text-white">$1,678</p>
               </div>
             </div>
           </div>
@@ -167,16 +188,16 @@ export default function FundraisingPage() {
       </div>
 
       {/* Category Filter */}
-      <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+      <div className="relative mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
         <div className="flex flex-wrap gap-2">
           {categories.map((category) => (
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+              className={`rounded-full px-4 py-2 text-sm font-medium transition-all ${
                 selectedCategory === category
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-secondary/20 text-foreground hover:bg-secondary/30"
+                  ? "bg-gradient-to-r from-[#6efcff] to-[#a78bfa] text-black"
+                  : "border border-white/10 bg-white/5 text-white/60 hover:bg-white/10 hover:text-white/80"
               }`}
             >
               {category}
@@ -186,68 +207,84 @@ export default function FundraisingPage() {
       </div>
 
       {/* Campaigns Grid */}
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="relative mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 pb-20">
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {filteredCampaigns.map((campaign) => (
             <div
               key={campaign.id}
-              className="overflow-hidden rounded-xl border border-border/60 bg-card transition-all hover:shadow-lg"
+              className="group overflow-hidden rounded-2xl border border-white/10 bg-black/40 backdrop-blur-sm transition-all hover:border-[#6efcff]/30 hover:shadow-2xl hover:shadow-[#6efcff]/10"
             >
               <div className="relative h-48">
                 <img
                   src={campaign.image}
                   alt={campaign.title}
-                  className="h-full w-full object-cover"
+                  className="h-full w-full object-cover transition-transform group-hover:scale-105"
                 />
-                <div className="absolute top-4 right-4 rounded-lg bg-primary/90 px-3 py-1 text-xs font-semibold text-primary-foreground">
+                <div className="absolute top-4 right-4 rounded-lg bg-black/60 backdrop-blur-sm border border-[#6efcff]/30 px-3 py-1 text-xs font-semibold text-[#c5fdff]">
                   TRL {campaign.trl}
+                </div>
+                <div className="absolute top-4 left-4 rounded-lg bg-black/60 backdrop-blur-sm border border-white/10 px-3 py-1 text-xs font-medium text-white/80">
+                  {campaign.category}
                 </div>
               </div>
               <div className="p-6">
-                <div className="mb-3 flex items-center justify-between">
-                  <span className="rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-                    {campaign.category}
-                  </span>
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <Clock className="h-3 w-3" />
-                    {getTimeRemaining(campaign.endDate)}
+                <h3 className="mb-2 text-lg font-semibold text-white/95">{campaign.title}</h3>
+                <p className="mb-4 text-sm text-white/60 line-clamp-2">{campaign.description}</p>
+                
+                {/* Vault Info */}
+                <div className="mb-4 rounded-xl border border-white/10 bg-white/5 p-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Shield className="h-4 w-4 text-[#6efcff]" />
+                    <span className="text-xs text-white/50">Vault Address</span>
+                  </div>
+                  <p className="text-xs font-mono text-[#c5fdff]">{campaign.vaultAddress}</p>
+                  <div className="flex items-center gap-2 mt-2">
+                    <Zap className="h-3 w-3 text-[#a78bfa]" />
+                    <span className="text-xs text-white/50">
+                      Accepts: {campaign.acceptedCurrencies?.join(", ")}
+                    </span>
                   </div>
                 </div>
-                <h3 className="mb-2 text-lg font-semibold text-foreground">{campaign.title}</h3>
-                <p className="mb-4 text-sm text-muted-foreground line-clamp-2">{campaign.description}</p>
+
+                {/* Progress */}
                 <div className="mb-4">
                   <div className="mb-2 flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">${campaign.currentAmount.toLocaleString()} raised</span>
-                    <span className="font-medium text-foreground">
+                    <span className="text-white/60">${campaign.currentAmount.toLocaleString()} raised</span>
+                    <span className="font-medium text-[#c5fdff]">
                       {getProgressPercentage(campaign.currentAmount, campaign.targetAmount).toFixed(0)}%
                     </span>
                   </div>
-                  <div className="h-2 overflow-hidden rounded-full bg-secondary/20">
+                  <div className="h-2 overflow-hidden rounded-full bg-white/10">
                     <div
-                      className="h-full rounded-full bg-primary transition-all"
+                      className="h-full rounded-full bg-gradient-to-r from-[#6efcff] to-[#a78bfa] transition-all"
                       style={{
                         width: `${getProgressPercentage(campaign.currentAmount, campaign.targetAmount)}%`,
                       }}
                     />
                   </div>
-                  <p className="mt-1 text-xs text-muted-foreground">
+                  <p className="mt-1 text-xs text-white/50">
                     Goal: ${campaign.targetAmount.toLocaleString()}
                   </p>
                 </div>
-                <div className="flex items-center justify-between border-t border-border/60 pt-4">
+
+                {/* Footer */}
+                <div className="flex items-center justify-between border-t border-white/10 pt-4 mb-4">
                   <div className="flex items-center gap-2">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#6efcff]/10 text-xs font-semibold text-[#c5fdff]">
                       {campaign.researcher.split(" ").map(n => n[0]).join("")}
                     </div>
-                    <span className="text-xs text-muted-foreground">{campaign.researcher}</span>
+                    <span className="text-xs text-white/60">{campaign.researcher}</span>
                   </div>
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <Users className="h-3 w-3" />
-                    {campaign.backers} backers
+                  <div className="flex items-center gap-1 text-xs text-white/50">
+                    <Clock className="h-3 w-3" />
+                    {getTimeRemaining(campaign.endDate)}
                   </div>
                 </div>
-                <button className="mt-4 w-full rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90">
-                  Fund Project
+
+                <button className="group w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#6efcff] to-[#a78bfa] px-4 py-3 text-sm font-semibold text-black transition-all hover:opacity-90">
+                  <Wallet className="h-4 w-4" />
+                  Fund Vault
+                  <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>
             </div>
