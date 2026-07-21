@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Upload, FileText, Video, ChevronRight, ChevronLeft, Check, Sparkles, AlertCircle } from "lucide-react"
 
 interface Step {
