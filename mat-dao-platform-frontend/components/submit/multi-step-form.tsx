@@ -77,11 +77,11 @@ export function MultiStepForm({ onSubmit, demoMode = false, demoData }: MultiSte
   const [error, setError] = useState<string | null>(null)
 
   // Auto-fill demo data
-  useState(() => {
+  useEffect(() => {
     if (demoMode && demoData) {
       setFormData(prev => ({ ...prev, ...demoData }))
     }
-  })
+  }, [demoMode, demoData])
 
   const updateField = (field: keyof FormData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }))

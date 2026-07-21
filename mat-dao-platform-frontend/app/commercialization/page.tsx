@@ -101,10 +101,10 @@ export default function CommercializationPage() {
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#6efcff]/30 bg-[#6efcff]/10">
                   <Sparkles className="h-5 w-5 text-[#c5fdff]" />
                 </div>
-                <h1 className="text-3xl font-bold text-white/95">Commercialization Marketplace</h1>
+                <h1 className="text-3xl font-bold text-white/95">Technology Marketplace</h1>
               </div>
               <p className="text-sm text-white/60">
-                License de-risked, validated technologies from the MatDAO ecosystem
+                License validated technologies from the MatDAO ecosystem
               </p>
             </div>
           </div>
@@ -245,7 +245,7 @@ export default function CommercializationPage() {
                 </div>
 
                 <button className="group w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#6efcff] to-[#a78bfa] px-4 py-3 text-sm font-semibold text-black transition-all hover:opacity-90">
-                  <ShoppingCart className="h-4 w-4" />
+                  <DollarSign className="h-4 w-4" />
                   Purchase License
                   <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </button>

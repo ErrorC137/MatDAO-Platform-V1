@@ -119,10 +119,10 @@ export default function FundraisingPage() {
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#6efcff]/30 bg-[#6efcff]/10">
                   <Sparkles className="h-5 w-5 text-[#c5fdff]" />
                 </div>
-                <h1 className="text-3xl font-bold text-white/95">Active Fundraising Vaults</h1>
+                <h1 className="text-3xl font-bold text-white/95">Active Fundraising</h1>
               </div>
               <p className="text-sm text-white/60">
-                Invest in breakthrough material science projects through protocol-controlled vaults
+                Support breakthrough material science projects with secure funding
               </p>
             </div>
             <div className="flex items-center gap-4">
@@ -157,7 +157,7 @@ export default function FundraisingPage() {
                 <Target className="h-5 w-5 text-[#a78bfa]" />
               </div>
               <div>
-                <p className="text-sm text-white/50">Active Vaults</p>
+                <p className="text-sm text-white/50">Active Campaigns</p>
                 <p className="text-2xl font-bold text-white">4</p>
               </div>
             </div>
@@ -231,11 +231,11 @@ export default function FundraisingPage() {
                 <h3 className="mb-2 text-lg font-semibold text-white/95">{campaign.title}</h3>
                 <p className="mb-4 text-sm text-white/60 line-clamp-2">{campaign.description}</p>
                 
-                {/* Vault Info */}
+                {/* Vault Info - Simplified for Web2 users */}
                 <div className="mb-4 rounded-xl border border-white/10 bg-white/5 p-3">
                   <div className="flex items-center gap-2 mb-2">
                     <Shield className="h-4 w-4 text-[#6efcff]" />
-                    <span className="text-xs text-white/50">Vault Address</span>
+                    <span className="text-xs text-white/50">Secure Funding Vault</span>
                   </div>
                   <p className="text-xs font-mono text-[#c5fdff]">{campaign.vaultAddress}</p>
                   <div className="flex items-center gap-2 mt-2">
@@ -282,8 +282,8 @@ export default function FundraisingPage() {
                 </div>
 
                 <button className="group w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#6efcff] to-[#a78bfa] px-4 py-3 text-sm font-semibold text-black transition-all hover:opacity-90">
-                  <Wallet className="h-4 w-4" />
-                  Fund Vault
+                  <DollarSign className="h-4 w-4" />
+                  Fund Project
                   <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>

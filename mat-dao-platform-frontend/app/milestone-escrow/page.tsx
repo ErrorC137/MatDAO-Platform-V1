@@ -169,10 +169,10 @@ export default function MilestoneEscrowPage() {
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#6efcff]/30 bg-[#6efcff]/10">
                   <Lock className="h-5 w-5 text-[#c5fdff]" />
                 </div>
-                <h1 className="text-3xl font-bold text-white/95">Milestone Escrow Vaults</h1>
+                <h1 className="text-3xl font-bold text-white/95">Milestone Funding</h1>
               </div>
               <p className="text-sm text-white/60">
-                Protocol-controlled escrow for milestone-based capital release
+                Track milestone progress and secure capital release
               </p>
             </div>
           </div>

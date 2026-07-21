@@ -4,8 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/context/auth-context"
-import { ConnectButton } from '@rainbow-me/rainbowkit'
-import { Mail, Lock, Loader2, Wallet, Sparkles, ArrowRight, ChevronRight } from "lucide-react"
+import { Mail, Lock, Loader2, Wallet, Sparkles, ArrowRight } from "lucide-react"
 
 export default function SignInPage() {
   const { signIn, isLoading, connectWallet } = useAuth()
@@ -13,7 +12,7 @@ export default function SignInPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
-  const [authMethod, setAuthMethod] = useState<"email" | "wallet">("email")
+  const [showWalletOption, setShowWalletOption] = useState(false)
 
   async function handleSignIn(e: React.FormEvent) {
     e.preventDefault()
@@ -58,145 +57,108 @@ export default function SignInPage() {
             Welcome to MatDAO
           </h1>
           <p className="text-sm text-white/60">
-            Connect your identity to access the protocol
+            Sign in with your email to access the platform
           </p>
         </div>
 
         {/* Card */}
         <div className="rounded-2xl border border-white/10 bg-black/40 backdrop-blur-xl p-8">
-          {/* Auth Method Toggle */}
-          <div className="mb-6 flex gap-2 p-1 rounded-xl bg-white/5">
+          {/* Email Form - Primary for Web2 users */}
+          <form onSubmit={handleSignIn} className="flex flex-col gap-5">
+            <div className="flex flex-col gap-2">
+              <label htmlFor="email" className="text-sm font-medium text-white/90">
+                Email
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40" />
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@university.edu"
+                  className="w-full rounded-lg border border-white/10 bg-white/5 py-3 pl-10 pr-4 text-sm text-white placeholder:text-white/30 focus:border-[#6efcff] focus:outline-none focus:ring-1 focus:ring-[#6efcff]/40 transition-all"
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label htmlFor="password" className="text-sm font-medium text-white/90">
+                Password
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40" />
+                <input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter your password"
+                  className="w-full rounded-lg border border-white/10 bg-white/5 py-3 pl-10 pr-4 text-sm text-white placeholder:text-white/30 focus:border-[#6efcff] focus:outline-none focus:ring-1 focus:ring-[#6efcff]/40 transition-all"
+                />
+              </div>
+            </div>
+
+            {error && (
+              <p className="text-sm text-red-400">{error}</p>
+            )}
+
             <button
-              onClick={() => setAuthMethod("email")}
-              className={`flex-1 rounded-lg py-2.5 text-sm font-medium transition-all ${
-                authMethod === "email"
-                  ? "bg-[#6efcff]/20 text-[#c5fdff]"
-                  : "text-white/60 hover:text-white/80"
-              }`}
+              type="submit"
+              disabled={isLoading}
+              className="group flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#6efcff] to-[#a78bfa] px-4 py-3 text-sm font-semibold text-black transition-all hover:opacity-90 disabled:opacity-50"
             >
-              Email
+              {isLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : null}
+              Sign In
+              {!isLoading && <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />}
             </button>
-            <button
-              onClick={() => setAuthMethod("wallet")}
-              className={`flex-1 rounded-lg py-2.5 text-sm font-medium transition-all ${
-                authMethod === "wallet"
-                  ? "bg-[#6efcff]/20 text-[#c5fdff]"
-                  : "text-white/60 hover:text-white/80"
-              }`}
-            >
-              Wallet
-            </button>
+          </form>
+
+          {/* Divider */}
+          <div className="my-6 flex items-center gap-4">
+            <div className="h-px flex-1 bg-white/10" />
+            <span className="text-xs text-white/50">or</span>
+            <div className="h-px flex-1 bg-white/10" />
           </div>
 
-          {authMethod === "email" ? (
-            <>
-              {/* Divider */}
-              <div className="mb-6 flex items-center gap-4">
-                <div className="h-px flex-1 bg-white/10" />
-                <span className="text-xs text-white/50">sign in with email</span>
-                <div className="h-px flex-1 bg-white/10" />
-              </div>
-
-              {/* Email Form */}
-              <form onSubmit={handleSignIn} className="flex flex-col gap-5">
-                <div className="flex flex-col gap-2">
-                  <label htmlFor="email" className="text-sm font-medium text-white/90">
-                    Email
-                  </label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40" />
-                    <input
-                      id="email"
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="you@university.edu"
-                      className="w-full rounded-lg border border-white/10 bg-white/5 py-3 pl-10 pr-4 text-sm text-white placeholder:text-white/30 focus:border-[#6efcff] focus:outline-none focus:ring-1 focus:ring-[#6efcff]/40 transition-all"
-                    />
-                  </div>
-                </div>
-
-                <div className="flex flex-col gap-2">
-                  <label htmlFor="password" className="text-sm font-medium text-white/90">
-                    Password
-                  </label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40" />
-                    <input
-                      id="password"
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Enter your password"
-                      className="w-full rounded-lg border border-white/10 bg-white/5 py-3 pl-10 pr-4 text-sm text-white placeholder:text-white/30 focus:border-[#6efcff] focus:outline-none focus:ring-1 focus:ring-[#6efcff]/40 transition-all"
-                    />
-                  </div>
-                </div>
-
-                {error && (
-                  <p className="text-sm text-red-400">{error}</p>
-                )}
-
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="group flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#6efcff] to-[#a78bfa] px-4 py-3 text-sm font-semibold text-black transition-all hover:opacity-90 disabled:opacity-50"
-                >
-                  {isLoading ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : null}
-                  Sign In
-                  {!isLoading && <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />}
-                </button>
-              </form>
-            </>
-          ) : (
-            <>
-              {/* Divider */}
-              <div className="mb-6 flex items-center gap-4">
-                <div className="h-px flex-1 bg-white/10" />
-                <span className="text-xs text-white/50">connect wallet</span>
-                <div className="h-px flex-1 bg-white/10" />
-              </div>
-
-              {/* Wallet Options */}
-              <div className="space-y-3">
-                <button
-                  onClick={handleWalletConnect}
-                  disabled={isLoading}
-                  className="group w-full flex items-center justify-between gap-3 rounded-xl border border-[#6efcff]/30 bg-[#6efcff]/10 px-4 py-4 text-sm text-[#c5fdff] hover:bg-[#6efcff]/20 transition-all disabled:opacity-50"
-                >
-                  <div className="flex items-center gap-3">
-                    <Wallet className="h-5 w-5" />
-                    <span className="font-medium">Connect Wallet</span>
-                  </div>
-                  <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                </button>
-
-                <div className="rounded-lg border border-white/10 bg-white/5 p-4">
-                  <p className="text-xs text-white/50 leading-relaxed">
-                    Connect your wallet to access Web3 features. Your wallet will be linked to your account after email sign-in.
-                  </p>
-                </div>
-
-                {error && (
-                  <p className="text-sm text-red-400">{error}</p>
-                )}
-              </div>
-            </>
-          )}
-
-          {/* Footer */}
-          <p className="mt-6 text-center text-sm text-white/50">
-            {"Don't have an account? "}
-            <Link
-              href="/auth/sign-up"
-              className="font-medium text-[#c5fdff] transition-colors hover:text-[#6efcff]"
+          {/* Wallet Connection - Optional for Web3 users */}
+          {!showWalletOption ? (
+            <button
+              onClick={() => setShowWalletOption(true)}
+              className="w-full flex items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/60 hover:bg-white/10 hover:text-white/80 transition-all"
             >
-              Sign Up
-            </Link>
-          </p>
+              <Wallet className="h-4 w-4" />
+              <span>Connect Wallet (Optional)</span>
+            </button>
+          ) : (
+            <div className="space-y-3">
+              <button
+                onClick={handleWalletConnect}
+                disabled={isLoading}
+                className="group w-full flex items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/60 hover:bg-white/10 hover:text-white/80 transition-all disabled:opacity-50"
+              >
+                <Wallet className="h-4 w-4" />
+                <span className="font-medium">Connect Wallet</span>
+              </button>
+              <p className="text-xs text-white/40 text-center">
+                Connect your wallet to enable Web3 features like vault investments and IP-NFT minting
+              </p>
+            </div>
+          )}
         </div>
+
+        {/* Footer */}
+        <p className="mt-6 text-center text-sm text-white/50">
+          {"Don't have an account? "}
+          <Link
+            href="/auth/sign-up"
+            className="font-medium text-[#c5fdff] transition-colors hover:text-[#6efcff]"
+          >
+            Sign Up
+          </Link>
+        </p>
       </div>
     </div>
   )
