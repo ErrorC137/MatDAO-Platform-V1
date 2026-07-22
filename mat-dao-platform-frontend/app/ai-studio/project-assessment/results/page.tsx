@@ -257,6 +257,184 @@ export default function ProjectAssessmentResultsPage() {
           />
         </div>
 
+        {/* Comprehensive Analysis Section */}
+        {(report.ipReport as any)?.comprehensive_analysis && (
+          <section className="workflow-panel mb-8 rounded-3xl border border-[#6efcff]/30 bg-gradient-to-br from-[#6efcff]/10 to-[#6efcff]/5 p-8 backdrop-blur-xl shadow-2xl">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-3 rounded-2xl bg-gradient-to-br from-[#6efcff]/30 to-[#6efcff]/10">
+                <Brain className="w-6 h-6 text-[#c5fdff]" />
+              </div>
+              <h2 className="font-headline text-xl font-bold text-white/95">Comprehensive Analysis</h2>
+            </div>
+            <div className="space-y-6">
+              {/* Executive Summary */}
+              <div className="rounded-2xl border border-white/10 bg-black/30 p-6 backdrop-blur-sm">
+                <h3 className="text-sm font-semibold text-[#c5fdff] mb-4 uppercase tracking-wider">Executive Summary</h3>
+                <div className="prose prose-invert max-w-none">
+                  <div className="text-sm text-white/70 leading-relaxed whitespace-pre-line">
+                    {(report.ipReport as any).comprehensive_analysis.executive_summary}
+                  </div>
+                </div>
+              </div>
+
+              {/* Technical Analysis */}
+              <div className="rounded-2xl border border-white/10 bg-black/30 p-6 backdrop-blur-sm">
+                <h3 className="text-sm font-semibold text-[#c5fdff] mb-4 uppercase tracking-wider">Technical Analysis</h3>
+                <div className="prose prose-invert max-w-none">
+                  <div className="text-sm text-white/70 leading-relaxed whitespace-pre-line">
+                    {(report.ipReport as any).comprehensive_analysis.technical_analysis}
+                  </div>
+                </div>
+              </div>
+
+              {/* Market Analysis */}
+              <div className="rounded-2xl border border-white/10 bg-black/30 p-6 backdrop-blur-sm">
+                <h3 className="text-sm font-semibold text-[#c5fdff] mb-4 uppercase tracking-wider">Market Analysis</h3>
+                <div className="prose prose-invert max-w-none">
+                  <div className="text-sm text-white/70 leading-relaxed whitespace-pre-line">
+                    {(report.ipReport as any).comprehensive_analysis.market_analysis}
+                  </div>
+                </div>
+              </div>
+
+              {/* IP and Competitive Analysis */}
+              <div className="rounded-2xl border border-white/10 bg-black/30 p-6 backdrop-blur-sm">
+                <h3 className="text-sm font-semibold text-[#c5fdff] mb-4 uppercase tracking-wider">IP & Competitive Analysis</h3>
+                <div className="prose prose-invert max-w-none">
+                  <div className="text-sm text-white/70 leading-relaxed whitespace-pre-line">
+                    {(report.ipReport as any).comprehensive_analysis.ip_competitive_analysis}
+                  </div>
+                </div>
+              </div>
+
+              {/* Development Roadmap */}
+              <div className="rounded-2xl border border-white/10 bg-black/30 p-6 backdrop-blur-sm">
+                <h3 className="text-sm font-semibold text-[#c5fdff] mb-4 uppercase tracking-wider">Development Roadmap</h3>
+                <div className="prose prose-invert max-w-none">
+                  <div className="text-sm text-white/70 leading-relaxed whitespace-pre-line">
+                    {(report.ipReport as any).comprehensive_analysis.development_roadmap}
+                  </div>
+                </div>
+              </div>
+
+              {/* Risk Assessment */}
+              <div className="rounded-2xl border border-white/10 bg-black/30 p-6 backdrop-blur-sm">
+                <h3 className="text-sm font-semibold text-[#c5fdff] mb-4 uppercase tracking-wider">Risk Assessment</h3>
+                <div className="prose prose-invert max-w-none">
+                  <div className="text-sm text-white/70 leading-relaxed whitespace-pre-line">
+                    {(report.ipReport as any).comprehensive_analysis.risk_assessment}
+                  </div>
+                </div>
+              </div>
+
+              {/* Strategic Recommendations */}
+              <div className="rounded-2xl border border-[#6efcff]/30 bg-gradient-to-br from-[#6efcff]/10 to-[#6efcff]/5 p-6 backdrop-blur-sm">
+                <h3 className="text-sm font-semibold text-[#c5fdff] mb-4 uppercase tracking-wider">Strategic Recommendations</h3>
+                <div className="prose prose-invert max-w-none">
+                  <div className="text-sm text-white/70 leading-relaxed whitespace-pre-line">
+                    {(report.ipReport as any).comprehensive_analysis.strategic_recommendations}
+                  </div>
+                </div>
+              </div>
+
+              {/* Investment Thesis */}
+              <div className="rounded-2xl border border-white/10 bg-black/30 p-6 backdrop-blur-sm">
+                <h3 className="text-sm font-semibold text-[#c5fdff] mb-4 uppercase tracking-wider">Investment Thesis</h3>
+                <div className="prose prose-invert max-w-none">
+                  <div className="text-sm text-white/70 leading-relaxed whitespace-pre-line">
+                    {(report.ipReport as any).comprehensive_analysis.investment_thesis}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Market Mapping Section */}
+        {(report.ipReport as any)?.market_mapping && (
+          <section className="workflow-panel mb-8 rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-8 backdrop-blur-xl shadow-2xl">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-3 rounded-2xl bg-gradient-to-br from-[#6efcff]/30 to-[#6efcff]/10">
+                <Orbit className="w-6 h-6 text-[#c5fdff]" />
+              </div>
+              <h2 className="font-headline text-xl font-bold text-white/95">Market Mapping Analysis</h2>
+            </div>
+            <div className="space-y-6">
+              {/* Working Field */}
+              <div className="rounded-2xl border border-white/10 bg-black/30 p-6 backdrop-blur-sm">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <p className="text-xs text-white/50 mb-2 uppercase tracking-wider">Working Field</p>
+                    <p className="text-base font-semibold text-white/90">{(report.ipReport as any).market_mapping.working_field}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-white/50 mb-2 uppercase tracking-wider">Accuracy Score</p>
+                    <p className="text-base font-semibold text-white/90">{(report.ipReport as any).market_mapping.overall_accuracy_score.toFixed(1)}%</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Market Opportunities */}
+              <div className="rounded-2xl border border-white/10 bg-black/30 p-6 backdrop-blur-sm">
+                <p className="text-sm font-semibold text-white/70 mb-4">Market Opportunities</p>
+                <div className="space-y-4">
+                  {(report.ipReport as any).market_mapping.market_opportunities?.slice(0, 4).map((opp: any, i: number) => (
+                    <div key={i} className="rounded-xl border border-white/10 bg-black/20 p-4 backdrop-blur-sm">
+                      <div className="flex items-start justify-between gap-4 mb-3">
+                        <div className="flex-1">
+                          <p className="text-sm font-semibold text-white/90 mb-1">{opp.market_name}</p>
+                          <p className="text-xs text-white/50">{opp.market_size} · {opp.growth_rate}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-xs text-white/50 mb-1">Fit Score</p>
+                          <p className="text-sm font-bold text-[#c5fdff]">{opp.fit_score.toFixed(0)}%</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-xs bg-white/10 px-2 py-1 rounded text-white/60">{opp.entry_difficulty} Entry</span>
+                        <span className="text-xs bg-white/10 px-2 py-1 rounded text-white/60">{opp.key_competitors?.slice(0, 2).join(', ')}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Strategic Recommendations */}
+              {(report.ipReport as any).market_mapping.strategic_recommendations && (
+                <div className="rounded-2xl border border-[#6efcff]/30 bg-gradient-to-br from-[#6efcff]/10 to-[#6efcff]/5 p-6 backdrop-blur-sm">
+                  <p className="text-sm font-semibold text-[#c5fdff] mb-4">Strategic Recommendations</p>
+                  <ul className="space-y-2">
+                    {(report.ipReport as any).market_mapping.strategic_recommendations.slice(0, 4).map((rec: string, i: number) => (
+                      <li key={i} className="text-sm text-white/70 flex items-start gap-3 leading-relaxed">
+                        <span className="text-[#6efcff] mt-0.5">•</span>
+                        <span>{rec}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Development Insights */}
+              {(report.ipReport as any).market_mapping.development_insights && (
+                <div className="rounded-2xl border border-white/10 bg-black/30 p-6 backdrop-blur-sm">
+                  <p className="text-sm font-semibold text-white/70 mb-4">Development Insights</p>
+                  <div className="space-y-4">
+                    <div>
+                      <p className="text-xs text-white/50 mb-2 uppercase tracking-wider">Current Stage</p>
+                      <p className="text-sm text-white/70">{(report.ipReport as any).market_mapping.development_insights.current_stage_assessment}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-white/50 mb-2 uppercase tracking-wider">Funding Stage</p>
+                      <p className="text-sm text-white/70">{(report.ipReport as any).market_mapping.development_insights.funding_recommendations.stage}</p>
+                      <p className="text-xs text-white/50 mt-1">{(report.ipReport as any).market_mapping.development_insights.funding_recommendations.estimated_range}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </section>
+        )}
+
         {/* Enhanced TRL Evaluation Section */}
         <section className="workflow-panel mb-8 rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-8 backdrop-blur-xl shadow-2xl">
           <div className="flex items-center gap-3 mb-6">
