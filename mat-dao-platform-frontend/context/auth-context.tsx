@@ -315,14 +315,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         console.log('Injected connector failed, trying walletConnect:', injectedError)
         // Try walletConnect for mobile browsers
         try {
-          await connect({ connector: walletConnect({ projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "" }) })
+          const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID
+          if (!projectId) {
+            throw new Error('WalletConnect Project ID not configured. Please add NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID to your environment variables.')
+          }
+          await connect({ connector: walletConnect({ projectId }) })
         } catch (wcError) {
           console.error('Both connectors failed:', wcError)
+          // Check if it's a timeout error
+          if (wcError instanceof Error && wcError.message.includes('timeout') || wcError.message.includes('timed out')) {
+            throw new Error('Wallet connection timed out. Please check your wallet connection and try again.')
+          }
           throw new Error('Failed to connect wallet. Please ensure you have a wallet installed or use a mobile wallet app.')
         }
       }
 
-      // Wait for the address to be available
+      // Wait for the address to be available with timeout
+      const maxWaitTime = 10000 // 10 seconds
+      const startTime = Date.now()
+      
+      while (!address && Date.now() - startTime < maxWaitTime) {
+        await new Promise(resolve => setTimeout(resolve, 100))
+      }
+
       if (address) {
         const walletAddress = address
 
@@ -344,6 +359,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
 
         setUser({ ...user, walletAddress: walletAddress })
+      } else {
+        throw new Error('Wallet connection timeout. Please ensure your wallet is unlocked and try again.')
       }
 
       // Clear cooldown on success
