@@ -38,6 +38,7 @@ interface AuthContextType {
   user: User | null
   isLoading: boolean
   signIn: (email: string, password: string) => Promise<void>
+  signInWithGoogle: () => Promise<void>
   signUp: (data: {
     email: string
     password: string
@@ -195,6 +196,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [user])
 
+  const signInWithGoogle = useCallback(async () => {
+    setIsLoading(true)
+    try {
+      console.log('Attempting sign in with Google')
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`
+        }
+      })
+
+      if (error) {
+        console.error('Google sign in error:', error)
+        throw error
+      }
+
+      console.log('Google sign in initiated:', data)
+    } catch (error) {
+      console.error('Google sign in error:', error)
+      throw error
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
+
   const signUp = useCallback(
     async (data: {
       email: string
@@ -323,7 +349,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } catch (wcError) {
           console.error('Both connectors failed:', wcError)
           // Check if it's a timeout error
-          if (wcError instanceof Error && wcError.message.includes('timeout') || wcError.message.includes('timed out')) {
+          if (wcError instanceof Error && (wcError.message.includes('timeout') || wcError.message.includes('timed out'))) {
             throw new Error('Wallet connection timed out. Please check your wallet connection and try again.')
           }
           throw new Error('Failed to connect wallet. Please ensure you have a wallet installed or use a mobile wallet app.')
@@ -404,6 +430,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user,
         isLoading,
         signIn,
+        signInWithGoogle,
         signUp,
         signOut,
         connectWallet,
