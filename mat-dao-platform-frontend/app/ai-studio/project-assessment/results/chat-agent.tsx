@@ -39,20 +39,56 @@ export function ChatAgent({ report }: ChatAgentProps) {
     let response = ""
 
     if (lowerMessage.includes("trl") || lowerMessage.includes("technology readiness")) {
-      const trlAssessment = trl >= 6 ? "Advanced development with clear commercialization path" : trl >= 4 ? "Promising development with defined roadmap" : trl >= 2 ? "Early development requiring significant investment" : "Conceptual stage requiring fundamental validation"
+      let trlAssessment = ""
+      if (trl >= 6) {
+        trlAssessment = "Advanced development with clear commercialization path"
+      } else if (trl >= 4) {
+        trlAssessment = "Promising development with defined roadmap"
+      } else if (trl >= 2) {
+        trlAssessment = "Early development requiring significant investment"
+      } else {
+        trlAssessment = "Conceptual stage requiring fundamental validation"
+      }
+      
       const milestoneStatus = trl >= 4 ? "The technology has achieved important milestones validating technical feasibility." : "The technology is in early development stages requiring further validation."
       const execSummary = comprehensiveAnalysis.executive_summary || "The technology shows promising development progress."
       
-      response = "Based on the analysis, your project is at Technology Readiness Level (TRL) " + trl + ". " + execSummary + "\n\nThe TRL assessment indicates:\n- " + trlAssessment + "\n\n" + milestoneStatus + "\n\nWould you like specific recommendations for advancing to the next TRL level?"
+      response = "Based on the analysis, your project is at Technology Readiness Level (TRL) " + String(trl) + ". " + execSummary + "\n\nThe TRL assessment indicates:\n- " + trlAssessment + "\n\n" + milestoneStatus + "\n\nWould you like specific recommendations for advancing to the next TRL level?"
     } else if (lowerMessage.includes("innovation") || lowerMessage.includes("novelty") || lowerMessage.includes("score")) {
-      const innovationAssessment = innovationScore > 70 ? "The technology shows exceptional innovation potential with strong competitive advantages." : innovationScore > 50 ? "The technology demonstrates good innovation with moderate competitive advantages." : "The technology shows incremental innovation with room for improvement."
+      let innovationAssessment = ""
+      if (innovationScore > 70) {
+        innovationAssessment = "The technology shows exceptional innovation potential with strong competitive advantages."
+      } else if (innovationScore > 50) {
+        innovationAssessment = "The technology demonstrates good innovation with moderate competitive advantages."
+      } else {
+        innovationAssessment = "The technology shows incremental innovation with room for improvement."
+      }
+      
       const technicalAnalysis = comprehensiveAnalysis.technical_analysis?.includes("Innovation and Novelty Assessment") ? comprehensiveAnalysis.technical_analysis.split("Innovation and Novelty Assessment")[1]?.split("###")[0] || "" : "The technology demonstrates promising innovation potential."
       
-      response = "Your innovation score is " + innovationScore + ". " + technicalAnalysis + "\n\nKey innovation factors:\n- Novel technical approach with differentiation potential\n- Patent landscape analysis revealing competitive positioning\n- Technical methodology showing scientific rigor\n\n" + innovationAssessment + "\n\nWould you like recommendations for enhancing innovation or IP strategy?"
+      response = "Your innovation score is " + String(innovationScore) + ". " + technicalAnalysis + "\n\nKey innovation factors:\n- Novel technical approach with differentiation potential\n- Patent landscape analysis revealing competitive positioning\n- Technical methodology showing scientific rigor\n\n" + innovationAssessment + "\n\nWould you like recommendations for enhancing innovation or IP strategy?"
     } else if (lowerMessage.includes("valuation") || lowerMessage.includes("worth") || lowerMessage.includes("value")) {
-      const valuationFormatted = typeof valuation === 'number' ? valuation.toLocaleString() : String(valuation)
-      const investmentSummary = comprehensiveAnalysis.investment_thesis?.includes("Investment Opportunity Summary") ? comprehensiveAnalysis.investment_thesis.split("Investment Opportunity Summary")[1]?.split("###")[0] || "" : "Market analysis, technology maturity, and competitive positioning."
-      const returnPotential = comprehensiveAnalysis.investment_thesis?.includes("Return Potential") ? comprehensiveAnalysis.investment_thesis.split("Return Potential")[1]?.split("###")[0] || "The investment offers significant return potential with multiple exit scenarios."
+      let valuationFormatted = ""
+      if (typeof valuation === 'number') {
+        valuationFormatted = valuation.toLocaleString()
+      } else {
+        valuationFormatted = String(valuation)
+      }
+      
+      let investmentSummary = ""
+      if (comprehensiveAnalysis.investment_thesis?.includes("Investment Opportunity Summary")) {
+        investmentSummary = comprehensiveAnalysis.investment_thesis.split("Investment Opportunity Summary")[1]?.split("###")[0] || ""
+      } else {
+        investmentSummary = "Market analysis, technology maturity, and competitive positioning."
+      }
+      
+      let returnPotential = ""
+      if (comprehensiveAnalysis.investment_thesis?.includes("Return Potential")) {
+        returnPotential = comprehensiveAnalysis.investment_thesis.split("Return Potential")[1]?.split("###")[0] || "The investment offers significant return potential with multiple exit scenarios."
+      } else {
+        returnPotential = "The investment offers significant return potential with multiple exit scenarios."
+      }
+      
       const trlString = String(trl)
       
       response = "The estimated valuation range is $" + valuationFormatted + ". This valuation is based on:\n\n" + investmentSummary + "\n\nKey valuation drivers:\n- Technology maturity at TRL " + trlString + "\n- Market opportunity in " + sector + "\n- IP position and competitive advantages\n- Development progress and commercialization potential\n\n" + returnPotential + "\n\nWould you like detailed investment recommendations or exit strategy analysis?"
@@ -67,33 +103,72 @@ export function ChatAgent({ report }: ChatAgentProps) {
       
       response = "The market analysis identifies " + workingField + " as the primary target sector with " + totalOpportunities + " market opportunities.\n\n" + marketOverview + "\n\nMarket entry strategy:\n- " + recommendedApproach + "\n- Timeline: " + timelineEstimate + "\n- Top opportunity: " + topOpportunity + "\n\n" + strategicRecs + "\n\nWould you like specific market entry recommendations or competitive analysis?"
     } else if (lowerMessage.includes("recommendation") || lowerMessage.includes("next step") || lowerMessage.includes("what should i do")) {
-      const priorityAction1 = trl < 4 ? "Complete experimental validation and prototype development" : trl < 7 ? "Advance to pilot-scale demonstrations and secure strategic partnerships" : "Execute market entry strategy and scale manufacturing"
+      let trlCondition = ""
+      if (trl < 4) {
+        trlCondition = "Complete experimental validation and prototype development"
+      } else if (trl < 7) {
+        trlCondition = "Advance to pilot-scale demonstrations and secure strategic partnerships"
+      } else {
+        trlCondition = "Execute market entry strategy and scale manufacturing"
+      }
+      
       const priorityAction2 = comprehensiveAnalysis.ip_competitive_analysis?.includes("IP Strategy Recommendations") ? "Implement comprehensive IP strategy with patent filing" : "Develop IP strategy aligned with commercialization timeline"
       const priorityAction3 = comprehensiveAnalysis.development_roadmap?.includes("Critical Next Steps") ? "Execute critical next steps for TRL advancement" : "Focus on development milestones and validation"
       const immediateActions = comprehensiveAnalysis.strategic_recommendations?.includes("Immediate Actions") ? comprehensiveAnalysis.strategic_recommendations.split("Immediate Actions")[1]?.split("###")[0] || "" : "Immediate priorities include technical validation, IP protection, and partnership development."
       const fundingStrategy = comprehensiveAnalysis.strategic_recommendations?.includes("Funding Strategy") ? comprehensiveAnalysis.strategic_recommendations.split("Funding Strategy")[1]?.split("##")[0] || "" : "Funding strategy should align with development milestones and commercialization timeline."
-      const trlCondition = trl < 4 ? "Complete experimental validation and prototype development" : trl < 7 ? "Advance to pilot-scale demonstrations and secure strategic partnerships" : "Execute market entry strategy and scale manufacturing"
       
       response = "Based on the comprehensive analysis, here are the key recommendations:\n\n" + immediateActions + "\n\nPriority actions:\n1. " + trlCondition + "\n2. " + priorityAction2 + "\n3. " + priorityAction3 + "\n\n" + fundingStrategy + "\n\nWould you like detailed action plans for any specific recommendation?"
     } else if (lowerMessage.includes("risk") || lowerMessage.includes("challenge") || lowerMessage.includes("problem")) {
-      const ipRiskAnalysis = comprehensiveAnalysis.risk_assessment?.includes("Intellectual Property Risk Analysis") ? comprehensiveAnalysis.risk_assessment.split("Intellectual Property Risk Analysis")[1]?.split("###")[0] || "" : "IP risks require strategic management and comprehensive analysis."
-      const riskMitigation = comprehensiveAnalysis.risk_assessment?.includes("Risk Mitigation Strategies") ? comprehensiveAnalysis.risk_assessment.split("Risk Mitigation Strategies")[1]?.split("##")[0] || "Risk mitigation strategies include phased development, comprehensive validation, and strategic partnerships."
+      let ipRiskAnalysis = ""
+      if (comprehensiveAnalysis.risk_assessment?.includes("Intellectual Property Risk Analysis")) {
+        ipRiskAnalysis = comprehensiveAnalysis.risk_assessment.split("Intellectual Property Risk Analysis")[1]?.split("###")[0] || ""
+      } else {
+        ipRiskAnalysis = "IP risks require strategic management and comprehensive analysis."
+      }
+      
+      let riskMitigation = ""
+      if (comprehensiveAnalysis.risk_assessment?.includes("Risk Mitigation Strategies")) {
+        riskMitigation = comprehensiveAnalysis.risk_assessment.split("Risk Mitigation Strategies")[1]?.split("##")[0] || ""
+      } else {
+        riskMitigation = "Risk mitigation strategies include phased development, comprehensive validation, and strategic partnerships."
+      }
+      
       const riskFactors = "Primary risk factors:\n- Technical development risks with validation requirements\n- Market adoption risks requiring customer engagement\n- IP landscape complexity requiring strategic management\n- Execution risks with development timeline considerations"
       const overallRisk = "The overall risk profile presents a favorable risk-reward ratio with clear mitigation strategies."
       
       response = "The comprehensive risk assessment identifies several key areas:\n\n" + ipRiskAnalysis + "\n\n" + riskFactors + "\n\n" + riskMitigation + "\n\n" + overallRisk + "\n\nWould you like specific risk mitigation recommendations for any particular area?"
     } else if (lowerMessage.includes("ip") || lowerMessage.includes("patent") || lowerMessage.includes("intellectual property")) {
-      const patentPositioning = comprehensiveAnalysis.ip_competitive_analysis?.includes("Patent Landscape Positioning") ? comprehensiveAnalysis.ip_competitive_analysis.split("Patent Landscape Positioning")[1]?.split("###")[0] || "Strong patent positioning with good novelty and competitive advantages." : "Strong patent positioning with good novelty and competitive advantages."
-      const ftoAnalysis = comprehensiveAnalysis.ip_competitive_analysis?.includes("Freedom to Operate") ? comprehensiveAnalysis.ip_competitive_analysis.split("Freedom to Operate")[1]?.split("###")[0] || "Freedom to operate analysis shows manageable IP considerations with strategic opportunities." : "Freedom to operate analysis shows manageable IP considerations with strategic opportunities."
+      let patentPositioning = ""
+      if (comprehensiveAnalysis.ip_competitive_analysis?.includes("Patent Landscape Positioning")) {
+        patentPositioning = comprehensiveAnalysis.ip_competitive_analysis.split("Patent Landscape Positioning")[1]?.split("###")[0] || "Strong patent positioning with good novelty and competitive advantages."
+      } else {
+        patentPositioning = "Strong patent positioning with good novelty and competitive advantages."
+      }
+      
+      let ftoAnalysis = ""
+      if (comprehensiveAnalysis.ip_competitive_analysis?.includes("Freedom to Operate")) {
+        ftoAnalysis = comprehensiveAnalysis.ip_competitive_analysis.split("Freedom to Operate")[1]?.split("###")[0] || "Freedom to operate analysis shows manageable IP considerations with strategic opportunities."
+      } else {
+        ftoAnalysis = "Freedom to operate analysis shows manageable IP considerations with strategic opportunities."
+      }
       
       response = "The IP analysis reveals:\n\n" + patentPositioning + "\n\nIP strategy recommendations:\n- File comprehensive patent applications for core innovations\n- Conduct regular freedom-to-operate analysis\n- Develop strategic IP portfolio with defensive positioning\n- Monitor competitive patent landscape\n- Consider international filings for key markets\n\n" + ftoAnalysis + "\n\nWould you like specific IP filing recommendations or competitive analysis?"
     } else if (lowerMessage.includes("timeline") || lowerMessage.includes("when") || lowerMessage.includes("how long")) {
       const developmentTimeline = comprehensiveAnalysis.development_roadmap?.includes("Development Timeline") ? comprehensiveAnalysis.development_roadmap.split("Development Timeline")[1]?.split("###")[0] : "Timeline estimates based on development stage and complexity."
-      const milestoneTimeline = trl < 4 ? "6-12 months to reach TRL 4-5 with prototype validation" : trl < 7 ? "12-18 months to reach TRL 6-7 with pilot validation" : "18-24 months to reach TRL 8-9 with commercialization"
+      
+      let milestoneTimeline = ""
+      if (trl < 4) {
+        milestoneTimeline = "6-12 months to reach TRL 4-5 with prototype validation"
+      } else if (trl < 7) {
+        milestoneTimeline = "12-18 months to reach TRL 6-7 with pilot validation"
+      } else {
+        milestoneTimeline = "18-24 months to reach TRL 8-9 with commercialization"
+      }
+      
       const criticalSteps = comprehensiveAnalysis.development_roadmap?.includes("Critical Next Steps") ? "Critical next steps should be completed within 3-6 months" : "Development priorities should focus on validation and advancement"
       const fundingTimeline = comprehensiveAnalysis.strategic_recommendations?.includes("Funding Timeline") ? comprehensiveAnalysis.strategic_recommendations.split("Funding Timeline")[1]?.split("##")[0] : "Funding should be aligned with key development milestones."
       
-      response = "Based on the current TRL " + trl + " status, the development timeline is:\n\n" + developmentTimeline + "\n\nExpected milestones:\n- " + milestoneTimeline + "\n- " + criticalSteps + "\n\n" + fundingTimeline + "\n\nWould you like detailed milestone planning or resource allocation recommendations?"
+      response = "Based on the current TRL " + String(trl) + " status, the development timeline is:\n\n" + developmentTimeline + "\n\nExpected milestones:\n- " + milestoneTimeline + "\n- " + criticalSteps + "\n\n" + fundingTimeline + "\n\nWould you like detailed milestone planning or resource allocation recommendations?"
     } else {
       const workingField = marketMapping.working_field || sector
       const valuationFormatted = typeof valuation === 'number' ? valuation.toLocaleString() : String(valuation)
