@@ -1,13 +1,17 @@
 "use client"
 
-import { useCallback, useState } from "react"
+import { useCallback, useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { FileUp, Loader2 } from "lucide-react"
+import { FileUp, Loader2, FileText, X } from "lucide-react"
 import { BackendStatus } from "@/components/ai-studio/BackendStatus"
 import { runCombinedAssessment } from "@/lib/trl-services/combined-report"
+import { useAuth } from "@/context/auth-context"
+import { loadUserData } from "@/lib/trl-services/storage"
+import type { CombinedAssessmentReport } from "@/lib/trl-services/types"
 
 export default function ProjectAssessmentSubmitPage() {
   const router = useRouter()
+  const { user } = useAuth()
   const [title, setTitle] = useState("")
   const [author, setAuthor] = useState("")
   const [category, setCategory] = useState("Deep Tech")
@@ -21,6 +25,24 @@ export default function ProjectAssessmentSubmitPage() {
   const [dragOver, setDragOver] = useState(false)
   const [userTrl, setUserTrl] = useState("")
   const [useUserTrl, setUseUserTrl] = useState(false)
+  const [savedReports, setSavedReports] = useState<CombinedAssessmentReport[]>([])
+  const [showSavedReports, setShowSavedReports] = useState(false)
+
+  useEffect(() => {
+    if (user) {
+      const userData = loadUserData(user.id)
+      setSavedReports(userData.assessments || [])
+    }
+  }, [user])
+
+  const loadSavedReport = (report: CombinedAssessmentReport) => {
+    setTitle(report.title)
+    setAuthor(report.author || "")
+    setCategory(report.category || "Deep Tech")
+    // Note: textContent is not stored in the report, so we'll leave it empty
+    setTextContent("")
+    setShowSavedReports(false)
+  }
 
   const runAssessment = useCallback(async () => {
     if (!title.trim() || (!textContent.trim() && !file)) {
@@ -102,6 +124,43 @@ export default function ProjectAssessmentSubmitPage() {
         </div>
 
         <div className="workflow-panel space-y-4 rounded-2xl p-6">
+          {/* Load Saved Reports Button */}
+          {savedReports.length > 0 && (
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setShowSavedReports(!showSavedReports)}
+                className="flex w-full items-center justify-between rounded-lg border border-white/10 bg-black/30 px-4 py-2.5 text-sm text-white hover:border-[#6efcff]/50 transition-colors"
+              >
+                <div className="flex items-center gap-2">
+                  <FileText className="h-4 w-4 text-[#6efcff]" />
+                  <span>Load from saved reports ({savedReports.length})</span>
+                </div>
+                {showSavedReports ? <X className="h-4 w-4" /> : <FileText className="h-4 w-4" />}
+              </button>
+              
+              {showSavedReports && (
+                <div className="absolute z-50 mt-2 w-full rounded-lg border border-white/10 bg-black/90 backdrop-blur-xl shadow-xl">
+                  <div className="max-h-60 overflow-y-auto">
+                    {savedReports.map((report) => (
+                      <button
+                        key={report.id}
+                        type="button"
+                        onClick={() => loadSavedReport(report)}
+                        className="w-full border-b border-white/5 px-4 py-3 text-left hover:bg-white/5 transition-colors last:border-0"
+                      >
+                        <div className="text-sm font-medium text-white">{report.title}</div>
+                        <div className="mt-1 text-xs text-white/50">
+                          TRL {report.summary.trl} · {new Date(report.createdAt).toLocaleDateString()}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
           <input
             className="w-full rounded-lg border border-white/10 bg-black/30 px-4 py-2.5 text-sm text-white placeholder:text-white/30"
             placeholder="Project title *"

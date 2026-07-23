@@ -188,16 +188,28 @@ export default function ProfilePage() {
               </h2>
               <div className="space-y-3">
                 {platformData.assessments.map((a) => (
-                  <div key={a.id} className="rounded-lg border border-border/60 bg-secondary/20 p-4">
-                    <h3 className="text-sm font-medium text-foreground">{a.title}</h3>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      TRL {a.summary.trl} · Score {a.summary.ipScore}
-                      {a.summary.valuationUsd ? ` · ${formatUsd(a.summary.valuationUsd)}` : ""}
-                    </p>
-                    <p className="mt-2 text-xs text-muted-foreground">
-                      {new Date(a.createdAt).toLocaleDateString()}
-                    </p>
-                  </div>
+                  <Link
+                    key={a.id}
+                    href="/ai-studio/project-assessment/results"
+                    onClick={() => {
+                      sessionStorage.setItem("matdao-combined-report", JSON.stringify(a))
+                    }}
+                    className="block rounded-lg border border-border/60 bg-secondary/20 p-4 transition-colors hover:border-primary/50 hover:bg-secondary/30"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <h3 className="text-sm font-medium text-foreground">{a.title}</h3>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          TRL {a.summary.trl} · Innovation Score {a.summary.ipScore}
+                          {a.summary.valuationUsd ? ` · ${formatUsd(a.summary.valuationUsd)}` : ""}
+                        </p>
+                        <p className="mt-2 text-xs text-muted-foreground">
+                          {new Date(a.createdAt).toLocaleDateString()} at {new Date(a.createdAt).toLocaleTimeString()}
+                        </p>
+                      </div>
+                      <ExternalLink className="h-4 w-4 text-muted-foreground" />
+                    </div>
+                  </Link>
                 ))}
               </div>
             </div>
