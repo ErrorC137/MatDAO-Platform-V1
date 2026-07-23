@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Check, Save, Target, Gem, Loader2, Download, Flame, ShieldCheck, AlertTriangle, Award, ChevronRight, Zap, Brain, Battery, Wind, Orbit, Info } from "lucide-react"
+import { Check, Save, Target, Gem, Loader2, Download, Flame, ShieldCheck, AlertTriangle, Award, ChevronRight, Zap, Brain, Battery, Wind, Orbit, Info, MessageSquare, X } from "lucide-react"
 import { useAuth } from "@/context/auth-context"
 import { formatUsd } from "@/lib/ai-studio/api"
 import { addAssessment, addSubmittedMilestone, MILESTONE_LABELS } from "@/lib/trl-services/storage"
@@ -13,6 +13,7 @@ import { CONTRACT_ADDRESSES } from "@/lib/web3/config"
 import type { CombinedAssessmentReport } from "@/lib/trl-services/types"
 import { generateReportPDF } from "@/lib/pdf/generateReportPDF"
 import { SpiderChart } from "@/components/ai-studio/SpiderChart"
+import { ChatAgent } from "./chat-agent"
 
 export default function ProjectAssessmentResultsPage() {
   const router = useRouter()
@@ -23,6 +24,7 @@ export default function ProjectAssessmentResultsPage() {
   const [minted, setMinted] = useState(false)
   const [nftTokenId, setNftTokenId] = useState<string | null>(null)
   const [ipfsUri, setIpfsUri] = useState<string | null>(null)
+  const [showChat, setShowChat] = useState(false)
 
   const { mintIPNFT, isPending: isMintingPending, isSuccess: isMintSuccess } = useMintIPNFT()
 
@@ -1434,6 +1436,23 @@ export default function ProjectAssessmentResultsPage() {
           </div>
         </section>
       </div>
+
+      {/* AI Chat Agent Panel */}
+      {showChat && report && (
+        <div className="fixed right-4 top-4 bottom-4 w-96 z-50">
+          <ChatAgent report={report} />
+        </div>
+      )}
+
+      {/* Chat Toggle Button */}
+      <button
+        onClick={() => setShowChat(!showChat)}
+        className={`fixed right-4 bottom-4 z-50 p-4 rounded-full shadow-lg transition-all ${
+          showChat ? 'bg-red-500 hover:bg-red-600' : 'bg-gradient-to-r from-[#6efcff] to-[#a78bfa] hover:opacity-90'
+        }`}
+      >
+        {showChat ? <X className="h-6 w-6 text-white" /> : <MessageSquare className="h-6 w-6 text-black" />}
+      </button>
     </div>
   )
 }
