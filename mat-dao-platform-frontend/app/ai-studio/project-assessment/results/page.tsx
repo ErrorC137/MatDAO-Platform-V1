@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Check, Save, Target, Gem, Loader2, Download, Flame, ShieldCheck, AlertTriangle, Award, ChevronRight, Zap, Brain, Battery, Wind, Orbit, Info, MessageSquare, X } from "lucide-react"
+import { Check, Save, Target, Gem, Loader2, Download, Flame, ShieldCheck, AlertTriangle, Award, ChevronRight, Zap, Brain, Battery, Wind, Orbit, Info, MessageSquare, X, FileText, Users, Building2, Scale, Gavel, Search, TrendingUp, BarChart3, Sparkles, Lock, CheckCircle2, XCircle } from "lucide-react"
 import { useAuth } from "@/context/auth-context"
 import { formatUsd } from "@/lib/ai-studio/api"
 import { addAssessment, addSubmittedMilestone, MILESTONE_LABELS } from "@/lib/trl-services/storage"
@@ -14,6 +14,7 @@ import type { CombinedAssessmentReport } from "@/lib/trl-services/types"
 import { generateReportPDF } from "@/lib/pdf/generateReportPDF"
 import { SpiderChart } from "@/components/ai-studio/SpiderChart"
 import { ChatAgent } from "./chat-agent"
+import ClaimChartVisualizer from "@/components/ClaimChartVisualizer"
 
 export default function ProjectAssessmentResultsPage() {
   const router = useRouter()
@@ -138,7 +139,10 @@ export default function ProjectAssessmentResultsPage() {
             <div className="p-3 rounded-2xl bg-gradient-to-br from-[#6efcff]/30 to-[#6efcff]/10">
               <Brain className="w-6 h-6 text-[#c5fdff]" />
             </div>
-            <h2 className="font-headline text-xl font-bold text-white/95">Document Analysis Summary</h2>
+            <div>
+              <h2 className="font-headline text-xl font-bold text-white/95">Document Analysis Summary</h2>
+              <p className="text-sm text-white/50">Comprehensive document structure and classification analysis</p>
+            </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
             <div className="rounded-2xl border border-white/10 bg-black/30 p-5 backdrop-blur-sm">
@@ -854,6 +858,317 @@ export default function ProjectAssessmentResultsPage() {
               </Link>
               .
             </p>
+          </div>
+        </section>
+
+        {/* USPTO Patent Search Results - New Section */}
+        {(report.ipReport as any)?.uspto_patents && (report.ipReport as any).uspto_patents.length > 0 && (
+          <section className="workflow-panel mb-8 rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-8 backdrop-blur-xl shadow-2xl">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-3 rounded-2xl bg-gradient-to-br from-[#6efcff]/30 to-[#6efcff]/10">
+                <Search className="w-6 h-6 text-[#c5fdff]" />
+              </div>
+              <h2 className="font-headline text-xl font-bold text-white/95">USPTO Patent Search Results</h2>
+              <span className="ml-auto text-xs text-white/50">Source: USPTO Open Data Portal</span>
+            </div>
+            <div className="space-y-4">
+              {(report.ipReport as any).uspto_patents.slice(0, 5).map((patent: any, i: number) => (
+                <div key={i} className="rounded-2xl border border-white/10 bg-black/30 p-5 backdrop-blur-sm">
+                  <div className="flex items-start justify-between gap-4 mb-3">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-xs font-mono text-[#c5fdff]">{patent.patent_id}</span>
+                        <span className={`px-2 py-0.5 rounded text-xs font-semibold border ${
+                          patent.similarity_score > 0.7 ? 'bg-red-500/20 text-red-400 border-red-500/30' :
+                          patent.similarity_score > 0.4 ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' :
+                          'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+                        }`}>
+                          {(patent.similarity_score * 100).toFixed(0)}% Similarity
+                        </span>
+                      </div>
+                      <p className="text-sm font-semibold text-white/90 mb-1">{patent.title}</p>
+                      <p className="text-xs text-white/50 mb-2">{patent.abstract?.slice(0, 150)}...</p>
+                      <div className="flex items-center gap-3 text-xs text-white/40">
+                        <span>Filing: {patent.filing_date}</span>
+                        <span>•</span>
+                        <span>Assignee: {patent.assignee || 'N/A'}</span>
+                      </div>
+                    </div>
+                  </div>
+                  {patent.ipc_codes && patent.ipc_codes.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {patent.ipc_codes.slice(0, 3).map((code: string, j: number) => (
+                        <span key={j} className="text-xs bg-white/10 px-2 py-1 rounded text-white/60">{code}</span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Patent Claim Analysis - New Section */}
+        {(report.ipReport as any)?.patent_claim_analysis && (
+          <section className="workflow-panel mb-8 rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-8 backdrop-blur-xl shadow-2xl">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-3 rounded-2xl bg-gradient-to-br from-[#a78bfa]/30 to-[#a78bfa]/10">
+                <Gavel className="w-6 h-6 text-[#c5fdff]" />
+              </div>
+              <h2 className="font-headline text-xl font-bold text-white/95">Patent Claim Analysis (35 USC § 102/103)</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              {/* Novelty Analysis */}
+              <div className="rounded-2xl border border-white/10 bg-black/30 p-6 backdrop-blur-sm">
+                <div className="flex items-center gap-2 mb-4">
+                  <Sparkles className="w-5 h-5 text-[#c5fdff]" />
+                  <h3 className="text-sm font-semibold text-white/90">Novelty Analysis (§ 102)</h3>
+                </div>
+                <div className="mb-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs text-white/50">Novelty Score</span>
+                    <span className={`text-lg font-bold ${
+                      (report.ipReport as any).patent_claim_analysis.novelty_score >= 0.7 ? 'text-emerald-400' :
+                      (report.ipReport as any).patent_claim_analysis.novelty_score >= 0.4 ? 'text-amber-400' : 'text-red-400'
+                    }`}>
+                      {((report.ipReport as any).patent_claim_analysis.novelty_score * 100).toFixed(0)}%
+                    </span>
+                  </div>
+                  <div className="w-full bg-white/10 rounded-full h-2">
+                    <div className={`h-2 rounded-full ${
+                      (report.ipReport as any).patent_claim_analysis.novelty_score >= 0.7 ? 'bg-emerald-500' :
+                      (report.ipReport as any).patent_claim_analysis.novelty_score >= 0.4 ? 'bg-amber-500' : 'bg-red-500'
+                    }`} style={{ width: `${(report.ipReport as any).patent_claim_analysis.novelty_score * 100}%` }} />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-xs text-white/50 mb-1">Novel Elements:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {(report.ipReport as any).patent_claim_analysis.novel_elements.slice(0, 3).map((element: string, i: number) => (
+                      <span key={i} className="text-xs bg-emerald-500/20 px-2 py-1 rounded text-emerald-400">{element.slice(0, 20)}...</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Non-Obviousness Analysis */}
+              <div className="rounded-2xl border border-white/10 bg-black/30 p-6 backdrop-blur-sm">
+                <div className="flex items-center gap-2 mb-4">
+                  <Scale className="w-5 h-5 text-[#c5fdff]" />
+                  <h3 className="text-sm font-semibold text-white/90">Non-Obviousness (§ 103)</h3>
+                </div>
+                <div className="mb-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs text-white/50">Non-Obviousness Score</span>
+                    <span className={`text-lg font-bold ${
+                      (report.ipReport as any).patent_claim_analysis.non_obviousness_score >= 0.7 ? 'text-emerald-400' :
+                      (report.ipReport as any).patent_claim_analysis.non_obviousness_score >= 0.4 ? 'text-amber-400' : 'text-red-400'
+                    }`}>
+                      {((report.ipReport as any).patent_claim_analysis.non_obviousness_score * 100).toFixed(0)}%
+                    </span>
+                  </div>
+                  <div className="w-full bg-white/10 rounded-full h-2">
+                    <div className={`h-2 rounded-full ${
+                      (report.ipReport as any).patent_claim_analysis.non_obviousness_score >= 0.7 ? 'bg-emerald-500' :
+                      (report.ipReport as any).patent_claim_analysis.non_obviousness_score >= 0.4 ? 'bg-amber-500' : 'bg-red-500'
+                    }`} style={{ width: `${(report.ipReport as any).patent_claim_analysis.non_obviousness_score * 100}%` }} />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-xs text-white/50 mb-1">Non-Obvious Features:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {(report.ipReport as any).patent_claim_analysis.non_obvious_features.slice(0, 3).map((feature: string, i: number) => (
+                      <span key={i} className="text-xs bg-emerald-500/20 px-2 py-1 rounded text-emerald-400">{feature.slice(0, 20)}...</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="rounded-2xl border border-[#6efcff]/30 bg-gradient-to-br from-[#6efcff]/10 to-[#6efcff]/5 p-6 backdrop-blur-sm">
+              <p className="text-sm font-semibold text-[#c5fdff] mb-3">Overall Patentability</p>
+              <p className="text-sm text-white/70 leading-relaxed">{(report.ipReport as any).patent_claim_analysis.overall_patentability}</p>
+              {(report.ipReport as any).patent_claim_analysis.recommendations && (report.ipReport as any).patent_claim_analysis.recommendations.length > 0 && (
+                <div className="mt-4">
+                  <p className="text-xs text-white/50 mb-2">Recommendations:</p>
+                  <ul className="space-y-2">
+                    {(report.ipReport as any).patent_claim_analysis.recommendations.slice(0, 3).map((rec: string, i: number) => (
+                      <li key={i} className="text-xs text-white/60 flex items-start gap-2">
+                        <span className="text-[#6efcff]">•</span>
+                        <span>{rec}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </section>
+        )}
+
+        {/* Legal Citation Verification - New Section */}
+        {(report.ipReport as any)?.legal_citation_verification && (
+          <section className="workflow-panel mb-8 rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-8 backdrop-blur-xl shadow-2xl">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-3 rounded-2xl bg-gradient-to-br from-[#6efcff]/30 to-[#6efcff]/10">
+                <FileText className="w-6 h-6 text-[#c5fdff]" />
+              </div>
+              <h2 className="font-headline text-xl font-bold text-white/95">Legal Citation Verification</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+              <div className="rounded-2xl border border-white/10 bg-black/30 p-5 backdrop-blur-sm">
+                <p className="text-xs text-white/50 mb-2">Total Citations</p>
+                <p className="text-2xl font-bold text-white/90">{(report.ipReport as any).legal_citation_verification.total_citations}</p>
+              </div>
+              <div className="rounded-2xl border border-emerald-500/30 bg-emerald-950/20 p-5 backdrop-blur-sm">
+                <p className="text-xs text-white/50 mb-2">Verified</p>
+                <p className="text-2xl font-bold text-emerald-400">{(report.ipReport as any).legal_citation_verification.verified_citations}</p>
+              </div>
+              <div className="rounded-2xl border border-red-500/30 bg-red-950/20 p-5 backdrop-blur-sm">
+                <p className="text-xs text-white/50 mb-2">Invalid</p>
+                <p className="text-2xl font-bold text-red-400">{(report.ipReport as any).legal_citation_verification.invalid_citations}</p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-black/30 p-5 backdrop-blur-sm">
+                <p className="text-xs text-white/50 mb-2">Confidence</p>
+                <p className="text-2xl font-bold text-white/90">{((report.ipReport as any).legal_citation_verification.overall_confidence * 100).toFixed(0)}%</p>
+              </div>
+            </div>
+            {(report.ipReport as any).legal_citation_verification.recommendations && (report.ipReport as any).legal_citation_verification.recommendations.length > 0 && (
+              <div className="rounded-2xl border border-[#6efcff]/30 bg-gradient-to-br from-[#6efcff]/10 to-[#6efcff]/5 p-6 backdrop-blur-sm">
+                <p className="text-sm font-semibold text-[#c5fdff] mb-3">Verification Recommendations</p>
+                <ul className="space-y-2">
+                  {(report.ipReport as any).legal_citation_verification.recommendations.map((rec: string, i: number) => (
+                    <li key={i} className="text-sm text-white/70 flex items-start gap-3">
+                      <CheckCircle2 className="w-4 h-4 text-[#c5fdff] flex-shrink-0 mt-0.5" />
+                      <span>{rec}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* Claim Chart Visualizer - New Section */}
+        {(report.ipReport as any)?.claim_chart_data && (
+          <section className="workflow-panel mb-8 rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-8 backdrop-blur-xl shadow-2xl">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-3 rounded-2xl bg-gradient-to-br from-[#6efcff]/30 to-[#6efcff]/10">
+                <BarChart3 className="w-6 h-6 text-[#c5fdff]" />
+              </div>
+              <h2 className="font-headline text-xl font-bold text-white/95">Claim Chart Analysis</h2>
+            </div>
+            <ClaimChartVisualizer
+              patentClaims={(report.ipReport as any).claim_chart_data.patent_claims || []}
+              priorArtClaims={(report.ipReport as any).claim_chart_data.prior_art_claims || []}
+            />
+          </section>
+        )}
+
+        {/* Compliance & Tokenization Status - New Section */}
+        <section className="workflow-panel mb-8 rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-8 backdrop-blur-xl shadow-2xl">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-3 rounded-2xl bg-gradient-to-br from-[#a78bfa]/30 to-[#a78bfa]/10">
+              <Lock className="w-6 h-6 text-[#c5fdff]" />
+            </div>
+            <h2 className="font-headline text-xl font-bold text-white/95">Compliance & Tokenization Status</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* KYC/KYB Status */}
+            <div className="rounded-2xl border border-white/10 bg-black/30 p-6 backdrop-blur-sm">
+              <div className="flex items-center gap-2 mb-4">
+                <Users className="w-5 h-5 text-[#c5fdff]" />
+                <h3 className="text-sm font-semibold text-white/90">KYC/KYB Verification</h3>
+              </div>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-white/50">Identity Verification</span>
+                  <div className="flex items-center gap-2">
+                    {(report.ipReport as any)?.compliance_status?.kyc_verified ? (
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    ) : (
+                      <XCircle className="w-4 h-4 text-red-400" />
+                    )}
+                    <span className={`text-xs font-semibold ${(report.ipReport as any)?.compliance_status?.kyc_verified ? 'text-emerald-400' : 'text-red-400'}`}>
+                      {(report.ipReport as any)?.compliance_status?.kyc_verified ? 'Verified' : 'Pending'}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-white/50">Accredited Investor</span>
+                  <div className="flex items-center gap-2">
+                    {(report.ipReport as any)?.compliance_status?.accredited ? (
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    ) : (
+                      <XCircle className="w-4 h-4 text-red-400" />
+                    )}
+                    <span className={`text-xs font-semibold ${(report.ipReport as any)?.compliance_status?.accredited ? 'text-emerald-400' : 'text-red-400'}`}>
+                      {(report.ipReport as any)?.compliance_status?.accredited ? 'Verified' : 'Pending'}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-white/50">Entity Registration</span>
+                  <div className="flex items-center gap-2">
+                    {(report.ipReport as any)?.compliance_status?.entity_registered ? (
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    ) : (
+                      <XCircle className="w-4 h-4 text-red-400" />
+                    )}
+                    <span className={`text-xs font-semibold ${(report.ipReport as any)?.compliance_status?.entity_registered ? 'text-emerald-400' : 'text-red-400'}`}>
+                      {(report.ipReport as any)?.compliance_status?.entity_registered ? 'Registered' : 'Pending'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Tokenization Status */}
+            <div className="rounded-2xl border border-white/10 bg-black/30 p-6 backdrop-blur-sm">
+              <div className="flex items-center gap-2 mb-4">
+                <Gem className="w-5 h-5 text-[#c5fdff]" />
+                <h3 className="text-sm font-semibold text-white/90">Tokenization Status</h3>
+              </div>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-white/50">Story Protocol IP Asset</span>
+                  <div className="flex items-center gap-2">
+                    {(report.ipReport as any)?.tokenization_status?.story_protocol_registered ? (
+					      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    ) : (
+                      <XCircle className="w-4 h-4 text-red-400" />
+                    )}
+                    <span className={`text-xs font-semibold ${(report.ipReport as any)?.tokenization_status?.story_protocol_registered ? 'text-emerald-400' : 'text-red-400'}`}>
+                      {(report.ipReport as any)?.tokenization_status?.story_protocol_registered ? 'Registered' : 'Pending'}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-white/50">ERC-3643 Token</span>
+                  <div className="flex items-center gap-2">
+                    {(report.ipReport as any)?.tokenization_status?.erc3643_deployed ? (
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    ) : (
+                      <XCircle className="w-4 h-4 text-red-400" />
+                    )}
+                    <span className={`text-xs font-semibold ${(report.ipReport as any)?.tokenization_status?.erc3643_deployed ? 'text-emerald-400' : 'text-red-400'}`}>
+                      {(report.ipReport as any)?.tokenization_status?.erc3643_deployed ? 'Deployed' : 'Pending'}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-white/50">Royalty Splitter</span>
+                  <div className="flex items-center gap-2">
+                    {(report.ipReport as any)?.tokenization_status?.royalty_splitter_configured ? (
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    ) : (
+                      <XCircle className="w-4 h-4 text-red-400" />
+                    )}
+                    <span className={`text-xs font-semibold ${(report.ipReport as any)?.tokenization_status?.royalty_splitter_configured ? 'text-emerald-400' : 'text-red-400'}`}>
+                      {(report.ipReport as any)?.tokenization_status?.royalty_splitter_configured ? 'Configured' : 'Pending'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
