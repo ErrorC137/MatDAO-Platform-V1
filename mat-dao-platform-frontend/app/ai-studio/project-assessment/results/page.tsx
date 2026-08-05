@@ -239,11 +239,11 @@ export default function ProjectAssessmentResultsPage() {
           />
           <EnhancedMetric 
             label="IP Valuation" 
-            value={report.ipReport?.valuation?.valuation_range_usd 
+            value={report.ipReport?.valuation?.valuation_available && report.ipReport?.valuation?.valuation_range_usd 
               ? `${formatUsd(report.ipReport.valuation.valuation_range_usd.low)} - ${formatUsd(report.ipReport.valuation.valuation_range_usd.high)}`
               : report.summary.valuationUsd 
                 ? formatUsd(report.summary.valuationUsd) 
-                : "N/A"
+                : "Not estimated"
             }
             icon={<Gem className="w-5 h-5" />}
           />
@@ -348,6 +348,28 @@ export default function ProjectAssessmentResultsPage() {
                   </div>
                 </div>
               </div>
+
+              {/* Team Assessment - New Section */}
+              {report.trlProject?.team_assessment && (
+                <div className="rounded-2xl border border-[#a78bfa]/30 bg-gradient-to-br from-[#a78bfa]/10 to-[#a78bfa]/5 p-6 backdrop-blur-sm">
+                  <h3 className="text-sm font-semibold text-[#a78bfa] mb-4 uppercase tracking-wider">Team Assessment</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div className="rounded-xl border border-white/10 bg-black/20 p-4">
+                      <p className="text-xs text-white/50 mb-1">Team Expertise Score</p>
+                      <p className="text-lg font-bold text-white/90">{((report.trlProject.team_expertise_score || 0.5) * 100).toFixed(0)}%</p>
+                    </div>
+                    <div className="rounded-xl border border-white/10 bg-black/20 p-4">
+                      <p className="text-xs text-white/50 mb-1">Institution Reputation</p>
+                      <p className="text-lg font-bold text-white/90">{((report.trlProject.institution_reputation_score || 0.5) * 100).toFixed(0)}%</p>
+                    </div>
+                  </div>
+                  <div className="prose prose-invert max-w-none">
+                    <div className="text-sm text-white/70 leading-relaxed whitespace-pre-line">
+                      {report.trlProject.team_assessment}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </section>
         )}

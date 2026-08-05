@@ -25,6 +25,11 @@ export interface TrlProject {
   score: number
   createdAt: string
   logo: "battery" | "carbon" | "ai" | "chitin" | "shield" | "turbine" | "composite"
+  keyData?: Record<string, unknown>
+  scoreReasoning?: Record<string, string>
+  team_expertise_score?: number
+  institution_reputation_score?: number
+  team_assessment?: string
 }
 
 export interface ResearcherProfile {
