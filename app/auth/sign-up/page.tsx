@@ -4,6 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/context/auth-context"
+import { roleDestination } from "@/lib/auth-routes"
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { Mail, Lock, User, Building2, Loader2 } from "lucide-react"
 
@@ -32,7 +33,7 @@ export default function SignUpPage() {
     }
     try {
       await signUp({ email, password, name, role, university: university || undefined })
-      router.push("/")
+      router.push(roleDestination(role))
     } catch (err: any) {
       console.error("Sign up error:", err)
       const errorMessage = err?.message || "Sign up failed. Please try again."

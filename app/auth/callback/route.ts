@@ -14,7 +14,22 @@ export async function GET(request: Request) {
     }
 
     const supabase = createClient(supabaseUrl, supabaseAnonKey)
-    await supabase.auth.exchangeCodeForSession(code)
+    const { data } = await supabase.auth.exchangeCodeForSession(code)
+
+    if (data.user) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', data.user.id)
+        .single()
+
+      if (profile?.role === 'investor') {
+        return NextResponse.redirect(requestUrl.origin + '/investor-dashboard')
+      }
+      if (profile?.role === 'researcher') {
+        return NextResponse.redirect(requestUrl.origin + '/researcher-dashboard')
+      }
+    }
   }
 
   // URL to redirect to after sign in process completes

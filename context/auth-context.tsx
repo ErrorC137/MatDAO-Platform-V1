@@ -37,7 +37,7 @@ export interface User {
 interface AuthContextType {
   user: User | null
   isLoading: boolean
-  signIn: (email: string, password: string) => Promise<void>
+  signIn: (email: string, password: string) => Promise<User | undefined>
   signInWithGoogle: () => Promise<void>
   signUp: (data: {
     email: string
@@ -45,7 +45,7 @@ interface AuthContextType {
     name: string
     role: "researcher" | "staff" | "investor"
     university?: string
-  }) => Promise<void>
+  }) => Promise<User | undefined>
   signOut: () => Promise<void>
   connectWallet: () => Promise<void>
   disconnectWallet: () => Promise<void>
@@ -135,7 +135,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     handleWalletConnection()
   }, [isConnected, address, user])
 
-  const loadUserProfile = async (userId: string) => {
+  const loadUserProfile = async (userId: string): Promise<User | undefined> => {
     console.log('loadUserProfile called for userId:', userId)
     const { data: profile, error } = await supabase
       .from('profiles')
@@ -145,22 +145,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     if (error) {
       console.error('Error loading profile:', error)
-      return
+      return undefined
     }
 
     if (profile) {
       console.log('Profile loaded successfully:', profile)
-      setUser({
+      const loadedUser: User = {
         id: profile.id,
         email: profile.email,
         name: profile.name,
         role: profile.role as User['role'],
         walletAddress: profile.wallet_address,
         university: profile.university,
-      })
+      }
+      setUser(loadedUser)
       console.log('User state set to:', profile)
+      return loadedUser
     } else {
       console.error('Profile not found for user:', userId)
+      return undefined
     }
   }
 
@@ -185,16 +188,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.log('Sign in successful, user data:', data.user)
       if (data.user) {
         console.log('Loading user profile for:', data.user.id)
-        await loadUserProfile(data.user.id)
-        console.log('User profile loaded, current user state:', user)
+        const loadedUser = await loadUserProfile(data.user.id)
+        console.log('User profile loaded, current user state:', loadedUser)
+        return loadedUser
       }
+      return undefined
     } catch (error) {
       console.error('Sign in error:', error)
       throw error
     } finally {
       setIsLoading(false)
     }
-  }, [user])
+  }, [])
 
   const signInWithGoogle = useCallback(async () => {
     setIsLoading(true)
@@ -291,18 +296,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             throw profileError
           }
 
-          setUser({
+          const newUser: User = {
             id: authData.user.id,
             email: data.email,
             name: data.name,
             role: data.role,
             walletAddress: null,
             university: data.university || null,
-          })
-          
+          }
+          setUser(newUser)
+
           // Clear cooldown on success
           clearCooldown()
+          return newUser
         }
+        return undefined
       } catch (error) {
         console.error('Sign up error:', error)
         throw error
