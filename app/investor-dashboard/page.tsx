@@ -391,7 +391,7 @@ function makeAxisTick(scoreByAxis: Record<string, number>, accentColor: string, 
     const { x, y, cx, cy, textAnchor, payload } = props
     const axisName = payload?.value as string
     const raw = scoreByAxis[axisName]
-    if (raw === undefined) return null
+    if (raw === undefined) return <></>
 
     // The value number matches this chart's own line color — a blue web
     // gets blue numbers, a purple web gets purple numbers — so the label
