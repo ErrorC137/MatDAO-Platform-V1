@@ -11,10 +11,8 @@ import { uploadMetadataToIPFSAction } from "@/lib/ipfs/uploadMetadataToIPFSActio
 import { useMintIPNFT } from "@/lib/web3/hooks/useMintIPNFT"
 import { CONTRACT_ADDRESSES } from "@/lib/web3/config"
 import type { CombinedAssessmentReport } from "@/lib/trl-services/types"
-import { generateReportPDF } from "@/lib/pdf/generateReportPDF"
 import { SpiderChart } from "@/components/ai-studio/SpiderChart"
-import { ChatAgent } from "./chat-agent"
-import ClaimChartVisualizer from "@/components/ClaimChartVisualizer"
+import { generateReportPDF } from "@/lib/pdf/generateReportPDF"
 
 export default function ProjectAssessmentResultsPage() {
   const router = useRouter()
@@ -25,7 +23,6 @@ export default function ProjectAssessmentResultsPage() {
   const [minted, setMinted] = useState(false)
   const [nftTokenId, setNftTokenId] = useState<string | null>(null)
   const [ipfsUri, setIpfsUri] = useState<string | null>(null)
-  const [showChat, setShowChat] = useState(false)
 
   const { mintIPNFT, isPending: isMintingPending, isSuccess: isMintSuccess } = useMintIPNFT()
 
