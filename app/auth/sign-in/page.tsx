@@ -4,6 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/context/auth-context"
+import { roleDestination } from "@/lib/auth-routes"
 import { Mail, Lock, Loader2, Wallet, Sparkles, ArrowRight } from "lucide-react"
 
 export default function SignInPage() {
@@ -22,8 +23,8 @@ export default function SignInPage() {
       return
     }
     try {
-      await signIn(email, password)
-      router.push("/")
+      const loggedInUser = await signIn(email, password)
+      router.push(loggedInUser ? roleDestination(loggedInUser.role) : "/")
     } catch {
       setError("Invalid credentials. Please try again.")
     }

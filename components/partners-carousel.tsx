@@ -47,12 +47,7 @@ export function PartnersCarousel() {
 
   return (
     <div className="w-full overflow-hidden bg-gradient-to-r from-[#0a0a0a] via-[#0d1a2d] to-[#0a0a0a] py-12">
-      <div className="container mx-auto px-4 mb-8">
-        <h3 className="text-center text-2xl font-bold text-white/90 mb-2">Building with the best</h3>
-        <p className="text-center text-sm text-white/60">Top crypto and biotech players are backing projects in the MatDAO ecosystem.</p>
-      </div>
-      
-      <div 
+      <div
         ref={scrollRef}
         className="flex gap-16 overflow-x-hidden px-12"
         onMouseEnter={() => setIsPaused(true)}

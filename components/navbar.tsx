@@ -3,8 +3,9 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState, useRef, useEffect } from "react"
-import { ChevronDown, LogOut, User } from "lucide-react"
+import { ChevronDown, LayoutDashboard, LogOut, User } from "lucide-react"
 import { useAuth } from "@/context/auth-context"
+import { roleDestination } from "@/lib/auth-routes"
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -92,8 +93,18 @@ export function Navbar() {
               </button>
               {dropdownOpen && (
                 <div className="absolute right-0 top-full mt-2 w-48 rounded-xl border border-border/60 bg-card/95 backdrop-blur-xl p-1.5 shadow-2xl shadow-black/20">
-                  <Link 
-                    href="/profile" 
+                  {user.role !== "staff" && (
+                    <Link
+                      href={roleDestination(user.role)}
+                      onClick={() => setDropdownOpen(false)}
+                      className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs text-muted-foreground hover:bg-secondary/80 hover:text-foreground transition-colors"
+                    >
+                      <LayoutDashboard className="h-3.5 w-3.5" />
+                      <span className="font-medium">Dashboard</span>
+                    </Link>
+                  )}
+                  <Link
+                    href="/profile"
                     onClick={() => setDropdownOpen(false)} 
                     className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs text-muted-foreground hover:bg-secondary/80 hover:text-foreground transition-colors"
                   >
