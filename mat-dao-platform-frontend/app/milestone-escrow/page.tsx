@@ -125,13 +125,13 @@ export default function MilestoneEscrowPage() {
   const getStatusColor = (status: Milestone["status"]) => {
     switch (status) {
       case "released":
-        return "text-green-400 bg-green-400/10 border-green-400/30"
+        return "text-green-600 bg-green-50 border-green-200"
       case "verified":
-        return "text-[#6efcff] bg-[#6efcff]/10 border-[#6efcff]/30"
+        return "text-blue-600 bg-blue-50 border-blue-200"
       case "rejected":
-        return "text-red-400 bg-red-400/10 border-red-400/30"
+        return "text-red-600 bg-red-50 border-red-200"
       default:
-        return "text-white/60 bg-white/5 border-white/10"
+        return "text-gray-600 bg-gray-50 border-gray-200"
     }
   }
 
@@ -153,25 +153,19 @@ export default function MilestoneEscrowPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0a0a1a] via-[#0d1a2d] to-[#050510]">
-      {/* Animated background */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#6efcff]/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#a78bfa]/10 rounded-full blur-3xl animate-pulse delay-1000" />
-      </div>
-
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="relative border-b border-white/10 bg-black/40 backdrop-blur-xl">
+      <div className="border-b border-gray-200 bg-white">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#6efcff]/30 bg-[#6efcff]/10">
-                  <Lock className="h-5 w-5 text-[#c5fdff]" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 bg-gray-100">
+                  <Lock className="h-5 w-5 text-gray-700" />
                 </div>
-                <h1 className="text-3xl font-bold text-white/95">Milestone Funding</h1>
+                <h1 className="text-3xl font-bold text-gray-900">Milestone Funding</h1>
               </div>
-              <p className="text-sm text-white/60">
+              <p className="text-sm text-gray-600">
                 Track milestone progress and secure capital release
               </p>
             </div>
@@ -180,29 +174,29 @@ export default function MilestoneEscrowPage() {
       </div>
 
       {/* Main Content */}
-      <div className="relative mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 pb-20">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 pb-20">
         <div className="grid gap-6 lg:grid-cols-3">
           {/* Vault List */}
           <div className="lg:col-span-1">
-            <div className="rounded-2xl border border-white/10 bg-black/40 backdrop-blur-sm p-4">
-              <h2 className="text-lg font-semibold text-white/95 mb-4">Active Vaults</h2>
+            <div className="border border-gray-200 bg-white rounded-lg p-4 shadow-sm">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Active Vaults</h2>
               <div className="space-y-3">
                 {mockVaults.map((vault) => (
                   <button
                     key={vault.id}
                     onClick={() => setSelectedVault(vault)}
-                    className={`w-full text-left rounded-xl border p-4 transition-all ${
+                    className={`w-full text-left rounded-lg border p-4 transition-all ${
                       selectedVault?.id === vault.id
-                        ? "border-[#6efcff]/30 bg-[#6efcff]/10"
-                        : "border-white/10 bg-white/5 hover:border-white/20"
+                        ? "border-blue-200 bg-blue-50"
+                        : "border-gray-200 bg-gray-50 hover:border-gray-300"
                     }`}
                   >
-                    <h3 className="text-sm font-medium text-white/90 mb-1 line-clamp-1">
+                    <h3 className="text-sm font-medium text-gray-900 mb-1 line-clamp-1">
                       {vault.projectTitle}
                     </h3>
-                    <div className="flex items-center justify-between text-xs text-white/50">
+                    <div className="flex items-center justify-between text-xs text-gray-500">
                       <span>{vault.researcher}</span>
-                      <span className="text-[#c5fdff]">
+                      <span className="text-blue-600">
                         {Math.round(getReleaseProgress(vault))}% released
                       </span>
                     </div>
@@ -215,42 +209,42 @@ export default function MilestoneEscrowPage() {
           {/* Vault Details */}
           <div className="lg:col-span-2">
             {selectedVault && (
-              <div className="rounded-2xl border border-white/10 bg-black/40 backdrop-blur-sm p-6">
+              <div className="border border-gray-200 bg-white rounded-lg p-6 shadow-sm">
                 {/* Vault Header */}
-                <div className="mb-6 pb-6 border-b border-white/10">
+                <div className="mb-6 pb-6 border-b border-gray-200">
                   <div className="flex items-start justify-between mb-4">
                     <div>
-                      <h2 className="text-xl font-bold text-white/95 mb-2">{selectedVault.projectTitle}</h2>
-                      <p className="text-sm text-white/60">Researcher: {selectedVault.researcher}</p>
+                      <h2 className="text-xl font-bold text-gray-900 mb-2">{selectedVault.projectTitle}</h2>
+                      <p className="text-sm text-gray-600">Researcher: {selectedVault.researcher}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-xs text-white/50 mb-1">Vault Address</p>
-                      <p className="text-sm font-mono text-[#c5fdff]">{selectedVault.vaultAddress}</p>
+                      <p className="text-xs text-gray-500 mb-1">Vault Address</p>
+                      <p className="text-sm font-mono text-blue-600">{selectedVault.vaultAddress}</p>
                     </div>
                   </div>
 
                   {/* Funding Progress */}
                   <div className="grid grid-cols-3 gap-4">
-                    <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+                    <div className="border border-gray-200 bg-gray-50 rounded-lg p-4">
                       <div className="flex items-center gap-2 mb-2">
-                        <DollarSign className="h-4 w-4 text-[#6efcff]" />
-                        <span className="text-xs text-white/50">Total Funding</span>
+                        <DollarSign className="h-4 w-4 text-blue-600" />
+                        <span className="text-xs text-gray-500">Total Funding</span>
                       </div>
-                      <p className="text-xl font-bold text-white">${selectedVault.totalFunding.toLocaleString()}</p>
+                      <p className="text-xl font-bold text-gray-900">${selectedVault.totalFunding.toLocaleString()}</p>
                     </div>
-                    <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+                    <div className="border border-gray-200 bg-gray-50 rounded-lg p-4">
                       <div className="flex items-center gap-2 mb-2">
-                        <Lock className="h-4 w-4 text-[#a78bfa]" />
-                        <span className="text-xs text-white/50">Escrowed</span>
+                        <Lock className="h-4 w-4 text-purple-600" />
+                        <span className="text-xs text-gray-500">Escrowed</span>
                       </div>
-                      <p className="text-xl font-bold text-white">${selectedVault.escrowedAmount.toLocaleString()}</p>
+                      <p className="text-xl font-bold text-gray-900">${selectedVault.escrowedAmount.toLocaleString()}</p>
                     </div>
-                    <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+                    <div className="border border-gray-200 bg-gray-50 rounded-lg p-4">
                       <div className="flex items-center gap-2 mb-2">
-                        <TrendingUp className="h-4 w-4 text-green-400" />
-                        <span className="text-xs text-white/50">Released</span>
+                        <TrendingUp className="h-4 w-4 text-green-600" />
+                        <span className="text-xs text-gray-500">Released</span>
                       </div>
-                      <p className="text-xl font-bold text-white">${selectedVault.releasedAmount.toLocaleString()}</p>
+                      <p className="text-xl font-bold text-gray-900">${selectedVault.releasedAmount.toLocaleString()}</p>
                     </div>
                   </div>
                 </div>
@@ -263,8 +257,8 @@ export default function MilestoneEscrowPage() {
                       onClick={() => setActiveTab(tab)}
                       className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                         activeTab === tab
-                          ? "bg-[#6efcff]/20 text-[#c5fdff] border border-[#6efcff]/30"
-                          : "text-white/60 hover:text-white/80"
+                          ? "bg-blue-100 text-blue-700 border border-blue-200"
+                          : "text-gray-600 hover:text-gray-900"
                       }`}
                     >
                       {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -276,15 +270,15 @@ export default function MilestoneEscrowPage() {
                 {activeTab === "overview" && (
                   <div className="space-y-6">
                     <div>
-                      <h3 className="text-lg font-semibold text-white/95 mb-4">Release Progress</h3>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">Release Progress</h3>
                       <div className="mb-4">
                         <div className="flex justify-between text-sm mb-2">
-                          <span className="text-white/60">Funds Released</span>
-                          <span className="text-[#c5fdff]">{Math.round(getReleaseProgress(selectedVault))}%</span>
+                          <span className="text-gray-600">Funds Released</span>
+                          <span className="text-blue-600">{Math.round(getReleaseProgress(selectedVault))}%</span>
                         </div>
-                        <div className="h-3 rounded-full bg-white/10 overflow-hidden">
+                        <div className="h-3 rounded-full bg-gray-200 overflow-hidden">
                           <div
-                            className="h-full rounded-full bg-gradient-to-r from-[#6efcff] to-[#a78bfa] transition-all"
+                            className="h-full rounded-full bg-blue-500 transition-all"
                             style={{ width: `${getReleaseProgress(selectedVault)}%` }}
                           />
                         </div>
@@ -292,27 +286,27 @@ export default function MilestoneEscrowPage() {
                     </div>
 
                     <div>
-                      <h3 className="text-lg font-semibold text-white/95 mb-4">Milestone Summary</h3>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">Milestone Summary</h3>
                       <div className="grid grid-cols-2 gap-4">
-                        <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-                          <p className="text-xs text-white/50 mb-1">Total Milestones</p>
-                          <p className="text-2xl font-bold text-white">{selectedVault.milestones.length}</p>
+                        <div className="border border-gray-200 bg-gray-50 rounded-lg p-4">
+                          <p className="text-xs text-gray-500 mb-1">Total Milestones</p>
+                          <p className="text-2xl font-bold text-gray-900">{selectedVault.milestones.length}</p>
                         </div>
-                        <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-                          <p className="text-xs text-white/50 mb-1">Completed</p>
-                          <p className="text-2xl font-bold text-green-400">
+                        <div className="border border-gray-200 bg-gray-50 rounded-lg p-4">
+                          <p className="text-xs text-gray-500 mb-1">Completed</p>
+                          <p className="text-2xl font-bold text-green-600">
                             {selectedVault.milestones.filter((m) => m.status === "released").length}
                           </p>
                         </div>
-                        <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-                          <p className="text-xs text-white/50 mb-1">Verified</p>
-                          <p className="text-2xl font-bold text-[#6efcff]">
+                        <div className="border border-gray-200 bg-gray-50 rounded-lg p-4">
+                          <p className="text-xs text-gray-500 mb-1">Verified</p>
+                          <p className="text-2xl font-bold text-blue-600">
                             {selectedVault.milestones.filter((m) => m.status === "verified").length}
                           </p>
                         </div>
-                        <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-                          <p className="text-xs text-white/50 mb-1">Pending</p>
-                          <p className="text-2xl font-bold text-white/60">
+                        <div className="border border-gray-200 bg-gray-50 rounded-lg p-4">
+                          <p className="text-xs text-gray-500 mb-1">Pending</p>
+                          <p className="text-2xl font-bold text-gray-600">
                             {selectedVault.milestones.filter((m) => m.status === "pending").length}
                           </p>
                         </div>
@@ -326,7 +320,7 @@ export default function MilestoneEscrowPage() {
                     {selectedVault.milestones.map((milestone, index) => (
                       <div
                         key={milestone.id}
-                        className="rounded-xl border border-white/10 bg-white/5 p-4"
+                        className="border border-gray-200 bg-gray-50 rounded-lg p-4"
                       >
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex items-start gap-3">
@@ -334,25 +328,25 @@ export default function MilestoneEscrowPage() {
                               {getStatusIcon(milestone.status)}
                             </div>
                             <div>
-                              <h4 className="text-sm font-medium text-white/90">{milestone.title}</h4>
-                              <p className="text-xs text-white/50 mt-1">{milestone.description}</p>
+                              <h4 className="text-sm font-medium text-gray-900">{milestone.title}</h4>
+                              <p className="text-xs text-gray-500 mt-1">{milestone.description}</p>
                             </div>
                           </div>
                           <div className="text-right">
-                            <p className="text-sm font-medium text-white">${milestone.targetAmount.toLocaleString()}</p>
+                            <p className="text-sm font-medium text-gray-900">${milestone.targetAmount.toLocaleString()}</p>
                             <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs border ${getStatusColor(milestone.status)}`}>
                               {milestone.status.charAt(0).toUpperCase() + milestone.status.slice(1)}
                             </span>
                           </div>
                         </div>
 
-                        <div className="flex items-center justify-between text-xs text-white/50 pt-3 border-t border-white/10">
+                        <div className="flex items-center justify-between text-xs text-gray-500 pt-3 border-t border-gray-200">
                           <div className="flex items-center gap-2">
                             <Clock className="h-3 w-3" />
                             <span>Due: {milestone.dueDate}</span>
                           </div>
                           {milestone.status === "verified" && (
-                            <button className="flex items-center gap-2 text-[#6efcff] hover:text-[#6efcff]/80 transition-colors">
+                            <button className="flex items-center gap-2 text-blue-600 hover:text-blue-700 transition-colors">
                               <Sparkles className="h-3 w-3" />
                               Release Funds
                               <ChevronRight className="h-3 w-3" />
@@ -366,13 +360,13 @@ export default function MilestoneEscrowPage() {
 
                 {activeTab === "transactions" && (
                   <div className="space-y-4">
-                    <div className="rounded-xl border border-white/10 bg-white/5 p-6 text-center">
-                      <Wallet className="h-12 w-12 text-[#6efcff] mx-auto mb-4" />
-                      <h3 className="text-lg font-semibold text-white/95 mb-2">Transaction History</h3>
-                      <p className="text-sm text-white/60 mb-4">
+                    <div className="border border-gray-200 bg-gray-50 rounded-lg p-6 text-center">
+                      <Wallet className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">Transaction History</h3>
+                      <p className="text-sm text-gray-600 mb-4">
                         View all fund releases and escrow transactions on-chain
                       </p>
-                      <button className="flex items-center justify-center gap-2 rounded-xl border border-[#6efcff]/30 bg-[#6efcff]/10 px-4 py-2 text-sm text-[#c5fdff] hover:bg-[#6efcff]/20 transition-all">
+                      <button className="flex items-center justify-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 text-sm text-blue-700 hover:bg-blue-100 transition-all">
                         <FileText className="h-4 w-4" />
                         View on Block Explorer
                       </button>

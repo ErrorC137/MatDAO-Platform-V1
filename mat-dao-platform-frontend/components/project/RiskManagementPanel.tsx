@@ -36,7 +36,7 @@ export function RiskManagementPanel({ escrowAddress, isAdmin = false }: RiskMana
     abi: ESCROW_ABI,
     functionName: "getEmergencyRefundEstimate",
     args: address ? [address as `0x${string}`] : undefined,
-    query: { enabled: !!address && isProjectFailed },
+    query: { enabled: Boolean(address && (isProjectFailed as boolean | undefined)) },
   })
 
   const { data: hash, writeContract, isPending } = useWriteContract()
@@ -78,7 +78,10 @@ export function RiskManagementPanel({ escrowAddress, isAdmin = false }: RiskMana
 
   const refundAmount = refundEstimate ? Number(refundEstimate) / 1e6 : 0
 
-  if (!isProjectFailed && !isAdmin) {
+  const projectFailed = Boolean(isProjectFailed as boolean | undefined)
+  const refund = refundEstimate as bigint | undefined
+
+  if (!projectFailed && !isAdmin) {
     return null
   }
 
@@ -94,7 +97,7 @@ export function RiskManagementPanel({ escrowAddress, isAdmin = false }: RiskMana
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {isProjectFailed ? (
+        {projectFailed ? (
           <div className="space-y-4">
             <div className="flex items-center gap-2 p-4 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg">
               <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
@@ -107,7 +110,7 @@ export function RiskManagementPanel({ escrowAddress, isAdmin = false }: RiskMana
               <Badge variant="destructive">Emergency Mode</Badge>
             </div>
 
-            {address && refundEstimate !== undefined && refundEstimate > 0n && (
+            {address && refund !== undefined && refund > 0n && (
               <div className="p-4 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm text-blue-900 dark:text-blue-100">Your Refund Estimate</span>
@@ -127,7 +130,7 @@ export function RiskManagementPanel({ escrowAddress, isAdmin = false }: RiskMana
             {address && (
               <Button
                 onClick={handleClaimRefund}
-                disabled={isPending || isConfirming || !refundEstimate || refundEstimate === 0n}
+                disabled={isPending || isConfirming || !refund || refund === 0n}
                 className="w-full bg-red-600 hover:bg-red-700"
               >
                 {isPending || isConfirming ? (

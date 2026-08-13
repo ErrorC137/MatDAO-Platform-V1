@@ -3,18 +3,17 @@
 import '@rainbow-me/rainbowkit/styles.css';
 import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { WagmiProvider as WagmiProviderCore } from 'wagmi';
-import { mainnet, polygon, optimism, arbitrum, base } from 'wagmi/chains';
+import { sepolia } from 'wagmi/chains';
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import { injected, walletConnect } from 'wagmi/connectors';
 
 const config = getDefaultConfig({
   appName: 'MatDAO Platform',
-  projectId: '14b9b11e59d6c908c7fa6cd4524dad47',
-  chains: [mainnet, polygon, optimism, arbitrum, base],
+  // The contracts and deployment tooling target Sepolia.  Restricting the UI
+  // to that chain avoids presenting a live-mainnet transaction for a testnet
+  // contract address.
+  projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || '00000000000000000000000000000000',
+  chains: [sepolia],
   ssr: false,
-  connectors: [
-    injected(),
-  ],
 });
 
 const queryClient = new QueryClient({

@@ -258,32 +258,6 @@ export function generateReportPDF(report: CombinedAssessmentReport): void {
     }
   }
   
-  // Compliance & Tokenization Status
-  doc.addPage()
-  doc.setFontSize(13)
-  doc.setTextColor(0, 0, 0)
-  doc.text("Compliance & Tokenization Status", 14, 20)
-  
-  const complianceData = [
-    ["KYC Verified", (report.ipReport as any)?.compliance_status?.kyc_verified ? "Yes" : "No"],
-    ["Accredited Investor", (report.ipReport as any)?.compliance_status?.accredited ? "Yes" : "No"],
-    ["Entity Registered", (report.ipReport as any)?.compliance_status?.entity_registered ? "Yes" : "No"],
-    ["Story Protocol IP Asset", (report.ipReport as any)?.tokenization_status?.story_protocol_registered ? "Registered" : "Pending"],
-    ["ERC-3643 Token", (report.ipReport as any)?.tokenization_status?.erc3643_deployed ? "Deployed" : "Pending"],
-    ["Royalty Splitter", (report.ipReport as any)?.tokenization_status?.royalty_splitter_configured ? "Configured" : "Pending"]
-  ]
-  
-  autoTable(doc, {
-    startY: 27,
-    head: [["Status Item", "Status"]],
-    body: complianceData,
-    theme: "grid",
-    headStyles: { fillColor: [167, 139, 250], textColor: [0, 0, 0], fontSize: 9 },
-    styles: { fontSize: 9 },
-    didDrawPage: (data) => {
-      currentY = data.cursor?.y || 27
-    },
-  })
   
   // IP Valuation (if available)
   if (report.ipReport) {

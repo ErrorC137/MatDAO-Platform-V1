@@ -102,7 +102,7 @@ async function main() {
 
   // Get token ID
   const tokenId = await matDAO_IPNFT.getNextTokenId()
-  console.log("🎫 Token ID:", tokenId - 1n)
+  console.log("🎫 Token ID:", tokenId - BigInt(1))
 
   // Fund the escrow with initial capital
   console.log("\n9️⃣ Funding escrow with initial capital...")

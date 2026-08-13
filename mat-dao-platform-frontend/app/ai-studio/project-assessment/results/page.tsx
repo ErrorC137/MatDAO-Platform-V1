@@ -134,37 +134,37 @@ export default function ProjectAssessmentResultsPage() {
         )}
 
         {/* Document Summary Section */}
-        <div className="mb-8 rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-8 backdrop-blur-xl shadow-2xl">
+        <div className="mb-8 border border-gray-200 bg-white rounded-lg p-6 shadow-sm">
           <div className="flex items-center gap-3 mb-6">
-            <div className="p-3 rounded-2xl bg-gradient-to-br from-[#6efcff]/30 to-[#6efcff]/10">
-              <Brain className="w-6 h-6 text-[#c5fdff]" />
+            <div className="p-2 bg-gray-100 rounded-lg">
+              <Brain className="w-5 h-5 text-gray-700" />
             </div>
             <div>
-              <h2 className="font-headline text-xl font-bold text-white/95">Document Analysis Summary</h2>
-              <p className="text-sm text-white/50">Comprehensive document structure and classification analysis</p>
+              <h2 className="text-lg font-semibold text-gray-900">Document Analysis Summary</h2>
+              <p className="text-sm text-gray-500">Document structure and classification</p>
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
-            <div className="rounded-2xl border border-white/10 bg-black/30 p-5 backdrop-blur-sm">
-              <p className="text-xs text-white/50 mb-2 uppercase tracking-wider">Document Type</p>
-              <p className="text-base font-semibold text-white/90">{report.ipReport?.document_profile?.document_type || "Research Paper"}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div className="border border-gray-200 bg-gray-50 rounded-lg p-4">
+              <p className="text-xs text-gray-500 mb-1 uppercase tracking-wide">Document Type</p>
+              <p className="text-sm font-medium text-gray-900">{report.ipReport?.document_profile?.document_type || "Research Paper"}</p>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-black/30 p-5 backdrop-blur-sm">
-              <p className="text-xs text-white/50 mb-2 uppercase tracking-wider">Word Count</p>
-              <p className="text-base font-semibold text-white/90">{report.ipReport?.document_profile?.word_count?.toLocaleString() || "N/A"}</p>
+            <div className="border border-gray-200 bg-gray-50 rounded-lg p-4">
+              <p className="text-xs text-gray-500 mb-1 uppercase tracking-wide">Word Count</p>
+              <p className="text-sm font-medium text-gray-900">{report.ipReport?.document_profile?.word_count?.toLocaleString() || "N/A"}</p>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-black/30 p-5 backdrop-blur-sm">
-              <p className="text-xs text-white/50 mb-2 uppercase tracking-wider">Classification</p>
-              <p className="text-base font-semibold text-white/90">{report.ipReport?.classification?.sector_name || "N/A"}</p>
+            <div className="border border-gray-200 bg-gray-50 rounded-lg p-4">
+              <p className="text-xs text-gray-500 mb-1 uppercase tracking-wide">Classification</p>
+              <p className="text-sm font-medium text-gray-900">{report.ipReport?.classification?.sector_name || "N/A"}</p>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-black/30 p-5 backdrop-blur-sm">
-              <p className="text-xs text-white/50 mb-2 uppercase tracking-wider">Primary Field</p>
-              <p className="text-base font-semibold text-white/90">{(report.ipReport?.classification as any)?.field_classification?.primary || "Materials Science"}</p>
+            <div className="border border-gray-200 bg-gray-50 rounded-lg p-4">
+              <p className="text-xs text-gray-500 mb-1 uppercase tracking-wide">Primary Field</p>
+              <p className="text-sm font-medium text-gray-900">{(report.ipReport?.classification as any)?.field_classification?.primary || "Materials Science"}</p>
             </div>
           </div>
-          <div className="rounded-2xl border border-white/10 bg-black/30 p-5 backdrop-blur-sm">
-            <p className="text-xs text-white/50 mb-3 uppercase tracking-wider">Analysis Overview</p>
-            <p className="text-sm text-white/70 leading-relaxed">
+          <div className="border border-gray-200 bg-gray-50 rounded-lg p-5">
+            <p className="text-xs text-gray-500 mb-3 uppercase tracking-wide">Analysis Overview</p>
+            <p className="text-sm text-gray-700 leading-relaxed">
               This document has been analyzed for {report.ipReport?.document_profile?.word_count?.toLocaleString() || "various"} words across {report.ipReport?.document_profile?.sections_found?.length || 3} sections. 
               The research is classified under {report.ipReport?.classification?.sector_name || "various fields"} with primary focus on {(report.ipReport?.classification as any)?.field_classification?.primary || "materials science"}. 
               The analysis indicates a TRL level of {report.trlProject.trl} with an IP novelty score of {report.summary.ipScore}/100.
@@ -265,112 +265,94 @@ export default function ProjectAssessmentResultsPage() {
 
         {/* Comprehensive Analysis Section */}
         {(report.ipReport as any)?.comprehensive_analysis && (
-          <section className="workflow-panel mb-8 rounded-3xl border border-[#6efcff]/30 bg-gradient-to-br from-[#6efcff]/10 to-[#6efcff]/5 p-8 backdrop-blur-xl shadow-2xl">
+          <section className="mb-8 border border-gray-200 bg-white rounded-lg p-6 shadow-sm">
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-3 rounded-2xl bg-gradient-to-br from-[#6efcff]/30 to-[#6efcff]/10">
-                <Brain className="w-6 h-6 text-[#c5fdff]" />
+              <div className="p-2 bg-gray-100 rounded-lg">
+                <Brain className="w-5 h-5 text-gray-700" />
               </div>
-              <h2 className="font-headline text-xl font-bold text-white/95">Comprehensive Analysis</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Comprehensive Analysis</h2>
             </div>
             <div className="space-y-6">
               {/* Executive Summary */}
-              <div className="rounded-2xl border border-white/10 bg-black/30 p-6 backdrop-blur-sm">
-                <h3 className="text-sm font-semibold text-[#c5fdff] mb-4 uppercase tracking-wider">Executive Summary</h3>
-                <div className="prose prose-invert max-w-none">
-                  <div className="text-sm text-white/70 leading-relaxed whitespace-pre-line">
-                    {(report.ipReport as any).comprehensive_analysis.executive_summary}
-                  </div>
+              <div className="border border-gray-200 bg-gray-50 rounded-lg p-5">
+                <h3 className="text-sm font-semibold text-gray-900 mb-3">Executive Summary</h3>
+                <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
+                  {(report.ipReport as any).comprehensive_analysis.executive_summary}
                 </div>
               </div>
 
               {/* Technical Analysis */}
-              <div className="rounded-2xl border border-white/10 bg-black/30 p-6 backdrop-blur-sm">
-                <h3 className="text-sm font-semibold text-[#c5fdff] mb-4 uppercase tracking-wider">Technical Analysis</h3>
-                <div className="prose prose-invert max-w-none">
-                  <div className="text-sm text-white/70 leading-relaxed whitespace-pre-line">
-                    {(report.ipReport as any).comprehensive_analysis.technical_analysis}
-                  </div>
+              <div className="border border-gray-200 bg-gray-50 rounded-lg p-5">
+                <h3 className="text-sm font-semibold text-gray-900 mb-3">Technical Analysis</h3>
+                <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
+                  {(report.ipReport as any).comprehensive_analysis.technical_analysis}
                 </div>
               </div>
 
               {/* Market Analysis */}
-              <div className="rounded-2xl border border-white/10 bg-black/30 p-6 backdrop-blur-sm">
-                <h3 className="text-sm font-semibold text-[#c5fdff] mb-4 uppercase tracking-wider">Market Analysis</h3>
-                <div className="prose prose-invert max-w-none">
-                  <div className="text-sm text-white/70 leading-relaxed whitespace-pre-line">
-                    {(report.ipReport as any).comprehensive_analysis.market_analysis}
-                  </div>
+              <div className="border border-gray-200 bg-gray-50 rounded-lg p-5">
+                <h3 className="text-sm font-semibold text-gray-900 mb-3">Market Analysis</h3>
+                <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
+                  {(report.ipReport as any).comprehensive_analysis.market_analysis}
                 </div>
               </div>
 
               {/* IP and Competitive Analysis */}
-              <div className="rounded-2xl border border-white/10 bg-black/30 p-6 backdrop-blur-sm">
-                <h3 className="text-sm font-semibold text-[#c5fdff] mb-4 uppercase tracking-wider">IP & Competitive Analysis</h3>
-                <div className="prose prose-invert max-w-none">
-                  <div className="text-sm text-white/70 leading-relaxed whitespace-pre-line">
-                    {(report.ipReport as any).comprehensive_analysis.ip_competitive_analysis}
-                  </div>
+              <div className="border border-gray-200 bg-gray-50 rounded-lg p-5">
+                <h3 className="text-sm font-semibold text-gray-900 mb-3">IP & Competitive Analysis</h3>
+                <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
+                  {(report.ipReport as any).comprehensive_analysis.ip_competitive_analysis}
                 </div>
               </div>
 
               {/* Development Roadmap */}
-              <div className="rounded-2xl border border-white/10 bg-black/30 p-6 backdrop-blur-sm">
-                <h3 className="text-sm font-semibold text-[#c5fdff] mb-4 uppercase tracking-wider">Development Roadmap</h3>
-                <div className="prose prose-invert max-w-none">
-                  <div className="text-sm text-white/70 leading-relaxed whitespace-pre-line">
-                    {(report.ipReport as any).comprehensive_analysis.development_roadmap}
-                  </div>
+              <div className="border border-gray-200 bg-gray-50 rounded-lg p-5">
+                <h3 className="text-sm font-semibold text-gray-900 mb-3">Development Roadmap</h3>
+                <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
+                  {(report.ipReport as any).comprehensive_analysis.development_roadmap}
                 </div>
               </div>
 
               {/* Risk Assessment */}
-              <div className="rounded-2xl border border-white/10 bg-black/30 p-6 backdrop-blur-sm">
-                <h3 className="text-sm font-semibold text-[#c5fdff] mb-4 uppercase tracking-wider">Risk Assessment</h3>
-                <div className="prose prose-invert max-w-none">
-                  <div className="text-sm text-white/70 leading-relaxed whitespace-pre-line">
-                    {(report.ipReport as any).comprehensive_analysis.risk_assessment}
-                  </div>
+              <div className="border border-gray-200 bg-gray-50 rounded-lg p-5">
+                <h3 className="text-sm font-semibold text-gray-900 mb-3">Risk Assessment</h3>
+                <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
+                  {(report.ipReport as any).comprehensive_analysis.risk_assessment}
                 </div>
               </div>
 
               {/* Strategic Recommendations */}
-              <div className="rounded-2xl border border-[#6efcff]/30 bg-gradient-to-br from-[#6efcff]/10 to-[#6efcff]/5 p-6 backdrop-blur-sm">
-                <h3 className="text-sm font-semibold text-[#c5fdff] mb-4 uppercase tracking-wider">Strategic Recommendations</h3>
-                <div className="prose prose-invert max-w-none">
-                  <div className="text-sm text-white/70 leading-relaxed whitespace-pre-line">
-                    {(report.ipReport as any).comprehensive_analysis.strategic_recommendations}
-                  </div>
+              <div className="border border-blue-200 bg-blue-50 rounded-lg p-5">
+                <h3 className="text-sm font-semibold text-gray-900 mb-3">Strategic Recommendations</h3>
+                <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
+                  {(report.ipReport as any).comprehensive_analysis.strategic_recommendations}
                 </div>
               </div>
 
               {/* Investment Thesis */}
-              <div className="rounded-2xl border border-white/10 bg-black/30 p-6 backdrop-blur-sm">
-                <h3 className="text-sm font-semibold text-[#c5fdff] mb-4 uppercase tracking-wider">Investment Thesis</h3>
-                <div className="prose prose-invert max-w-none">
-                  <div className="text-sm text-white/70 leading-relaxed whitespace-pre-line">
-                    {(report.ipReport as any).comprehensive_analysis.investment_thesis}
-                  </div>
+              <div className="border border-gray-200 bg-gray-50 rounded-lg p-5">
+                <h3 className="text-sm font-semibold text-gray-900 mb-3">Investment Thesis</h3>
+                <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
+                  {(report.ipReport as any).comprehensive_analysis.investment_thesis}
                 </div>
               </div>
 
-              {/* Team Assessment - New Section */}
+              {/* Team Assessment */}
               {report.trlProject?.team_assessment && (
-                <div className="rounded-2xl border border-[#a78bfa]/30 bg-gradient-to-br from-[#a78bfa]/10 to-[#a78bfa]/5 p-6 backdrop-blur-sm">
-                  <h3 className="text-sm font-semibold text-[#a78bfa] mb-4 uppercase tracking-wider">Team Assessment</h3>
+                <div className="border border-gray-200 bg-gray-50 rounded-lg p-5">
+                  <h3 className="text-sm font-semibold text-gray-900 mb-3">Team Assessment</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div className="rounded-xl border border-white/10 bg-black/20 p-4">
-                      <p className="text-xs text-white/50 mb-1">Team Expertise Score</p>
-                      <p className="text-lg font-bold text-white/90">{((report.trlProject.team_expertise_score || 0.5) * 100).toFixed(0)}%</p>
+                    <div className="border border-gray-200 bg-white rounded p-3">
+                      <p className="text-xs text-gray-500 mb-1">Team Expertise Score</p>
+                      <p className="text-lg font-semibold text-gray-900">{((report.trlProject.team_expertise_score || 0.5) * 100).toFixed(0)}%</p>
                     </div>
-                    <div className="rounded-xl border border-white/10 bg-black/20 p-4">
-                      <p className="text-xs text-white/50 mb-1">Institution Reputation</p>
-                      <p className="text-lg font-bold text-white/90">{((report.trlProject.institution_reputation_score || 0.5) * 100).toFixed(0)}%</p>
+                    <div className="border border-gray-200 bg-white rounded p-3">
+                      <p className="text-xs text-gray-500 mb-1">Institution Reputation</p>
+                      <p className="text-lg font-semibold text-gray-900">{((report.trlProject.institution_reputation_score || 0.5) * 100).toFixed(0)}%</p>
                     </div>
                   </div>
-                  <div className="prose prose-invert max-w-none">
-                    <div className="text-sm text-white/70 leading-relaxed whitespace-pre-line">
-                      {report.trlProject.team_assessment}
-                    </div>
+                  <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
+                    {report.trlProject.team_assessment}
                   </div>
                 </div>
               )}
@@ -863,32 +845,34 @@ export default function ProjectAssessmentResultsPage() {
 
         {/* USPTO Patent Search Results - New Section */}
         {(report.ipReport as any)?.uspto_patents && (report.ipReport as any).uspto_patents.length > 0 && (
-          <section className="workflow-panel mb-8 rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-8 backdrop-blur-xl shadow-2xl">
+          <section className="mb-8 border border-gray-200 bg-white rounded-lg p-6 shadow-sm">
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-3 rounded-2xl bg-gradient-to-br from-[#6efcff]/30 to-[#6efcff]/10">
-                <Search className="w-6 h-6 text-[#c5fdff]" />
+              <div className="p-2 bg-gray-100 rounded-lg">
+                <Search className="w-5 h-5 text-gray-700" />
               </div>
-              <h2 className="font-headline text-xl font-bold text-white/95">USPTO Patent Search Results</h2>
-              <span className="ml-auto text-xs text-white/50">Source: USPTO Open Data Portal</span>
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900">USPTO Patent Search Results</h2>
+                <p className="text-sm text-gray-500">Source: USPTO Open Data Portal</p>
+              </div>
             </div>
             <div className="space-y-4">
               {(report.ipReport as any).uspto_patents.slice(0, 5).map((patent: any, i: number) => (
-                <div key={i} className="rounded-2xl border border-white/10 bg-black/30 p-5 backdrop-blur-sm">
+                <div key={i} className="border border-gray-200 bg-gray-50 rounded-lg p-4">
                   <div className="flex items-start justify-between gap-4 mb-3">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="text-xs font-mono text-[#c5fdff]">{patent.patent_id}</span>
+                        <span className="text-xs font-mono text-gray-600">{patent.patent_id}</span>
                         <span className={`px-2 py-0.5 rounded text-xs font-semibold border ${
-                          patent.similarity_score > 0.7 ? 'bg-red-500/20 text-red-400 border-red-500/30' :
-                          patent.similarity_score > 0.4 ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' :
-                          'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+                          patent.similarity_score > 0.7 ? 'bg-red-100 text-red-700 border-red-200' :
+                          patent.similarity_score > 0.4 ? 'bg-yellow-100 text-yellow-700 border-yellow-200' :
+                          'bg-green-100 text-green-700 border-green-200'
                         }`}>
                           {(patent.similarity_score * 100).toFixed(0)}% Similarity
                         </span>
                       </div>
-                      <p className="text-sm font-semibold text-white/90 mb-1">{patent.title}</p>
-                      <p className="text-xs text-white/50 mb-2">{patent.abstract?.slice(0, 150)}...</p>
-                      <div className="flex items-center gap-3 text-xs text-white/40">
+                      <p className="text-sm font-medium text-gray-900 mb-1">{patent.title}</p>
+                      <p className="text-xs text-gray-600 mb-2">{patent.abstract?.slice(0, 150)}...</p>
+                      <div className="flex items-center gap-3 text-xs text-gray-500">
                         <span>Filing: {patent.filing_date}</span>
                         <span>•</span>
                         <span>Assignee: {patent.assignee || 'N/A'}</span>
@@ -898,7 +882,7 @@ export default function ProjectAssessmentResultsPage() {
                   {patent.ipc_codes && patent.ipc_codes.length > 0 && (
                     <div className="flex flex-wrap gap-2">
                       {patent.ipc_codes.slice(0, 3).map((code: string, j: number) => (
-                        <span key={j} className="text-xs bg-white/10 px-2 py-1 rounded text-white/60">{code}</span>
+                        <span key={j} className="text-xs bg-gray-200 px-2 py-1 rounded text-gray-700">{code}</span>
                       ))}
                     </div>
                   )}
@@ -910,90 +894,90 @@ export default function ProjectAssessmentResultsPage() {
 
         {/* Patent Claim Analysis - New Section */}
         {(report.ipReport as any)?.patent_claim_analysis && (
-          <section className="workflow-panel mb-8 rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-8 backdrop-blur-xl shadow-2xl">
+          <section className="mb-8 border border-gray-200 bg-white rounded-lg p-6 shadow-sm">
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-3 rounded-2xl bg-gradient-to-br from-[#a78bfa]/30 to-[#a78bfa]/10">
-                <Gavel className="w-6 h-6 text-[#c5fdff]" />
+              <div className="p-2 bg-gray-100 rounded-lg">
+                <Gavel className="w-5 h-5 text-gray-700" />
               </div>
-              <h2 className="font-headline text-xl font-bold text-white/95">Patent Claim Analysis (35 USC § 102/103)</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Patent Claim Analysis (35 USC § 102/103)</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               {/* Novelty Analysis */}
-              <div className="rounded-2xl border border-white/10 bg-black/30 p-6 backdrop-blur-sm">
+              <div className="border border-gray-200 bg-gray-50 rounded-lg p-5">
                 <div className="flex items-center gap-2 mb-4">
-                  <Sparkles className="w-5 h-5 text-[#c5fdff]" />
-                  <h3 className="text-sm font-semibold text-white/90">Novelty Analysis (§ 102)</h3>
+                  <Sparkles className="w-5 h-5 text-gray-700" />
+                  <h3 className="text-sm font-semibold text-gray-900">Novelty Analysis (§ 102)</h3>
                 </div>
                 <div className="mb-4">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs text-white/50">Novelty Score</span>
+                    <span className="text-xs text-gray-500">Novelty Score</span>
                     <span className={`text-lg font-bold ${
-                      (report.ipReport as any).patent_claim_analysis.novelty_score >= 0.7 ? 'text-emerald-400' :
-                      (report.ipReport as any).patent_claim_analysis.novelty_score >= 0.4 ? 'text-amber-400' : 'text-red-400'
+                      (report.ipReport as any).patent_claim_analysis.novelty_score >= 0.7 ? 'text-green-600' :
+                      (report.ipReport as any).patent_claim_analysis.novelty_score >= 0.4 ? 'text-yellow-600' : 'text-red-600'
                     }`}>
                       {((report.ipReport as any).patent_claim_analysis.novelty_score * 100).toFixed(0)}%
                     </span>
                   </div>
-                  <div className="w-full bg-white/10 rounded-full h-2">
+                  <div className="w-full bg-gray-200 rounded-full h-2">
                     <div className={`h-2 rounded-full ${
-                      (report.ipReport as any).patent_claim_analysis.novelty_score >= 0.7 ? 'bg-emerald-500' :
-                      (report.ipReport as any).patent_claim_analysis.novelty_score >= 0.4 ? 'bg-amber-500' : 'bg-red-500'
+                      (report.ipReport as any).patent_claim_analysis.novelty_score >= 0.7 ? 'bg-green-500' :
+                      (report.ipReport as any).patent_claim_analysis.novelty_score >= 0.4 ? 'bg-yellow-500' : 'bg-red-500'
                     }`} style={{ width: `${(report.ipReport as any).patent_claim_analysis.novelty_score * 100}%` }} />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <p className="text-xs text-white/50 mb-1">Novel Elements:</p>
+                  <p className="text-xs text-gray-500 mb-1">Novel Elements:</p>
                   <div className="flex flex-wrap gap-2">
                     {(report.ipReport as any).patent_claim_analysis.novel_elements.slice(0, 3).map((element: string, i: number) => (
-                      <span key={i} className="text-xs bg-emerald-500/20 px-2 py-1 rounded text-emerald-400">{element.slice(0, 20)}...</span>
+                      <span key={i} className="text-xs bg-green-100 px-2 py-1 rounded text-green-700">{element.slice(0, 20)}...</span>
                     ))}
                   </div>
                 </div>
               </div>
 
               {/* Non-Obviousness Analysis */}
-              <div className="rounded-2xl border border-white/10 bg-black/30 p-6 backdrop-blur-sm">
+              <div className="border border-gray-200 bg-gray-50 rounded-lg p-5">
                 <div className="flex items-center gap-2 mb-4">
-                  <Scale className="w-5 h-5 text-[#c5fdff]" />
-                  <h3 className="text-sm font-semibold text-white/90">Non-Obviousness (§ 103)</h3>
+                  <Scale className="w-5 h-5 text-gray-700" />
+                  <h3 className="text-sm font-semibold text-gray-900">Non-Obviousness (§ 103)</h3>
                 </div>
                 <div className="mb-4">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs text-white/50">Non-Obviousness Score</span>
+                    <span className="text-xs text-gray-500">Non-Obviousness Score</span>
                     <span className={`text-lg font-bold ${
-                      (report.ipReport as any).patent_claim_analysis.non_obviousness_score >= 0.7 ? 'text-emerald-400' :
-                      (report.ipReport as any).patent_claim_analysis.non_obviousness_score >= 0.4 ? 'text-amber-400' : 'text-red-400'
+                      (report.ipReport as any).patent_claim_analysis.non_obviousness_score >= 0.7 ? 'text-green-600' :
+                      (report.ipReport as any).patent_claim_analysis.non_obviousness_score >= 0.4 ? 'text-yellow-600' : 'text-red-600'
                     }`}>
                       {((report.ipReport as any).patent_claim_analysis.non_obviousness_score * 100).toFixed(0)}%
                     </span>
                   </div>
-                  <div className="w-full bg-white/10 rounded-full h-2">
+                  <div className="w-full bg-gray-200 rounded-full h-2">
                     <div className={`h-2 rounded-full ${
-                      (report.ipReport as any).patent_claim_analysis.non_obviousness_score >= 0.7 ? 'bg-emerald-500' :
-                      (report.ipReport as any).patent_claim_analysis.non_obviousness_score >= 0.4 ? 'bg-amber-500' : 'bg-red-500'
+                      (report.ipReport as any).patent_claim_analysis.non_obviousness_score >= 0.7 ? 'bg-green-500' :
+                      (report.ipReport as any).patent_claim_analysis.non_obviousness_score >= 0.4 ? 'bg-yellow-500' : 'bg-red-500'
                     }`} style={{ width: `${(report.ipReport as any).patent_claim_analysis.non_obviousness_score * 100}%` }} />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <p className="text-xs text-white/50 mb-1">Non-Obvious Features:</p>
+                  <p className="text-xs text-gray-500 mb-1">Non-Obvious Features:</p>
                   <div className="flex flex-wrap gap-2">
                     {(report.ipReport as any).patent_claim_analysis.non_obvious_features.slice(0, 3).map((feature: string, i: number) => (
-                      <span key={i} className="text-xs bg-emerald-500/20 px-2 py-1 rounded text-emerald-400">{feature.slice(0, 20)}...</span>
+                      <span key={i} className="text-xs bg-green-100 px-2 py-1 rounded text-green-700">{feature.slice(0, 20)}...</span>
                     ))}
                   </div>
                 </div>
               </div>
             </div>
-            <div className="rounded-2xl border border-[#6efcff]/30 bg-gradient-to-br from-[#6efcff]/10 to-[#6efcff]/5 p-6 backdrop-blur-sm">
-              <p className="text-sm font-semibold text-[#c5fdff] mb-3">Overall Patentability</p>
-              <p className="text-sm text-white/70 leading-relaxed">{(report.ipReport as any).patent_claim_analysis.overall_patentability}</p>
+            <div className="border border-blue-200 bg-blue-50 rounded-lg p-5">
+              <p className="text-sm font-semibold text-gray-900 mb-3">Overall Patentability</p>
+              <p className="text-sm text-gray-700 leading-relaxed">{(report.ipReport as any).patent_claim_analysis.overall_patentability}</p>
               {(report.ipReport as any).patent_claim_analysis.recommendations && (report.ipReport as any).patent_claim_analysis.recommendations.length > 0 && (
                 <div className="mt-4">
-                  <p className="text-xs text-white/50 mb-2">Recommendations:</p>
+                  <p className="text-xs text-gray-500 mb-2">Recommendations:</p>
                   <ul className="space-y-2">
                     {(report.ipReport as any).patent_claim_analysis.recommendations.slice(0, 3).map((rec: string, i: number) => (
-                      <li key={i} className="text-xs text-white/60 flex items-start gap-2">
-                        <span className="text-[#6efcff]">•</span>
+                      <li key={i} className="text-xs text-gray-600 flex items-start gap-2">
+                        <span className="text-blue-600">•</span>
                         <span>{rec}</span>
                       </li>
                     ))}
@@ -1006,38 +990,38 @@ export default function ProjectAssessmentResultsPage() {
 
         {/* Legal Citation Verification - New Section */}
         {(report.ipReport as any)?.legal_citation_verification && (
-          <section className="workflow-panel mb-8 rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-8 backdrop-blur-xl shadow-2xl">
+          <section className="mb-8 border border-gray-200 bg-white rounded-lg p-6 shadow-sm">
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-3 rounded-2xl bg-gradient-to-br from-[#6efcff]/30 to-[#6efcff]/10">
-                <FileText className="w-6 h-6 text-[#c5fdff]" />
+              <div className="p-2 bg-gray-100 rounded-lg">
+                <FileText className="w-5 h-5 text-gray-700" />
               </div>
-              <h2 className="font-headline text-xl font-bold text-white/95">Legal Citation Verification</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Legal Citation Verification</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-              <div className="rounded-2xl border border-white/10 bg-black/30 p-5 backdrop-blur-sm">
-                <p className="text-xs text-white/50 mb-2">Total Citations</p>
-                <p className="text-2xl font-bold text-white/90">{(report.ipReport as any).legal_citation_verification.total_citations}</p>
+              <div className="border border-gray-200 bg-gray-50 rounded-lg p-4">
+                <p className="text-xs text-gray-500 mb-2">Total Citations</p>
+                <p className="text-2xl font-bold text-gray-900">{(report.ipReport as any).legal_citation_verification.total_citations}</p>
               </div>
-              <div className="rounded-2xl border border-emerald-500/30 bg-emerald-950/20 p-5 backdrop-blur-sm">
-                <p className="text-xs text-white/50 mb-2">Verified</p>
-                <p className="text-2xl font-bold text-emerald-400">{(report.ipReport as any).legal_citation_verification.verified_citations}</p>
+              <div className="border border-green-200 bg-green-50 rounded-lg p-4">
+                <p className="text-xs text-gray-500 mb-2">Verified</p>
+                <p className="text-2xl font-bold text-green-600">{(report.ipReport as any).legal_citation_verification.verified_citations}</p>
               </div>
-              <div className="rounded-2xl border border-red-500/30 bg-red-950/20 p-5 backdrop-blur-sm">
-                <p className="text-xs text-white/50 mb-2">Invalid</p>
-                <p className="text-2xl font-bold text-red-400">{(report.ipReport as any).legal_citation_verification.invalid_citations}</p>
+              <div className="border border-red-200 bg-red-50 rounded-lg p-4">
+                <p className="text-xs text-gray-500 mb-2">Invalid</p>
+                <p className="text-2xl font-bold text-red-600">{(report.ipReport as any).legal_citation_verification.invalid_citations}</p>
               </div>
-              <div className="rounded-2xl border border-white/10 bg-black/30 p-5 backdrop-blur-sm">
-                <p className="text-xs text-white/50 mb-2">Confidence</p>
-                <p className="text-2xl font-bold text-white/90">{((report.ipReport as any).legal_citation_verification.overall_confidence * 100).toFixed(0)}%</p>
+              <div className="border border-gray-200 bg-gray-50 rounded-lg p-4">
+                <p className="text-xs text-gray-500 mb-2">Confidence</p>
+                <p className="text-2xl font-bold text-gray-900">{((report.ipReport as any).legal_citation_verification.overall_confidence * 100).toFixed(0)}%</p>
               </div>
             </div>
             {(report.ipReport as any).legal_citation_verification.recommendations && (report.ipReport as any).legal_citation_verification.recommendations.length > 0 && (
-              <div className="rounded-2xl border border-[#6efcff]/30 bg-gradient-to-br from-[#6efcff]/10 to-[#6efcff]/5 p-6 backdrop-blur-sm">
-                <p className="text-sm font-semibold text-[#c5fdff] mb-3">Verification Recommendations</p>
+              <div className="border border-blue-200 bg-blue-50 rounded-lg p-5">
+                <p className="text-sm font-semibold text-gray-900 mb-3">Verification Recommendations</p>
                 <ul className="space-y-2">
                   {(report.ipReport as any).legal_citation_verification.recommendations.map((rec: string, i: number) => (
-                    <li key={i} className="text-sm text-white/70 flex items-start gap-3">
-                      <CheckCircle2 className="w-4 h-4 text-[#c5fdff] flex-shrink-0 mt-0.5" />
+                    <li key={i} className="text-sm text-gray-700 flex items-start gap-3">
+                      <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
                       <span>{rec}</span>
                     </li>
                   ))}
@@ -1049,12 +1033,12 @@ export default function ProjectAssessmentResultsPage() {
 
         {/* Claim Chart Visualizer - New Section */}
         {(report.ipReport as any)?.claim_chart_data && (
-          <section className="workflow-panel mb-8 rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-8 backdrop-blur-xl shadow-2xl">
+          <section className="mb-8 border border-gray-200 bg-white rounded-lg p-6 shadow-sm">
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-3 rounded-2xl bg-gradient-to-br from-[#6efcff]/30 to-[#6efcff]/10">
-                <BarChart3 className="w-6 h-6 text-[#c5fdff]" />
+              <div className="p-2 bg-gray-100 rounded-lg">
+                <BarChart3 className="w-5 h-5 text-gray-700" />
               </div>
-              <h2 className="font-headline text-xl font-bold text-white/95">Claim Chart Analysis</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Claim Chart Analysis</h2>
             </div>
             <ClaimChartVisualizer
               patentClaims={(report.ipReport as any).claim_chart_data.patent_claims || []}
@@ -1063,166 +1047,60 @@ export default function ProjectAssessmentResultsPage() {
           </section>
         )}
 
-        {/* Compliance & Tokenization Status - New Section */}
-        <section className="workflow-panel mb-8 rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-8 backdrop-blur-xl shadow-2xl">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-3 rounded-2xl bg-gradient-to-br from-[#a78bfa]/30 to-[#a78bfa]/10">
-              <Lock className="w-6 h-6 text-[#c5fdff]" />
-            </div>
-            <h2 className="font-headline text-xl font-bold text-white/95">Compliance & Tokenization Status</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* KYC/KYB Status */}
-            <div className="rounded-2xl border border-white/10 bg-black/30 p-6 backdrop-blur-sm">
-              <div className="flex items-center gap-2 mb-4">
-                <Users className="w-5 h-5 text-[#c5fdff]" />
-                <h3 className="text-sm font-semibold text-white/90">KYC/KYB Verification</h3>
-              </div>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-white/50">Identity Verification</span>
-                  <div className="flex items-center gap-2">
-                    {(report.ipReport as any)?.compliance_status?.kyc_verified ? (
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                    ) : (
-                      <XCircle className="w-4 h-4 text-red-400" />
-                    )}
-                    <span className={`text-xs font-semibold ${(report.ipReport as any)?.compliance_status?.kyc_verified ? 'text-emerald-400' : 'text-red-400'}`}>
-                      {(report.ipReport as any)?.compliance_status?.kyc_verified ? 'Verified' : 'Pending'}
-                    </span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-white/50">Accredited Investor</span>
-                  <div className="flex items-center gap-2">
-                    {(report.ipReport as any)?.compliance_status?.accredited ? (
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                    ) : (
-                      <XCircle className="w-4 h-4 text-red-400" />
-                    )}
-                    <span className={`text-xs font-semibold ${(report.ipReport as any)?.compliance_status?.accredited ? 'text-emerald-400' : 'text-red-400'}`}>
-                      {(report.ipReport as any)?.compliance_status?.accredited ? 'Verified' : 'Pending'}
-                    </span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-white/50">Entity Registration</span>
-                  <div className="flex items-center gap-2">
-                    {(report.ipReport as any)?.compliance_status?.entity_registered ? (
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                    ) : (
-                      <XCircle className="w-4 h-4 text-red-400" />
-                    )}
-                    <span className={`text-xs font-semibold ${(report.ipReport as any)?.compliance_status?.entity_registered ? 'text-emerald-400' : 'text-red-400'}`}>
-                      {(report.ipReport as any)?.compliance_status?.entity_registered ? 'Registered' : 'Pending'}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Tokenization Status */}
-            <div className="rounded-2xl border border-white/10 bg-black/30 p-6 backdrop-blur-sm">
-              <div className="flex items-center gap-2 mb-4">
-                <Gem className="w-5 h-5 text-[#c5fdff]" />
-                <h3 className="text-sm font-semibold text-white/90">Tokenization Status</h3>
-              </div>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-white/50">Story Protocol IP Asset</span>
-                  <div className="flex items-center gap-2">
-                    {(report.ipReport as any)?.tokenization_status?.story_protocol_registered ? (
-					      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                    ) : (
-                      <XCircle className="w-4 h-4 text-red-400" />
-                    )}
-                    <span className={`text-xs font-semibold ${(report.ipReport as any)?.tokenization_status?.story_protocol_registered ? 'text-emerald-400' : 'text-red-400'}`}>
-                      {(report.ipReport as any)?.tokenization_status?.story_protocol_registered ? 'Registered' : 'Pending'}
-                    </span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-white/50">ERC-3643 Token</span>
-                  <div className="flex items-center gap-2">
-                    {(report.ipReport as any)?.tokenization_status?.erc3643_deployed ? (
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                    ) : (
-                      <XCircle className="w-4 h-4 text-red-400" />
-                    )}
-                    <span className={`text-xs font-semibold ${(report.ipReport as any)?.tokenization_status?.erc3643_deployed ? 'text-emerald-400' : 'text-red-400'}`}>
-                      {(report.ipReport as any)?.tokenization_status?.erc3643_deployed ? 'Deployed' : 'Pending'}
-                    </span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-white/50">Royalty Splitter</span>
-                  <div className="flex items-center gap-2">
-                    {(report.ipReport as any)?.tokenization_status?.royalty_splitter_configured ? (
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                    ) : (
-                      <XCircle className="w-4 h-4 text-red-400" />
-                    )}
-                    <span className={`text-xs font-semibold ${(report.ipReport as any)?.tokenization_status?.royalty_splitter_configured ? 'text-emerald-400' : 'text-red-400'}`}>
-                      {(report.ipReport as any)?.tokenization_status?.royalty_splitter_configured ? 'Configured' : 'Pending'}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
 
         {/* Enhanced IP & FTO Analysis */}
         {report.ipReport && (
-          <section className="workflow-panel mb-6 rounded-2xl p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <ShieldCheck className="w-5 h-5 text-[#6efcff]" />
-              <h2 className="font-headline text-lg font-bold text-white/95">IP & FTO Analysis</h2>
+          <section className="mb-8 border border-gray-200 bg-white rounded-lg p-6 shadow-sm">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2 bg-gray-100 rounded-lg">
+                <ShieldCheck className="w-5 h-5 text-gray-700" />
+              </div>
+              <h2 className="text-lg font-semibold text-gray-900">IP & FTO Analysis</h2>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-              <div className="rounded-xl border border-white/10 bg-black/20 p-4">
-                <p className="text-xs text-white/50 mb-1">Sector</p>
-                <p className="text-sm font-semibold text-white/90">{report.ipReport.classification.sector_name}</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div className="border border-gray-200 bg-gray-50 rounded-lg p-4">
+                <p className="text-xs text-gray-500 mb-1">Sector</p>
+                <p className="text-sm font-medium text-gray-900">{report.ipReport.classification.sector_name}</p>
               </div>
-              <div className="rounded-xl border border-white/10 bg-black/20 p-4">
-                <p className="text-xs text-white/50 mb-1">FTO Risk Score</p>
-                <p className={`text-sm font-semibold ${getFTORiskColor(report.ipReport.fto.r_fto)}`}>{(report.ipReport.fto.r_fto * 100).toFixed(2)}%</p>
+              <div className="border border-gray-200 bg-gray-50 rounded-lg p-4">
+                <p className="text-xs text-gray-500 mb-1">FTO Risk Score</p>
+                <p className={`text-sm font-medium ${getFTORiskColor(report.ipReport.fto.r_fto)}`}>{(report.ipReport.fto.r_fto * 100).toFixed(2)}%</p>
               </div>
-              <div className="rounded-xl border border-white/10 bg-black/20 p-4">
-                <p className="text-xs text-white/50 mb-1">Target Valuation</p>
-                <p className="text-sm font-semibold text-emerald-400">{formatUsd(report.ipReport.valuation.v_target_usd)}</p>
+              <div className="border border-gray-200 bg-gray-50 rounded-lg p-4">
+                <p className="text-xs text-gray-500 mb-1">Target Valuation</p>
+                <p className="text-sm font-medium text-green-600">{formatUsd(report.ipReport.valuation.v_target_usd)}</p>
               </div>
             </div>
 
             {/* Enhanced Classification & Keywords */}
             {(report.ipReport.classification as any).detected_keywords && (
-              <div className="rounded-lg border border-[#6efcff]/30 bg-[#6efcff]/5 p-4 mb-4">
-                <p className="text-xs font-semibold text-[#c5fdff] mb-3">🔍 Automatic Classification & Keywords</p>
+              <div className="border border-gray-200 bg-gray-50 rounded-lg p-4 mb-4">
+                <p className="text-xs font-semibold text-gray-900 mb-3">Automatic Classification & Keywords</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <p className="text-[10px] text-white/50 mb-2">Detected Keywords:</p>
+                    <p className="text-xs text-gray-500 mb-2">Detected Keywords:</p>
                     <div className="flex flex-wrap gap-2">
                       {(report.ipReport.classification as any).detected_keywords.map((keyword: string, i: number) => (
-                        <span key={i} className="text-[10px] bg-white/10 px-2 py-1 rounded text-white/60">
+                        <span key={i} className="text-xs bg-gray-200 px-2 py-1 rounded text-gray-700">
                           {keyword}
                         </span>
                       ))}
                     </div>
                   </div>
                   <div>
-                    <p className="text-[10px] text-white/50 mb-2">Field Classification:</p>
+                    <p className="text-xs text-gray-500 mb-2">Field Classification:</p>
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <span className="text-[10px] text-white/50">Primary:</span>
-                        <span className="text-xs text-white/90">{(report.ipReport.classification as any).field_classification?.primary}</span>
+                        <span className="text-xs text-gray-500">Primary:</span>
+                        <span className="text-xs text-gray-900">{(report.ipReport.classification as any).field_classification?.primary}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-[10px] text-white/50">Secondary:</span>
-                        <span className="text-xs text-white/90">{(report.ipReport.classification as any).field_classification?.secondary}</span>
+                        <span className="text-xs text-gray-500">Secondary:</span>
+                        <span className="text-xs text-gray-900">{(report.ipReport.classification as any).field_classification?.secondary}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-[10px] text-white/50">Tertiary:</span>
-                        <span className="text-xs text-white/90">{(report.ipReport.classification as any).field_classification?.tertiary}</span>
+                        <span className="text-xs text-gray-500">Tertiary:</span>
+                        <span className="text-xs text-gray-900">{(report.ipReport.classification as any).field_classification?.tertiary}</span>
                       </div>
                     </div>
                   </div>
@@ -1232,52 +1110,52 @@ export default function ProjectAssessmentResultsPage() {
             
             {/* Enhanced Valuation Factors Breakdown */}
             {(report.ipReport.valuation as any).additional_factors && (
-              <div className="rounded-lg border border-[#6efcff]/30 bg-[#6efcff]/5 p-4 mt-4">
-                <p className="text-xs font-semibold text-[#c5fdff] mb-3">📊 Enhanced Valuation Factors</p>
+              <div className="border border-gray-200 bg-gray-50 rounded-lg p-4 mt-4">
+                <p className="text-xs font-semibold text-gray-900 mb-3">Enhanced Valuation Factors</p>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  <div className="rounded-lg bg-black/30 p-3">
-                    <p className="text-[10px] text-white/50 mb-1">Market Size Multiplier</p>
-                    <p className="text-sm font-semibold text-white/90">{((report.ipReport.valuation as any).additional_factors.market_size_multiplier).toFixed(2)}x</p>
+                  <div className="border border-gray-200 bg-white rounded p-3">
+                    <p className="text-xs text-gray-500 mb-1">Market Size Multiplier</p>
+                    <p className="text-sm font-medium text-gray-900">{((report.ipReport.valuation as any).additional_factors.market_size_multiplier).toFixed(2)}x</p>
                   </div>
-                  <div className="rounded-lg bg-black/30 p-3">
-                    <p className="text-[10px] text-white/50 mb-1">TRL Adjustment</p>
-                    <p className="text-sm font-semibold text-white/90">{((report.ipReport.valuation as any).additional_factors.trl_adjustment_factor).toFixed(2)}x</p>
+                  <div className="border border-gray-200 bg-white rounded p-3">
+                    <p className="text-xs text-gray-500 mb-1">TRL Adjustment</p>
+                    <p className="text-sm font-medium text-gray-900">{((report.ipReport.valuation as any).additional_factors.trl_adjustment_factor).toFixed(2)}x</p>
                   </div>
-                  <div className="rounded-lg bg-black/30 p-3">
-                    <p className="text-[10px] text-white/50 mb-1">Team Quality</p>
-                    <p className="text-sm font-semibold text-white/90">{((report.ipReport.valuation as any).additional_factors.team_quality_score).toFixed(2)}</p>
+                  <div className="border border-gray-200 bg-white rounded p-3">
+                    <p className="text-xs text-gray-500 mb-1">Team Quality</p>
+                    <p className="text-sm font-medium text-gray-900">{((report.ipReport.valuation as any).additional_factors.team_quality_score).toFixed(2)}</p>
                   </div>
-                  <div className="rounded-lg bg-black/30 p-3">
-                    <p className="text-[10px] text-white/50 mb-1">Competitive Advantage</p>
-                    <p className="text-sm font-semibold text-white/90">{((report.ipReport.valuation as any).additional_factors.competitive_advantage_score).toFixed(2)}</p>
+                  <div className="border border-gray-200 bg-white rounded p-3">
+                    <p className="text-xs text-gray-500 mb-1">Competitive Advantage</p>
+                    <p className="text-sm font-medium text-gray-900">{((report.ipReport.valuation as any).additional_factors.competitive_advantage_score).toFixed(2)}</p>
                   </div>
-                  <div className="rounded-lg bg-black/30 p-3">
-                    <p className="text-[10px] text-white/50 mb-1">Regulatory Risk</p>
-                    <p className="text-sm font-semibold text-white/90">{((report.ipReport.valuation as any).additional_factors.regulatory_risk_discount * 100).toFixed(1)}%</p>
+                  <div className="border border-gray-200 bg-white rounded p-3">
+                    <p className="text-xs text-gray-500 mb-1">Regulatory Risk</p>
+                    <p className="text-sm font-medium text-gray-900">{((report.ipReport.valuation as any).additional_factors.regulatory_risk_discount * 100).toFixed(1)}%</p>
                   </div>
-                  <div className="rounded-lg bg-black/30 p-3">
-                    <p className="text-[10px] text-white/50 mb-1">Time to Market</p>
-                    <p className="text-sm font-semibold text-white/90">{(report.ipReport.valuation as any).additional_factors.time_to_market_months} months</p>
+                  <div className="border border-gray-200 bg-white rounded p-3">
+                    <p className="text-xs text-gray-500 mb-1">Time to Market</p>
+                    <p className="text-sm font-medium text-gray-900">{(report.ipReport.valuation as any).additional_factors.time_to_market_months} months</p>
                   </div>
-                  <div className="rounded-lg bg-black/30 p-3">
-                    <p className="text-[10px] text-white/50 mb-1">Patent Strength</p>
-                    <p className="text-sm font-semibold text-white/90">{((report.ipReport.valuation as any).additional_factors.patent_strength_score).toFixed(2)}</p>
+                  <div className="border border-gray-200 bg-white rounded p-3">
+                    <p className="text-xs text-gray-500 mb-1">Patent Strength</p>
+                    <p className="text-sm font-medium text-gray-900">{((report.ipReport.valuation as any).additional_factors.patent_strength_score).toFixed(2)}</p>
                   </div>
-                  <div className="rounded-lg bg-black/30 p-3">
-                    <p className="text-[10px] text-white/50 mb-1">Commercial Readiness</p>
-                    <p className="text-sm font-semibold text-white/90">{((report.ipReport.valuation as any).additional_factors.commercial_readiness_score).toFixed(2)}</p>
+                  <div className="border border-gray-200 bg-white rounded p-3">
+                    <p className="text-xs text-gray-500 mb-1">Commercial Readiness</p>
+                    <p className="text-sm font-medium text-gray-900">{((report.ipReport.valuation as any).additional_factors.commercial_readiness_score).toFixed(2)}</p>
                   </div>
                 </div>
-                <div className="mt-3 pt-3 border-t border-white/10">
-                  <p className="text-[10px] text-white/50 mb-1">Enhanced Formula:</p>
-                  <p className="text-xs text-[#c5fdff] font-mono">{report.ipReport.valuation.formula}</p>
+                <div className="mt-3 pt-3 border-t border-gray-200">
+                  <p className="text-xs text-gray-500 mb-1">Enhanced Formula:</p>
+                  <p className="text-xs text-blue-600 font-mono">{report.ipReport.valuation.formula}</p>
                 </div>
               </div>
             )}
             
-            <div className="mt-4 rounded-lg border border-white/10 bg-black/20 p-4">
-                <p className="text-xs font-semibold text-white/70 mb-2">Valuation Calculation Breakdown</p>
-                <div className="space-y-2 text-xs text-white/60">
+            <div className="mt-4 border border-gray-200 bg-gray-50 rounded-lg p-4">
+                <p className="text-xs font-semibold text-gray-900 mb-2">Valuation Calculation Breakdown</p>
+                <div className="space-y-2 text-xs text-gray-700">
                   <div className="flex justify-between">
                     <span>Baseline Value (V_baseline)</span>
                     <span>{formatUsd(report.ipReport.valuation.v_baseline_usd)}</span>
@@ -1290,18 +1168,18 @@ export default function ProjectAssessmentResultsPage() {
                     <span>FTO Adjustment (1 - R_fto)</span>
                     <span>{(1 - report.ipReport.valuation.r_fto).toFixed(2)}x</span>
                   </div>
-                  <div className="border-t border-white/10 pt-2 mt-2 flex justify-between font-semibold text-white/90">
+                  <div className="border-t border-gray-200 pt-2 mt-2 flex justify-between font-semibold text-gray-900">
                     <span>Target Valuation (V_target)</span>
                     <span>{formatUsd(report.ipReport.valuation.v_target_usd)}</span>
                   </div>
-                  <p className="mt-2 text-[10px] text-white/40">
+                  <p className="mt-2 text-xs text-gray-500">
                     Formula: V_target = V_baseline × S_originality × (1 - R_fto)
                   </p>
                 </div>
               </div>
-              <div className="rounded-lg border border-white/10 bg-black/20 p-4">
-                <p className="text-xs font-semibold text-white/70 mb-2">Classification Details</p>
-                <div className="space-y-2 text-xs text-white/60">
+              <div className="border border-gray-200 bg-gray-50 rounded-lg p-4">
+                <p className="text-xs font-semibold text-gray-900 mb-2">Classification Details</p>
+                <div className="space-y-2 text-xs text-gray-700">
                   <div className="flex justify-between">
                     <span>IPC Primary</span>
                     <span>{report.ipReport.classification.ipc_primary}</span>
@@ -1324,9 +1202,9 @@ export default function ProjectAssessmentResultsPage() {
               {/* DeepSeek-enhanced valuation insights */}
               {(report.ipReport.valuation as any).deepseek_enhancement && (
                 <>
-                  <div className="rounded-lg border border-[#6efcff]/30 bg-[#6efcff]/5 p-4">
-                    <p className="text-xs font-semibold text-[#c5fdff] mb-2">🚀 Market Opportunity</p>
-                    <div className="space-y-2 text-xs text-white/70">
+                  <div className="border border-blue-200 bg-blue-50 rounded-lg p-4">
+                    <p className="text-xs font-semibold text-gray-900 mb-2">Market Opportunity</p>
+                    <div className="space-y-2 text-xs text-gray-700">
                       <div className="flex justify-between">
                         <span>Total Addressable Market</span>
                         <span>{(report.ipReport.valuation as any).deepseek_enhancement.market_opportunity.total_addressable_market}</span>
@@ -1342,43 +1220,43 @@ export default function ProjectAssessmentResultsPage() {
                     </div>
                   </div>
                   
-                  <div className="rounded-lg border border-white/10 bg-black/20 p-4">
-                    <p className="text-xs font-semibold text-white/70 mb-2">Commercialization Path</p>
-                    <div className="space-y-2 text-xs text-white/60">
+                  <div className="border border-gray-200 bg-gray-50 rounded-lg p-4">
+                    <p className="text-xs font-semibold text-gray-900 mb-2">Commercialization Path</p>
+                    <div className="space-y-2 text-xs text-gray-700">
                       <div className="flex justify-between">
                         <span>Time to Market</span>
                         <span>{(report.ipReport.valuation as any).deepseek_enhancement.commercialization_path.time_to_market}</span>
                       </div>
                       <div className="mt-2">
-                        <p className="text-[10px] text-white/50 mb-1">Key Partnerships:</p>
+                        <p className="text-xs text-gray-500 mb-1">Key Partnerships:</p>
                         <div className="flex flex-wrap gap-1">
                           {(report.ipReport.valuation as any).deepseek_enhancement.commercialization_path.key_partnerships.map((p: string, i: number) => (
-                            <span key={i} className="text-[10px] bg-white/10 px-2 py-0.5 rounded text-white/60">{p}</span>
+                            <span key={i} className="text-xs bg-gray-200 px-2 py-0.5 rounded text-gray-700">{p}</span>
                           ))}
                         </div>
                       </div>
                     </div>
                   </div>
                   
-                  <div className="rounded-lg border border-white/10 bg-black/20 p-4">
-                    <p className="text-xs font-semibold text-white/70 mb-2">Risk Factors</p>
+                  <div className="border border-gray-200 bg-gray-50 rounded-lg p-4">
+                    <p className="text-xs font-semibold text-gray-900 mb-2">Risk Factors</p>
                     <div className="space-y-2">
                       {(report.ipReport.valuation as any).deepseek_enhancement.risk_factors.technical_risks.length > 0 && (
                         <div>
-                          <p className="text-[10px] text-white/50 mb-1">Technical Risks:</p>
+                          <p className="text-xs text-gray-500 mb-1">Technical Risks:</p>
                           <ul className="space-y-1">
                             {(report.ipReport.valuation as any).deepseek_enhancement.risk_factors.technical_risks.map((r: string, i: number) => (
-                              <li key={i} className="text-[10px] text-white/55">• {r}</li>
+                              <li key={i} className="text-xs text-gray-600">• {r}</li>
                             ))}
                           </ul>
                         </div>
                       )}
                       {(report.ipReport.valuation as any).deepseek_enhancement.risk_factors.market_risks.length > 0 && (
                         <div>
-                          <p className="text-[10px] text-white/50 mb-1">Market Risks:</p>
+                          <p className="text-xs text-gray-500 mb-1">Market Risks:</p>
                           <ul className="space-y-1">
                             {(report.ipReport.valuation as any).deepseek_enhancement.risk_factors.market_risks.map((r: string, i: number) => (
-                              <li key={i} className="text-[10px] text-white/55">• {r}</li>
+                              <li key={i} className="text-xs text-gray-600">• {r}</li>
                             ))}
                           </ul>
                         </div>
@@ -1386,14 +1264,14 @@ export default function ProjectAssessmentResultsPage() {
                     </div>
                   </div>
                   
-                  <div className="rounded-lg border border-white/10 bg-black/20 p-4">
-                    <p className="text-xs font-semibold text-white/70 mb-2">Recommendations</p>
+                  <div className="border border-gray-200 bg-gray-50 rounded-lg p-4">
+                    <p className="text-xs font-semibold text-gray-900 mb-2">Recommendations</p>
                     <div className="space-y-2">
                       <div>
-                        <p className="text-[10px] text-white/50 mb-1">Immediate Actions:</p>
+                        <p className="text-xs text-gray-500 mb-1">Immediate Actions:</p>
                         <ul className="space-y-1">
                           {(report.ipReport.valuation as any).deepseek_enhancement.recommendations.immediate_actions.map((a: string, i: number) => (
-                            <li key={i} className="text-[10px] text-white/55">• {a}</li>
+                            <li key={i} className="text-xs text-gray-600">• {a}</li>
                           ))}
                         </ul>
                       </div>
@@ -1406,31 +1284,33 @@ export default function ProjectAssessmentResultsPage() {
 
         {/* Value Chain Analysis */}
         {(report.ipReport as any).value_chain_analysis && (
-          <section className="workflow-panel mb-6 rounded-2xl p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <Orbit className="w-5 h-5 text-[#6efcff]" />
-              <h2 className="font-headline text-lg font-bold text-white/95">Value Chain Analysis</h2>
+          <section className="mb-8 border border-gray-200 bg-white rounded-lg p-6 shadow-sm">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2 bg-gray-100 rounded-lg">
+                <Orbit className="w-5 h-5 text-gray-700" />
+              </div>
+              <h2 className="text-lg font-semibold text-gray-900">Value Chain Analysis</h2>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
               {/* Upstream */}
-              <div className="rounded-xl border border-white/10 bg-black/20 p-4">
-                <p className="text-xs font-semibold text-white/70 mb-3 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-blue-400"></span>
+              <div className="border border-gray-200 bg-gray-50 rounded-lg p-4">
+                <p className="text-xs font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-blue-500"></span>
                   Upstream
                 </p>
                 <div className="space-y-3">
                   {(report.ipReport as any).value_chain_analysis.upstream.map((stage: any, i: number) => (
-                    <div key={i} className="rounded-lg bg-black/30 p-3">
-                      <p className="text-xs font-semibold text-white/90 mb-1">{stage.stage}</p>
-                      <p className="text-[10px] text-white/60 mb-2">{stage.description}</p>
+                    <div key={i} className="border border-gray-200 bg-white rounded p-3">
+                      <p className="text-xs font-medium text-gray-900 mb-1">{stage.stage}</p>
+                      <p className="text-xs text-gray-600 mb-2">{stage.description}</p>
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-[10px] text-white/50">Risk:</span>
-                        <span className={`text-[10px] ${stage.risk_level === 'high' ? 'text-red-400' : stage.risk_level === 'medium' ? 'text-yellow-400' : 'text-emerald-400'}`}>{stage.risk_level}</span>
+                        <span className="text-xs text-gray-500">Risk:</span>
+                        <span className={`text-xs ${stage.risk_level === 'high' ? 'text-red-600' : stage.risk_level === 'medium' ? 'text-yellow-600' : 'text-green-600'}`}>{stage.risk_level}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-[10px] text-white/50">Cost Impact:</span>
-                        <span className={`text-[10px] ${stage.cost_impact === 'high' ? 'text-red-400' : 'text-emerald-400'}`}>{stage.cost_impact}</span>
+                        <span className="text-xs text-gray-500">Cost Impact:</span>
+                        <span className={`text-xs ${stage.cost_impact === 'high' ? 'text-red-600' : 'text-green-600'}`}>{stage.cost_impact}</span>
                       </div>
                     </div>
                   ))}
@@ -1438,23 +1318,23 @@ export default function ProjectAssessmentResultsPage() {
               </div>
 
               {/* Midstream */}
-              <div className="rounded-xl border border-white/10 bg-black/20 p-4">
-                <p className="text-xs font-semibold text-white/70 mb-3 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-purple-400"></span>
+              <div className="border border-gray-200 bg-gray-50 rounded-lg p-4">
+                <p className="text-xs font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-purple-500"></span>
                   Midstream
                 </p>
                 <div className="space-y-3">
                   {(report.ipReport as any).value_chain_analysis.midstream.map((stage: any, i: number) => (
-                    <div key={i} className="rounded-lg bg-black/30 p-3">
-                      <p className="text-xs font-semibold text-white/90 mb-1">{stage.stage}</p>
-                      <p className="text-[10px] text-white/60 mb-2">{stage.description}</p>
+                    <div key={i} className="border border-gray-200 bg-white rounded p-3">
+                      <p className="text-xs font-medium text-gray-900 mb-1">{stage.stage}</p>
+                      <p className="text-xs text-gray-600 mb-2">{stage.description}</p>
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-[10px] text-white/50">Risk:</span>
-                        <span className={`text-[10px] ${stage.risk_level === 'high' ? 'text-red-400' : stage.risk_level === 'medium' ? 'text-yellow-400' : 'text-emerald-400'}`}>{stage.risk_level}</span>
+                        <span className="text-xs text-gray-500">Risk:</span>
+                        <span className={`text-xs ${stage.risk_level === 'high' ? 'text-red-600' : stage.risk_level === 'medium' ? 'text-yellow-600' : 'text-green-600'}`}>{stage.risk_level}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-[10px] text-white/50">Cost Impact:</span>
-                        <span className={`text-[10px] ${stage.cost_impact === 'high' ? 'text-red-400' : 'text-emerald-400'}`}>{stage.cost_impact}</span>
+                        <span className="text-xs text-gray-500">Cost Impact:</span>
+                        <span className={`text-xs ${stage.cost_impact === 'high' ? 'text-red-600' : 'text-green-600'}`}>{stage.cost_impact}</span>
                       </div>
                     </div>
                   ))}
@@ -1462,23 +1342,23 @@ export default function ProjectAssessmentResultsPage() {
               </div>
 
               {/* Downstream */}
-              <div className="rounded-xl border border-white/10 bg-black/20 p-4">
-                <p className="text-xs font-semibold text-white/70 mb-3 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+              <div className="border border-gray-200 bg-gray-50 rounded-lg p-4">
+                <p className="text-xs font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-green-500"></span>
                   Downstream
                 </p>
                 <div className="space-y-3">
                   {(report.ipReport as any).value_chain_analysis.downstream.map((stage: any, i: number) => (
-                    <div key={i} className="rounded-lg bg-black/30 p-3">
-                      <p className="text-xs font-semibold text-white/90 mb-1">{stage.stage}</p>
-                      <p className="text-[10px] text-white/60 mb-2">{stage.description}</p>
+                    <div key={i} className="border border-gray-200 bg-white rounded p-3">
+                      <p className="text-xs font-medium text-gray-900 mb-1">{stage.stage}</p>
+                      <p className="text-xs text-gray-600 mb-2">{stage.description}</p>
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-[10px] text-white/50">Risk:</span>
-                        <span className={`text-[10px] ${stage.risk_level === 'high' ? 'text-red-400' : stage.risk_level === 'medium' ? 'text-yellow-400' : 'text-emerald-400'}`}>{stage.risk_level}</span>
+                        <span className="text-xs text-gray-500">Risk:</span>
+                        <span className={`text-xs ${stage.risk_level === 'high' ? 'text-red-600' : stage.risk_level === 'medium' ? 'text-yellow-600' : 'text-green-600'}`}>{stage.risk_level}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-[10px] text-white/50">Cost Impact:</span>
-                        <span className={`text-[10px] ${stage.cost_impact === 'high' ? 'text-red-400' : 'text-emerald-400'}`}>{stage.cost_impact}</span>
+                        <span className="text-xs text-gray-500">Cost Impact:</span>
+                        <span className={`text-xs ${stage.cost_impact === 'high' ? 'text-red-600' : 'text-green-600'}`}>{stage.cost_impact}</span>
                       </div>
                     </div>
                   ))}
@@ -1487,12 +1367,12 @@ export default function ProjectAssessmentResultsPage() {
             </div>
 
             {/* Value Capture Opportunities */}
-            <div className="rounded-lg border border-[#6efcff]/30 bg-[#6efcff]/5 p-4">
-              <p className="text-xs font-semibold text-[#c5fdff] mb-3">💰 Value Capture Opportunities</p>
+            <div className="border border-blue-200 bg-blue-50 rounded-lg p-4">
+              <p className="text-xs font-semibold text-gray-900 mb-3">Value Capture Opportunities</p>
               <ul className="space-y-2">
                 {(report.ipReport as any).value_chain_analysis.value_capture_opportunities.map((opportunity: string, i: number) => (
-                  <li key={i} className="text-xs text-white/70 flex items-start gap-2">
-                    <span className="text-[#6efcff]">•</span>
+                  <li key={i} className="text-xs text-gray-700 flex items-start gap-2">
+                    <span className="text-blue-600">•</span>
                     <span>{opportunity}</span>
                   </li>
                 ))}
@@ -1503,65 +1383,67 @@ export default function ProjectAssessmentResultsPage() {
 
         {/* Enhanced Due Diligence */}
         {report.dueDiligenceReport && (
-          <section className="workflow-panel mb-6 rounded-2xl p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <Brain className="w-5 h-5 text-[#6efcff]" />
-              <h2 className="font-headline text-lg font-bold text-white/95">Due Diligence</h2>
+          <section className="mb-8 border border-gray-200 bg-white rounded-lg p-6 shadow-sm">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2 bg-gray-100 rounded-lg">
+                <Brain className="w-5 h-5 text-gray-700" />
+              </div>
+              <h2 className="text-lg font-semibold text-gray-900">Due Diligence</h2>
             </div>
             
             {/* Spider Chart Visualization */}
-            <div className="mb-6 rounded-xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs font-semibold text-white/70 mb-4">Multi-Dimensional Analysis</p>
-              <SpiderChart data={report.dueDiligenceReport.dimensions.map(d => ({
+            <div className="mb-6 border border-gray-200 bg-gray-50 rounded-lg p-4">
+              <p className="text-xs font-semibold text-gray-700 mb-4">Multi-Dimensional Analysis</p>
+              <SpiderChart data={report.dueDiligenceReport.dimensions.map((d: any) => ({
                 name: d.name,
                 score: d.score,
                 maxScore: d.maxScore
               }))} />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <div className="rounded-xl border border-white/10 bg-black/20 p-4">
-                <p className="text-xs text-white/50 mb-1">Total Score</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div className="border border-gray-200 bg-gray-50 rounded-lg p-4">
+                <p className="text-xs text-gray-500 mb-1">Total Score</p>
                 <div className="flex items-center gap-2">
                   <p className={`text-lg font-bold ${getDueDiligenceScoreColor(report.dueDiligenceReport.totalScore)}`}>{report.dueDiligenceReport.totalScore.toFixed(1)}%</p>
-                  <div className="flex-1 bg-white/10 rounded-full h-2">
+                  <div className="flex-1 bg-gray-200 rounded-full h-2">
                     <div className={`h-2 rounded-full ${getDueDiligenceScoreBarColor(report.dueDiligenceReport.totalScore)}`} style={{ width: `${report.dueDiligenceReport.totalScore}%` }} />
                   </div>
                 </div>
               </div>
-              <div className="rounded-xl border border-white/10 bg-black/20 p-4">
-                <p className="text-xs text-white/50 mb-1">Investment Tier</p>
+              <div className="border border-gray-200 bg-gray-50 rounded-lg p-4">
+                <p className="text-xs text-gray-500 mb-1">Investment Tier</p>
                 <span className={`text-sm font-bold uppercase ${getInvestmentTierColor(report.dueDiligenceReport.investmentTier)}`}>{report.dueDiligenceReport.investmentTier}</span>
               </div>
             </div>
 
             {/* Detailed Dimension Breakdown */}
-            <div className="space-y-3">
-              {report.dueDiligenceReport.dimensions.map((dim) => (
-                <div key={dim.id} className="rounded-lg border border-white/10 bg-black/20 p-4">
+            <div className="space-y-3 mb-6">
+              {report.dueDiligenceReport.dimensions.map((dim: any) => (
+                <div key={dim.id} className="border border-gray-200 bg-gray-50 rounded-lg p-4">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-semibold text-white/90">{dim.name}</span>
-                      <span className="text-[10px] bg-white/10 px-2 py-0.5 rounded text-white/50">{dim.layer}</span>
+                      <span className="text-sm font-medium text-gray-900">{dim.name}</span>
+                      <span className="text-xs bg-gray-200 px-2 py-0.5 rounded text-gray-600">{dim.layer}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-bold text-[#c5fdff]">{dim.score}/{dim.maxScore}</span>
-                      <span className="text-xs text-white/50">({(dim.weight * 100).toFixed(0)}% weight)</span>
+                      <span className="text-sm font-bold text-blue-600">{dim.score}/{dim.maxScore}</span>
+                      <span className="text-xs text-gray-500">({(dim.weight * 100).toFixed(0)}% weight)</span>
                     </div>
                   </div>
-                  <div className="w-full bg-white/10 rounded-full h-1.5 mb-2">
+                  <div className="w-full bg-gray-200 rounded-full h-1.5 mb-2">
                     <div 
-                      className="h-1.5 rounded-full bg-gradient-to-r from-[#6efcff]/50 to-[#6efcff]" 
+                      className="h-1.5 rounded-full bg-blue-500" 
                       style={{ width: `${(dim.score / dim.maxScore) * 100}%` }}
                     />
                   </div>
                   {dim.evidence && dim.evidence.length > 0 && (
                     <div className="mt-2">
-                      <p className="text-[10px] text-white/50 mb-1">Evidence:</p>
+                      <p className="text-xs text-gray-500 mb-1">Evidence:</p>
                       <ul className="space-y-1">
-                        {dim.evidence.map((evidence, i) => (
-                          <li key={i} className="text-xs text-white/60 flex items-start gap-2">
-                            <span className="text-[#6efcff]">•</span>
+                        {dim.evidence.map((evidence: string, i: number) => (
+                          <li key={i} className="text-xs text-gray-600 flex items-start gap-2">
+                            <span className="text-blue-600">•</span>
                             <span>{evidence}</span>
                           </li>
                         ))}
@@ -1575,9 +1457,9 @@ export default function ProjectAssessmentResultsPage() {
               {/* DeepSeek-enhanced due diligence */}
               {(report.dueDiligenceReport as any).scientific_rigor && (
                 <>
-                  <div className="rounded-lg border border-[#6efcff]/30 bg-[#6efcff]/5 p-4">
-                    <p className="text-xs font-semibold text-[#c5fdff] mb-2">🔬 Scientific Rigor</p>
-                    <div className="space-y-2 text-xs text-white/70">
+                  <div className="border border-blue-200 bg-blue-50 rounded-lg p-4 mb-4">
+                    <p className="text-xs font-semibold text-gray-900 mb-2">Scientific Rigor</p>
+                    <div className="space-y-2 text-xs text-gray-700">
                       <div className="flex justify-between">
                         <span>Methodology Quality</span>
                         <span>{(report.dueDiligenceReport as any).scientific_rigor.methodology_quality}</span>
@@ -1597,9 +1479,9 @@ export default function ProjectAssessmentResultsPage() {
                     </div>
                   </div>
                   
-                  <div className="rounded-lg border border-white/10 bg-black/20 p-4">
-                    <p className="text-xs font-semibold text-white/70 mb-2">Innovation Assessment</p>
-                    <div className="space-y-2 text-xs text-white/60">
+                  <div className="border border-gray-200 bg-gray-50 rounded-lg p-4 mb-4">
+                    <p className="text-xs font-semibold text-gray-900 mb-2">Innovation Assessment</p>
+                    <div className="space-y-2 text-xs text-gray-700">
                       <div className="flex justify-between">
                         <span>Technical Novelty</span>
                         <span>{(report.dueDiligenceReport as any).innovation_assessment.technical_novelty}</span>
@@ -1611,9 +1493,9 @@ export default function ProjectAssessmentResultsPage() {
                     </div>
                   </div>
                   
-                  <div className="rounded-lg border border-white/10 bg-black/20 p-4">
-                    <p className="text-xs font-semibold text-white/70 mb-2">Market Fit</p>
-                    <div className="space-y-2 text-xs text-white/60">
+                  <div className="border border-gray-200 bg-gray-50 rounded-lg p-4 mb-4">
+                    <p className="text-xs font-semibold text-gray-900 mb-2">Market Fit</p>
+                    <div className="space-y-2 text-xs text-gray-700">
                       <div className="flex justify-between">
                         <span>Problem Solving</span>
                         <span>{(report.dueDiligenceReport as any).market_fit.problem_solving}</span>
@@ -1633,25 +1515,25 @@ export default function ProjectAssessmentResultsPage() {
                     </div>
                   </div>
                   
-                  <div className="rounded-lg border border-white/10 bg-black/20 p-4">
-                    <p className="text-xs font-semibold text-white/70 mb-2">Risk Assessment</p>
+                  <div className="border border-gray-200 bg-gray-50 rounded-lg p-4 mb-4">
+                    <p className="text-xs font-semibold text-gray-900 mb-2">Risk Assessment</p>
                     <div className="space-y-2">
                       {(report.dueDiligenceReport as any).risk_assessment.technical_risks.length > 0 && (
                         <div>
-                          <p className="text-[10px] text-white/50 mb-1">Technical Risks:</p>
+                          <p className="text-xs text-gray-500 mb-1">Technical Risks:</p>
                           <ul className="space-y-1">
                             {(report.dueDiligenceReport as any).risk_assessment.technical_risks.map((r: string, i: number) => (
-                              <li key={i} className="text-[10px] text-white/55">• {r}</li>
+                              <li key={i} className="text-xs text-gray-600">• {r}</li>
                             ))}
                           </ul>
                         </div>
                       )}
                       {(report.dueDiligenceReport as any).risk_assessment.execution_risks.length > 0 && (
                         <div>
-                          <p className="text-[10px] text-white/50 mb-1">Execution Risks:</p>
+                          <p className="text-xs text-gray-500 mb-1">Execution Risks:</p>
                           <ul className="space-y-1">
                             {(report.dueDiligenceReport as any).risk_assessment.execution_risks.map((r: string, i: number) => (
-                              <li key={i} className="text-[10px] text-white/55">• {r}</li>
+                              <li key={i} className="text-xs text-gray-600">• {r}</li>
                             ))}
                           </ul>
                         </div>
@@ -1659,28 +1541,28 @@ export default function ProjectAssessmentResultsPage() {
                     </div>
                   </div>
                   
-                  <div className="rounded-lg border border-white/10 bg-black/20 p-4">
-                    <p className="text-xs font-semibold text-white/70 mb-2">Investment Recommendation</p>
-                    <div className="space-y-2 text-xs text-white/60">
+                  <div className="border border-gray-200 bg-gray-50 rounded-lg p-4 mb-4">
+                    <p className="text-xs font-semibold text-gray-900 mb-2">Investment Recommendation</p>
+                    <div className="space-y-2 text-xs text-gray-700">
                       <div className="flex justify-between">
                         <span>Overall Score</span>
-                        <span className="font-semibold text-white/90">{(report.dueDiligenceReport as any).investment_recommendation.overall_score}/100</span>
+                        <span className="font-semibold text-gray-900">{(report.dueDiligenceReport as any).investment_recommendation.overall_score}/100</span>
                       </div>
                       <div className="flex justify-between">
                         <span>Recommended Action</span>
-                        <span className="font-semibold text-[#c5fdff]">{(report.dueDiligenceReport as any).investment_recommendation.recommended_action}</span>
+                        <span className="font-semibold text-blue-600">{(report.dueDiligenceReport as any).investment_recommendation.recommended_action}</span>
                       </div>
                     </div>
                   </div>
                   
-                  <div className="rounded-lg border border-white/10 bg-black/20 p-4">
-                    <p className="text-xs font-semibold text-white/70 mb-2">Next Steps</p>
+                  <div className="border border-gray-200 bg-gray-50 rounded-lg p-4">
+                    <p className="text-xs font-semibold text-gray-900 mb-2">Next Steps</p>
                     <div className="space-y-2">
                       <div>
-                        <p className="text-[10px] text-white/50 mb-1">Due Diligence Items:</p>
+                        <p className="text-xs text-gray-500 mb-1">Due Diligence Items:</p>
                         <ul className="space-y-1">
                           {(report.dueDiligenceReport as any).next_steps.due_diligence_items.map((item: string, i: number) => (
-                            <li key={i} className="text-[10px] text-white/55">• {item}</li>
+                            <li key={i} className="text-xs text-gray-600">• {item}</li>
                           ))}
                         </ul>
                       </div>
@@ -1691,46 +1573,46 @@ export default function ProjectAssessmentResultsPage() {
           </section>
         )}
 
-        <section className="workflow-panel rounded-2xl p-6">
-          <h2 className="mb-4 font-headline text-lg font-bold text-white/95">Comprehensive Analysis Document</h2>
-          <div className="space-y-6 text-sm text-white/70">
+        <section className="mb-8 border border-gray-200 bg-white rounded-lg p-6 shadow-sm">
+          <h2 className="mb-6 text-lg font-semibold text-gray-900">Comprehensive Analysis Document</h2>
+          <div className="space-y-6 text-sm text-gray-700">
             {ipfsUri && (
-              <div className="rounded-lg border border-[#f59e0b]/30 bg-[#f59e0b]/5 p-4">
-                <h3 className="mb-2 font-semibold text-[#f59e0b]">IP-NFT Metadata</h3>
-                <p className="text-xs text-white/60 break-all">IPFS URI: {ipfsUri}</p>
+              <div className="border border-amber-200 bg-amber-50 rounded-lg p-4">
+                <h3 className="mb-2 font-semibold text-gray-900">IP-NFT Metadata</h3>
+                <p className="text-xs text-gray-600 break-all">IPFS URI: {ipfsUri}</p>
                 {minted && (
-                  <p className="mt-2 text-xs text-emerald-400">✓ Successfully minted as IP-NFT #{nftTokenId}</p>
+                  <p className="mt-2 text-xs text-green-600">✓ Successfully minted as IP-NFT #{nftTokenId}</p>
                 )}
               </div>
             )}
             <div>
-              <h3 className="mb-2 font-semibold text-white/90">Project Overview</h3>
+              <h3 className="mb-2 font-semibold text-gray-900">Project Overview</h3>
               <p className="mb-2"><strong>Title:</strong> {report.title}</p>
               <p className="mb-2"><strong>Author:</strong> {report.author}</p>
               <p><strong>Category:</strong> {report.category}</p>
             </div>
 
             <div>
-              <h3 className="mb-2 font-semibold text-white/90">TRL Evaluation Analysis</h3>
+              <h3 className="mb-2 font-semibold text-gray-900">TRL Evaluation Analysis</h3>
               <p className="mb-2"><strong>TRL Level:</strong> {report.summary.trl}</p>
               <p className="mb-2"><strong>TRL Summary:</strong> {report.trlProject.trlSummary}</p>
               <p className="mb-2"><strong>Key Accomplishments:</strong></p>
               <ul className="ml-4 space-y-1">
-                {report.trlProject.accomplishments.map((a, i) => (
+                {report.trlProject.accomplishments.map((a: string, i: number) => (
                   <li key={i}>• {a}</li>
                 ))}
               </ul>
             </div>
 
             <div>
-              <h3 className="mb-2 font-semibold text-white/90">Milestone Roadmap</h3>
+              <h3 className="mb-2 font-semibold text-gray-900">Milestone Roadmap</h3>
               <div className="space-y-2">
-                {Object.entries(report.trlProject.milestones).map(([key, m]) => (
-                  <div key={key} className="rounded-lg border border-white/10 bg-black/20 p-3">
-                    <p className="font-semibold text-white/90">{MILESTONE_LABELS[key] || key}</p>
-                    <p className="text-xs text-white/60">{m.description}</p>
-                    <p className="text-xs text-white/40 mt-1">Timeline: {m.timeline}</p>
-                    <p className="text-xs text-[#6efcff] mt-1">Status: {m.status}</p>
+                {Object.entries(report.trlProject.milestones).map(([key, m]: [string, any]) => (
+                  <div key={key} className="border border-gray-200 bg-gray-50 rounded-lg p-3">
+                    <p className="font-medium text-gray-900">{MILESTONE_LABELS[key] || key}</p>
+                    <p className="text-xs text-gray-600">{m.description}</p>
+                    <p className="text-xs text-gray-500 mt-1">Timeline: {m.timeline}</p>
+                    <p className="text-xs text-blue-600 mt-1">Status: {m.status}</p>
                   </div>
                 ))}
               </div>
@@ -1738,7 +1620,7 @@ export default function ProjectAssessmentResultsPage() {
 
             {report.ipReport && (
               <div>
-                <h3 className="mb-2 font-semibold text-white/90">IP Valuation & FTO Analysis</h3>
+                <h3 className="mb-2 font-semibold text-gray-900">IP Valuation & FTO Analysis</h3>
                 <p className="mb-2"><strong>Sector:</strong> {report.ipReport.classification.sector_name}</p>
                 <p className="mb-2"><strong>FTO Risk Score:</strong> {(report.ipReport.fto.r_fto * 100).toFixed(2)}%</p>
                 <p className="mb-2"><strong>Target Valuation:</strong> {formatUsd(report.ipReport.valuation.v_target_usd)}</p>
@@ -1748,24 +1630,24 @@ export default function ProjectAssessmentResultsPage() {
 
             {report.dueDiligenceReport && (
               <div>
-                <h3 className="mb-2 font-semibold text-white/90">Scientific Due Diligence Analysis</h3>
+                <h3 className="mb-2 font-semibold text-gray-900">Scientific Due Diligence Analysis</h3>
                 <p className="mb-2"><strong>Total Due Diligence Score:</strong> {report.dueDiligenceReport.totalScore.toFixed(2)}%</p>
-                <p className="mb-2"><strong>Investment Tier:</strong> <span className="uppercase text-[#c5fdff]">{report.dueDiligenceReport.investmentTier}</span></p>
+                <p className="mb-2"><strong>Investment Tier:</strong> <span className="uppercase text-blue-600">{report.dueDiligenceReport.investmentTier}</span></p>
                 <p className="mb-2"><strong>Integrity Gate Status:</strong> {report.dueDiligenceReport.integrityGateTriggered ? "Triggered" : "Not Triggered"}</p>
               </div>
             )}
 
             <div>
-              <h3 className="mb-2 font-semibold text-white/90">Summary Metrics</h3>
+              <h3 className="mb-2 font-semibold text-gray-900">Summary Metrics</h3>
               <p className="mb-2"><strong>Innovation Score:</strong> {report.summary.ipScore}</p>
               <p className="mb-2"><strong>IP Valuation:</strong> {report.summary.valuationUsd ? formatUsd(report.summary.valuationUsd) : "N/A"}</p>
               <p><strong>Due Diligence Score:</strong> {report.summary.dueDiligenceScore !== null ? `${report.summary.dueDiligenceScore.toFixed(2)}%` : "N/A"}</p>
             </div>
 
             <div>
-              <h3 className="mb-2 font-semibold text-white/90">Recommended Actions</h3>
+              <h3 className="mb-2 font-semibold text-gray-900">Recommended Actions</h3>
               <ul className="ml-4 space-y-1">
-                {report.summary.recommendedNextSteps.map((step, i) => (
+                {report.summary.recommendedNextSteps.map((step: string, i: number) => (
                   <li key={i}>• {step}</li>
                 ))}
               </ul>
@@ -1785,10 +1667,10 @@ export default function ProjectAssessmentResultsPage() {
       <button
         onClick={() => setShowChat(!showChat)}
         className={`fixed right-4 bottom-4 z-50 p-4 rounded-full shadow-lg transition-all ${
-          showChat ? 'bg-red-500 hover:bg-red-600' : 'bg-gradient-to-r from-[#6efcff] to-[#a78bfa] hover:opacity-90'
+          showChat ? 'bg-gray-600 text-white' : 'bg-blue-600 text-white hover:bg-blue-700'
         }`}
       >
-        {showChat ? <X className="h-6 w-6 text-white" /> : <MessageSquare className="h-6 w-6 text-black" />}
+        {showChat ? <X className="w-6 h-6" /> : <MessageSquare className="w-6 h-6" />}
       </button>
     </div>
   )
@@ -1796,9 +1678,9 @@ export default function ProjectAssessmentResultsPage() {
 
 function Metric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-black/30 p-4 text-center">
-      <p className="text-[10px] uppercase tracking-wider text-white/45">{label}</p>
-      <p className="mt-1 font-headline text-lg font-bold text-white/90">{value}</p>
+    <div className="border border-gray-200 bg-gray-50 rounded-lg p-4 text-center">
+      <p className="text-xs uppercase tracking-wide text-gray-500">{label}</p>
+      <p className="mt-1 text-lg font-semibold text-gray-900">{value}</p>
     </div>
   )
 }
@@ -1806,106 +1688,105 @@ function Metric({ label, value }: { label: string; value: string }) {
 function EnhancedMetric({ label, value, trl, score, icon }: { label: string; value: string; trl?: number; score?: number; icon: React.ReactNode }) {
   const getMetricColor = () => {
     if (trl !== undefined) {
-      if (trl >= 8) return "border-emerald-500/30 bg-emerald-950/20"
-      if (trl >= 6) return "border-teal-500/30 bg-teal-950/20"
-      if (trl >= 4) return "border-amber-500/30 bg-amber-950/20"
-      return "border-indigo-500/30 bg-indigo-950/20"
+      if (trl >= 8) return "border-green-200 bg-green-50"
+      if (trl >= 6) return "border-teal-200 bg-teal-50"
+      if (trl >= 4) return "border-amber-200 bg-amber-50"
+      return "border-indigo-200 bg-indigo-50"
     }
     if (score !== undefined) {
-      if (score >= 80) return "border-emerald-500/30 bg-emerald-950/20"
-      if (score >= 60) return "border-teal-500/30 bg-teal-950/20"
-      if (score >= 40) return "border-amber-500/30 bg-amber-950/20"
-      return "border-red-500/30 bg-red-950/20"
+      if (score >= 80) return "border-green-200 bg-green-50"
+      if (score >= 60) return "border-teal-200 bg-teal-50"
+      if (score >= 40) return "border-amber-200 bg-amber-50"
+      return "border-red-200 bg-red-50"
     }
-    return "border-white/10 bg-black/20"
+    return "border-gray-200 bg-gray-50"
   }
 
   const getMetricTextColor = () => {
     if (trl !== undefined) {
-      if (trl >= 8) return "text-emerald-400"
-      if (trl >= 6) return "text-teal-400"
-      if (trl >= 4) return "text-amber-400"
-      return "text-indigo-400"
+      if (trl >= 8) return "text-green-600"
+      if (trl >= 6) return "text-teal-600"
+      if (trl >= 4) return "text-amber-600"
+      return "text-indigo-600"
     }
     if (score !== undefined) {
-      if (score >= 80) return "text-emerald-400"
-      if (score >= 60) return "text-teal-400"
-      if (score >= 40) return "text-amber-400"
-      return "text-red-400"
+      if (score >= 80) return "text-green-600"
+      if (score >= 60) return "text-teal-600"
+      if (score >= 40) return "text-amber-600"
+      return "text-red-600"
     }
-    return "text-white/90"
+    return "text-gray-900"
   }
 
   return (
-    <div className={`rounded-xl border px-4 py-4 transition-all duration-200 hover:scale-105 ${getMetricColor()}`}>
+    <div className={`border rounded-lg px-4 py-4 transition-all duration-200 hover:scale-105 ${getMetricColor()}`}>
       <div className="flex items-center gap-2 mb-2">
-        <div className="p-1.5 rounded-lg bg-white/10">{icon}</div>
-        <p className="text-xs text-white/50">{label}</p>
+        <div className="p-1.5 rounded-lg bg-white">{icon}</div>
+        <p className="text-xs text-gray-500">{label}</p>
       </div>
-      <p className={`text-lg font-bold ${getMetricTextColor()} mt-1`}>{value}</p>
+      <p className={`text-lg font-semibold ${getMetricTextColor()} mt-1`}>{value}</p>
     </div>
   )
 }
 
 function getTRLBadgeClass(trl: number): string {
-  if (trl >= 8) return "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
-  if (trl >= 6) return "bg-teal-500/10 text-teal-400 border border-teal-500/30"
-  if (trl >= 4) return "bg-amber-500/10 text-amber-400 border border-amber-500/30"
-  return "bg-indigo-500/10 text-indigo-400 border border-indigo-500/30"
+  if (trl >= 8) return "bg-green-100 text-green-700 border border-green-200"
+  if (trl >= 6) return "bg-teal-100 text-teal-700 border border-teal-200"
+  if (trl >= 4) return "bg-amber-100 text-amber-700 border border-amber-200"
+  return "bg-indigo-100 text-indigo-700 border border-indigo-200"
 }
 
 function getTRLIcon(trl: number): React.ReactNode {
-  if (trl >= 8) return <Award className="w-4 h-4 text-emerald-400" />
-  if (trl >= 6) return <Zap className="w-4 h-4 text-teal-400" />
-  if (trl >= 4) return <Battery className="w-4 h-4 text-amber-400" />
-  return <Brain className="w-4 h-4 text-indigo-400" />
+  if (trl >= 8) return <Award className="w-4 h-4 text-green-600" />
+  if (trl >= 6) return <Zap className="w-4 h-4 text-teal-600" />
+  if (trl >= 4) return <Battery className="w-4 h-4 text-amber-600" />
+  return <Brain className="w-4 h-4 text-indigo-600" />
 }
 
 function getTRLIconBg(trl: number): string {
-  if (trl >= 8) return "bg-emerald-500/20"
-  if (trl >= 6) return "bg-teal-500/20"
-  if (trl >= 4) return "bg-amber-500/20"
-  return "bg-indigo-500/20"
+  if (trl >= 8) return "bg-green-100"
+  if (trl >= 6) return "bg-teal-100"
+  if (trl >= 4) return "bg-amber-100"
+  return "bg-indigo-100"
 }
 
 function getScoreColor(score: number): string {
-  if (score >= 80) return "text-emerald-400"
-  if (score >= 60) return "text-teal-400"
-  if (score >= 40) return "text-amber-400"
-  return "text-red-400"
+  if (score >= 80) return "text-green-600"
+  if (score >= 60) return "text-teal-600"
+  if (score >= 40) return "text-amber-600"
+  return "text-red-600"
 }
 
 function getScoreBarColor(score: number): string {
-  if (score >= 80) return "bg-emerald-500"
+  if (score >= 80) return "bg-green-500"
   if (score >= 60) return "bg-teal-500"
   if (score >= 40) return "bg-amber-500"
   return "bg-red-500"
 }
 
 function getFTORiskColor(risk: number): string {
-  if (risk <= 0.2) return "text-emerald-400"
-  if (risk <= 0.4) return "text-teal-400"
-  if (risk <= 0.6) return "text-amber-400"
-  return "text-red-400"
+  if (risk >= 0.7) return "text-red-600"
+  if (risk >= 0.4) return "text-amber-600"
+  return "text-green-600"
 }
 
 function getDueDiligenceScoreColor(score: number): string {
-  if (score >= 80) return "text-emerald-400"
-  if (score >= 60) return "text-teal-400"
-  if (score >= 40) return "text-amber-400"
-  return "text-red-400"
+  if (score >= 80) return "text-green-600"
+  if (score >= 60) return "text-teal-600"
+  if (score >= 40) return "text-amber-600"
+  return "text-red-600"
 }
 
 function getDueDiligenceScoreBarColor(score: number): string {
-  if (score >= 80) return "bg-emerald-500"
+  if (score >= 80) return "bg-green-500"
   if (score >= 60) return "bg-teal-500"
   if (score >= 40) return "bg-amber-500"
   return "bg-red-500"
 }
 
 function getInvestmentTierColor(tier: string): string {
-  if (tier === "A" || tier === "A+") return "text-emerald-400"
-  if (tier === "B" || tier === "B+") return "text-teal-400"
-  if (tier === "C" || tier === "C+") return "text-amber-400"
-  return "text-red-400"
+  if (tier === "A" || tier === "A+") return "text-green-600"
+  if (tier === "B" || tier === "B+") return "text-teal-600"
+  if (tier === "C" || tier === "C+") return "text-amber-600"
+  return "text-gray-600"
 }

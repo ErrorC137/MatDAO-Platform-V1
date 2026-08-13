@@ -61,6 +61,9 @@ export interface AnalysisReport {
     analysis_source: string
   }
   valuation: {
+    valuation_available?: boolean
+    valuation_status?: string
+    valuation_message?: string
     v_baseline_usd: number
     s_originality: number
     r_fto: number
@@ -83,6 +86,7 @@ export interface AnalysisReport {
       patent_strength_score: number
       commercial_readiness_score: number
     }
+    valuation_range_usd?: { low: number; high: number } | null
   }
   trl_evaluation?: {
     trl: number

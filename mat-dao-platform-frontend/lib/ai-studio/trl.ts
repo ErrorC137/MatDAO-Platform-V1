@@ -131,13 +131,9 @@ export async function analyzeTrl(file: File): Promise<TrlReport> {
   try {
     const report = await analyzeDocument(file)
     return deriveTrlFromAnalysis(report, file.name)
-  } catch {
-    const text = await file.text()
-    if (!text.trim()) {
-      throw new Error(
-        "Could not read file content. For PDF/DOCX files, start the IP Engine backend first.",
-      )
-    }
-    return scoreTextTrl(text, file.name)
+  } catch (error) {
+    throw new Error(
+      `TRL assessment requires the IP Engine; client-side keyword scoring is disabled. ${error instanceof Error ? error.message : ""}`,
+    )
   }
 }

@@ -78,9 +78,9 @@ export function useFundingProgress(escrowAddress: string) {
   })
 
   return {
-    current: data?.[0] || 0n,
-    goal: data?.[1] || 0n,
-    percentage: data?.[2] || 0n,
+    current: (data as readonly [bigint, bigint, bigint] | undefined)?.[0] || 0n,
+    goal: (data as readonly [bigint, bigint, bigint] | undefined)?.[1] || 0n,
+    percentage: (data as readonly [bigint, bigint, bigint] | undefined)?.[2] || 0n,
     isLoading,
     error,
   }

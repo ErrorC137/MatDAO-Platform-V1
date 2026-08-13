@@ -676,17 +676,19 @@ export async function runCombinedAssessment(
     return result
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error)
-    console.warn('Backend analysis failed, using deterministic fallback:', errorMessage)
+    console.error('Backend analysis failed:', errorMessage)
     
     // Check if it's a rate limiting error
     if (errorMessage.includes('429') || errorMessage.includes('rate limit') || errorMessage.includes('Too Many Requests')) {
       console.warn('Rate limit detected - consider adding API rate limiting or caching')
     }
     
-    // Use deterministic fallback when backend is unavailable
-    const fallbackResult = generateDeterministicFallback(normalizedInput)
-    analysisCache.set(inputHash, fallbackResult)
-    return fallbackResult
+    // Never manufacture scores, patent matches, team assessments, or a dollar
+    // valuation in the browser. A fallback made from keyword counts looks like
+    // an assessment but has no evidentiary basis and is actively misleading.
+    throw new Error(
+      `The document could not be analyzed by the IP Engine. ${errorMessage || "Please retry after the service is available."}`,
+    )
   }
 }
 

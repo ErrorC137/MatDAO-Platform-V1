@@ -94,7 +94,8 @@ export function LiquiditySwapDeck({ swapAddress, usdcAddress, iptAddress }: Liqu
       return
     }
 
-    const rate = Number(liquidityStatus[2]) / 1e6
+    const [, , contractRate] = liquidityStatus as unknown as readonly [bigint, bigint, bigint]
+    const rate = Number(contractRate) / 1e6
     if (swapDirection === "USDC_TO_IPT") {
       const output = amount / rate
       setOutputAmount(output.toFixed(2))
@@ -157,14 +158,14 @@ export function LiquiditySwapDeck({ swapAddress, usdcAddress, iptAddress }: Liqu
   }
 
   const needsApproval = swapDirection === "USDC_TO_IPT" 
-    ? (usdcAllowance ? BigInt(parseUnits(inputAmount || "0", 6)) > usdcAllowance : true)
-    : (iptAllowance ? BigInt(parseUnits(inputAmount || "0", 6)) > iptAllowance : true)
+    ? (usdcAllowance ? parseUnits(inputAmount || "0", 6) > (usdcAllowance as bigint) : true)
+    : (iptAllowance ? parseUnits(inputAmount || "0", 6) > (iptAllowance as bigint) : true)
 
   const userBalance = swapDirection === "USDC_TO_IPT" 
-    ? (usdcBalance ? Number(usdcBalance) / 1e6 : 0)
-    : (iptBalance ? Number(iptBalance) / 1e6 : 0)
+    ? (usdcBalance ? Number(usdcBalance as bigint) / 1e6 : 0)
+    : (iptBalance ? Number(iptBalance as bigint) / 1e6 : 0)
 
-  const rate = liquidityStatus ? Number(liquidityStatus[2]) / 1e6 : 1
+  const rate = liquidityStatus ? Number((liquidityStatus as unknown as readonly [bigint, bigint, bigint])[2]) / 1e6 : 1
 
   return (
     <Card>
@@ -179,7 +180,7 @@ export function LiquiditySwapDeck({ swapAddress, usdcAddress, iptAddress }: Liqu
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Liquidity Status */}
-        {liquidityStatus && (
+        {Boolean(liquidityStatus) && (
           <div className="flex items-center justify-between p-3 bg-secondary/20 rounded-lg">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <RefreshCw className="h-4 w-4" />
@@ -188,11 +189,11 @@ export function LiquiditySwapDeck({ swapAddress, usdcAddress, iptAddress }: Liqu
             <div className="flex items-center gap-4">
               <div className="text-right">
                 <p className="text-xs text-muted-foreground">USDC</p>
-                <p className="font-semibold">{(Number(liquidityStatus[0]) / 1e6).toLocaleString()}</p>
+                <p className="font-semibold">{(Number((liquidityStatus as unknown as readonly [bigint, bigint, bigint])[0]) / 1e6).toLocaleString()}</p>
               </div>
               <div className="text-right">
                 <p className="text-xs text-muted-foreground">IPT</p>
-                <p className="font-semibold">{(Number(liquidityStatus[1]) / 1e6).toLocaleString()}</p>
+                <p className="font-semibold">{(Number((liquidityStatus as unknown as readonly [bigint, bigint, bigint])[1]) / 1e6).toLocaleString()}</p>
               </div>
             </div>
           </div>

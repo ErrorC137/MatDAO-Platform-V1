@@ -1,7 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  typescript: {
-    ignoreBuildErrors: true,
+  // This repository is nested beneath other workspaces. Pin Turbopack to this
+  // application so production builds do not traverse an inaccessible parent.
+  turbopack: {
+    root: process.cwd(),
   }
 }
 

@@ -150,7 +150,7 @@ export function deriveDueDiligenceFromAnalysis(
     {
       id: 6,
       name: "Team Credibility",
-      score: clampScore(report.classification.classification_confidence * 7 + 2),
+      score: 0,
       maxScore: 10,
       weight: 10,
       layer: "enrichment",
@@ -162,10 +162,7 @@ export function deriveDueDiligenceFromAnalysis(
     {
       id: 7,
       name: "Market Viability",
-      score: clampScore(
-        (report.valuation.v_baseline_usd > 1_000_000 ? 6 : 4) +
-        report.originality.originality_premium_s * 10,
-      ),
+      score: 0,
       maxScore: 10,
       weight: 12,
       layer: "enrichment",
@@ -262,14 +259,10 @@ export async function analyzeDueDiligence(file: File): Promise<DueDiligenceRepor
   try {
     const report = await analyzeDocument(file)
     return deriveDueDiligenceFromAnalysis(report, file.name)
-  } catch {
-    const text = await file.text()
-    if (!text.trim()) {
-      throw new Error(
-        "Could not read file content. For PDF/DOCX files, start the IP Engine backend first.",
-      )
-    }
-    return scoreTextDueDiligence(text, file.name)
+  } catch (error) {
+    throw new Error(
+      `Due diligence requires the IP Engine; client-side keyword scoring is disabled. ${error instanceof Error ? error.message : ""}`,
+    )
   }
 }
 

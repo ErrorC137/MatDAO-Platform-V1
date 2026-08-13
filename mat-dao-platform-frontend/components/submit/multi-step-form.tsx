@@ -94,13 +94,13 @@ export function MultiStepForm({ onSubmit, demoMode = false, demoData }: MultiSte
   const validateStep = (step: number): boolean => {
     switch (step) {
       case 1:
-        return formData.title && formData.institution && formData.email && formData.workingField
+        return Boolean(formData.title && formData.institution && formData.email && formData.workingField)
       case 2:
-        return formData.targetAudience && formData.painPoints
+        return Boolean(formData.targetAudience && formData.painPoints)
       case 3:
-        return formData.businessModel && formData.fundingNeeded
+        return Boolean(formData.businessModel && formData.fundingNeeded)
       case 4:
-        return formData.milestones && formData.timeline
+        return Boolean(formData.milestones && formData.timeline)
       case 5:
         return true // Files are optional
       default:

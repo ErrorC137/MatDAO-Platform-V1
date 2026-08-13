@@ -12,7 +12,9 @@ export async function POST(request: NextRequest) {
     }
 
     const upstream = new FormData()
-    upstream.append("file", file)
+    // Preserve the filename so FastAPI can validate the extension.  App Router
+    // form parsing otherwise serializes a Blob as a generic "blob" upload.
+    upstream.append("file", file, file instanceof File ? file.name : "upload")
 
     const response = await fetch(`${IP_ENGINE_URL}/api/analyze`, {
       method: "POST",

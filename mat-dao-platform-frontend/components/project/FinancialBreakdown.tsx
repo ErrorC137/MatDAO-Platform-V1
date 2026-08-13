@@ -31,7 +31,7 @@ export function FinancialBreakdown({ escrowAddress }: FinancialBreakdownProps) {
     return null
   }
 
-  const [totalGoal, platformFee, netRunway] = breakdown
+  const [totalGoal, platformFee, netRunway] = breakdown as unknown as readonly [bigint, bigint, bigint]
   const total = Number(totalGoal) / 1e6
   const fee = Number(platformFee) / 1e6
   const runway = Number(netRunway) / 1e6

@@ -31,19 +31,9 @@ export function LegalRegistryPanel({ ipnftAddress, tokenId }: LegalRegistryPanel
     args: [BigInt(tokenId)],
   })
 
-  // Mock legal hash for demo if not deployed
-  const displayHash = legalHash || "0x7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069"
-  
-  // Mock licenses for demo
-  const mockLicenses = licenses || [
-    {
-      licensees: ["0x70997970C51812dc3A010C7d01b50e0d17dc79C8"],
-      expirationBlocks: [BigInt(12345678)],
-      licenseTermsHashes: ["0x8a1b2c3d4e5f678901234567890abcdef1234567890abcdef1234567890abcdef"]
-    }
-  ]
-
-  const hasActiveLicenses = mockLicenses[0]?.licensees?.length > 0
+  type Licenses = readonly [readonly string[], readonly bigint[], readonly string[]]
+  const licenseData = licenses as Licenses | undefined
+  const hasActiveLicenses = Boolean(licenseData?.[0]?.length)
 
   return (
     <Card>
@@ -61,9 +51,9 @@ export function LegalRegistryPanel({ ipnftAddress, tokenId }: LegalRegistryPanel
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-medium text-foreground">Legal Agreement Hash</h3>
-            <Badge className="bg-emerald-500 text-white animate-pulse">
+            <Badge variant="outline">
               <CheckCircle className="h-3 w-3 mr-1" />
-              STATE: LEGALLY BINDING TO CHULA TTO
+              {legalHash ? "ON-CHAIN HASH RECORDED" : "NOT RECORDED"}
             </Badge>
           </div>
           
@@ -71,13 +61,13 @@ export function LegalRegistryPanel({ ipnftAddress, tokenId }: LegalRegistryPanel
             <div className="flex items-start gap-2">
               <Hash className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
               <code className="text-xs text-muted-foreground break-all font-mono">
-                {displayHash}
+                {(legalHash as string | undefined) || "No legal-agreement hash has been recorded for this token."}
               </code>
             </div>
           </div>
           
           <p className="text-xs text-muted-foreground">
-            This SHA-256 hash cryptographically binds the IP-NFT to the physical Intellectual Property Assignment Agreement (IPAA) filed with Chula TTO, making the token represent legally enforceable commercial rights.
+            An on-chain hash can prove that a specific document fingerprint was recorded. It does not itself establish ownership, licensing, or legal enforceability; those require the underlying agreements and applicable legal review.
           </p>
         </div>
 
@@ -100,16 +90,16 @@ export function LegalRegistryPanel({ ipnftAddress, tokenId }: LegalRegistryPanel
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {mockLicenses[0].licensees.map((licensee, index) => (
+                  {licenseData![0].map((licensee, index) => (
                     <TableRow key={index}>
                       <TableCell className="text-xs font-mono">
                         {licensee.slice(0, 6)}...{licensee.slice(-4)}
                       </TableCell>
                       <TableCell className="text-xs">
-                        #{mockLicenses[0].expirationBlocks[index].toString()}
+                        #{licenseData![1][index].toString()}
                       </TableCell>
                       <TableCell className="text-xs font-mono">
-                        {mockLicenses[0].licenseTermsHashes[index].slice(0, 10)}...
+                        {licenseData![2][index].slice(0, 10)}...
                       </TableCell>
                       <TableCell>
                         <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">
@@ -144,7 +134,7 @@ export function LegalRegistryPanel({ ipnftAddress, tokenId }: LegalRegistryPanel
         {/* Security Notice */}
         <div className="p-3 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg">
           <p className="text-xs text-blue-900 dark:text-blue-100">
-            <strong>Legal Innovation:</strong> MatDAO uses cryptographic document hashing to physically bind real-world patent agreements to smart contracts, ensuring tokens represent legally enforceable commercial rights.
+            <strong>Important:</strong> verify every agreement, party authorization, jurisdictional requirement, and regulatory obligation before presenting any tokenized asset to investors.
           </p>
         </div>
       </CardContent>

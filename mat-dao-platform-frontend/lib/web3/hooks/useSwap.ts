@@ -89,12 +89,12 @@ export function useSwapQuotes() {
 
   const getQuoteETHForUSDC = (ethAmount: bigint) => {
     if (!exchangeRate) return BigInt(0)
-    return (ethAmount * exchangeRate[1]) / BigInt(1000000000000000000)
+    return (ethAmount * (exchangeRate as readonly [bigint, bigint])[1]) / BigInt(1000000000000000000)
   }
 
   const getQuoteUSDCForETH = (usdcAmount: bigint) => {
     if (!exchangeRate) return BigInt(0)
-    return (usdcAmount * exchangeRate[0]) / BigInt(1000000)
+    return (usdcAmount * (exchangeRate as readonly [bigint, bigint])[0]) / BigInt(1000000)
   }
 
   return {

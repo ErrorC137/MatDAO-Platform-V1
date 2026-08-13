@@ -76,26 +76,26 @@ export function DemoModeToggle() {
       <div className="flex flex-col items-end gap-2">
         {/* Settings Panel */}
         {showSettings && (
-          <div className="mb-2 rounded-xl border border-[#6efcff]/30 bg-black/90 p-4 backdrop-blur-xl">
-            <h4 className="mb-3 text-sm font-semibold text-white">Demo Settings</h4>
+          <div className="mb-2 border border-gray-200 bg-white rounded-lg p-4 shadow-lg">
+            <h4 className="mb-3 text-sm font-semibold text-gray-900">Demo Settings</h4>
             <div className="space-y-3">
               <label className="flex items-center gap-3 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={autoApprove}
                   onChange={toggleAutoApprove}
-                  className="h-4 w-4 accent-[#6efcff]"
+                  className="h-4 w-4 accent-blue-600"
                 />
-                <span className="text-xs text-white/80">Auto-approve submissions</span>
+                <span className="text-xs text-gray-700">Auto-approve submissions</span>
               </label>
               <label className="flex items-center gap-3 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={instantInvestment}
                   onChange={toggleInstantInvestment}
-                  className="h-4 w-4 accent-[#6efcff]"
+                  className="h-4 w-4 accent-blue-600"
                 />
-                <span className="text-xs text-white/80">Instant investment (no wallet)</span>
+                <span className="text-xs text-gray-700">Instant investment (no wallet)</span>
               </label>
             </div>
           </div>
@@ -104,10 +104,10 @@ export function DemoModeToggle() {
         {/* Main Toggle Button */}
         <button
           onClick={toggleDemoMode}
-          className={`flex items-center gap-2 rounded-full px-4 py-2 transition-all ${
+          className={`flex items-center gap-2 rounded-full px-4 py-2 transition-all shadow-sm ${
             isEnabled
-              ? 'bg-gradient-to-r from-[#6efcff] to-[#a78bfa] text-black shadow-lg shadow-[#6efcff]/20'
-              : 'bg-white/10 text-white/80 hover:bg-white/20'
+              ? 'bg-blue-600 text-white hover:bg-blue-700'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
           }`}
         >
           {isEnabled ? (
@@ -126,10 +126,10 @@ export function DemoModeToggle() {
         {/* Settings Toggle */}
         <button
           onClick={() => setShowSettings(!showSettings)}
-          className={`rounded-full p-2 transition-all ${
+          className={`rounded-full p-2 transition-all shadow-sm ${
             showSettings
-              ? 'bg-[#6efcff]/20 text-[#6efcff]'
-              : 'bg-white/10 text-white/60 hover:bg-white/20'
+              ? 'bg-blue-100 text-blue-600'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
           }`}
         >
           <Settings className="h-4 w-4" />
